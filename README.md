@@ -39,4 +39,4 @@ See **LICENCE** file.
 
 ## Owner
 
-- Matthieu Sieben <me@matthieusieben.com>
+- Matthieu Sieben <http://goo.gl/OJ2ce>
