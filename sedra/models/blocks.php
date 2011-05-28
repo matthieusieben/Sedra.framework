@@ -7,13 +7,13 @@ class Blocks {
 	public static function get($part = NULL, $data = array())
 	{
 		if(!isset(self::$blocks)) {
-			# LATER: Set this up from DB
+			# TODO: Set this up from DB
 			self::$blocks = array(
 				'header' => array(
 
 				), # header
 				'column' => array(
-					Load::view('user', $data),
+
 				), # column
 				'footer' => array(
 

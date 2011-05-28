@@ -62,21 +62,17 @@ class Load
 	 */
 	private static function load_file( $dir, $file_name )
 	{
-		// Parent dir
-		$path = INCLUDE_DIR.$dir.DS.$file_name;
-
-		// Full path
-		$path .= is_dir($path) ? DS.$file_name.'.php' : '.php';
-
-		if( is_file($path) )
-		{
-			require_once($path);
+		if($path = stream_resolve_include_path($dir . DS . $file_name . '.php')) {
+			require_once $path;
 			return TRUE;
 		}
-		else
-		{
-			return FALSE;
+		
+		if($path = stream_resolve_include_path($dir . DS . $file_name . DS . $file_name . '.php')) {
+			require_once $path;
+			return TRUE;
 		}
+		
+		return FALSE;
 	}
 
 	/**
@@ -125,12 +121,7 @@ class Load
 	public static function get_view_path( $name )
 	{
 		$name = str_replace( '/', DS, $name );
-
-		// System's default view
-		$file = INCLUDE_DIR . 'views' .DS. $name . '.php';
-		if( is_file( $file ) ) return $file;
-
-		return NULL;
+		return stream_resolve_include_path('views' .DS. $name . '.php');
 	}
 
 	/*
@@ -164,8 +155,7 @@ class Render {
 	public static function site_view($view, $data = array())
 	{
 		Load::model('site');
-		$data += Site::data($data);
-		echo Load::view($view, $data);
+		self::view($view, $data + Site::data($data));
 	}
 
 	public static function view($view, $data = array())
@@ -175,13 +165,7 @@ class Render {
 
 	public static function exception($e)
 	{
-		Load::model('site');
-
 		set_status_header($e instanceof SedraException ? $e->getCode() : 500);
-
-		$data = Site::data();
-		$data['e'] = $e;
-
-		Render::view('exception', $data);
+		Render::site_view('exception', array('e' => $e));
 	}
 }

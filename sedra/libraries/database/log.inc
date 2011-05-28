@@ -129,7 +129,7 @@ class DatabaseLog {
    * Determine the routine that called this query.
    *
    * We define "the routine that called this query" as the first entry in
-   * the call stack that is not inside includes/database. That makes the
+   * the call stack that is not inside database/. That makes the
    * climbing logic very simple, and handles the variable stack depth caused
    * by the query builders.
    *
@@ -145,7 +145,7 @@ class DatabaseLog {
     $stack = debug_backtrace();
     $stack_count = count($stack);
     for ($i = 0; $i < $stack_count; ++$i) {
-      if (strpos($stack[$i]['file'], 'includes' . DIRECTORY_SEPARATOR . 'database') === FALSE) {
+      if (strpos($stack[$i]['file'], 'libraries' . DIRECTORY_SEPARATOR . 'database') === FALSE) {
         return array(
           'file' => $stack[$i]['file'],
           'line' => $stack[$i]['line'],

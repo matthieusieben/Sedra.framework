@@ -2,5 +2,5 @@
 *.DS_Store
 *.bak
 *.bak.php
-includes/settings.php
+site/settings.php
 *.pxm

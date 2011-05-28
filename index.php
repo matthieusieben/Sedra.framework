@@ -10,15 +10,8 @@ define('START_TIME',	microtime());
 define('DEVEL',			TRUE);
 define('DS',			DIRECTORY_SEPARATOR);
 define('BASE_DIR',		dirname(__FILE__).DS);
-define('INCLUDE_DIR',	BASE_DIR.'includes'.DS);
-
-/*
- * ---------------------------------------------------------------------------
- * Set custom error reporting
- * ---------------------------------------------------------------------------
- */
-
-error_reporting( E_ALL );
+define('SEDRA_DIR',		BASE_DIR.'sedra'.DS);
+define('SITE_DIR',		BASE_DIR.'site'.DS);
 
 /*
  * ---------------------------------------------------------------------------
@@ -26,7 +19,7 @@ error_reporting( E_ALL );
  * ---------------------------------------------------------------------------
  */
 
-require INCLUDE_DIR.'common/boot.php';
+require SEDRA_DIR.'common/boot.php';
 
 /*
  * ---------------------------------------------------------------------------

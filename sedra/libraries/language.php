@@ -20,13 +20,6 @@ class Language
 	private static $translated_strings = array();
 
 	/**
-	 * List files already loaded in memory
-	 *
-	 * @var	array
-	 */
-	private static $loaded_files = array();
-
-	/**
 	 * List of all available languages
 	 *
 	 * @var	array
@@ -122,7 +115,7 @@ class Language
 			return $_GET['language'];
 		}
 		
-		return config('language/default');
+		return config('language/default', REFERENCE_LANGUAGE);
 	}
 
 	/**
@@ -134,7 +127,7 @@ class Language
 	public static function set($language)
 	{
 		self::$language = self::validate($language);
-		self::load_file(INCLUDE_DIR.'language/');
+		self::load();
 		return self::$language;
 	}
 
@@ -154,7 +147,7 @@ class Language
 			}
 		}
 
-		return config('language/default');
+		return config('language/default', REFERENCE_LANGUAGE);
 	}
 
 	/**
@@ -165,16 +158,6 @@ class Language
 	public static function get()
 	{
 		return self::$language;
-	}
-
-	/**
-	 * Prints a translation of a string.
-	 *
-	 * @see Language::t()
-	 */
-	public static function p($string, $replace_pairs = array())
-	{
-		echo self::t($string, $replace_pairs);
 	}
 
 	/**
@@ -193,6 +176,10 @@ class Language
 			$string = self::$translated_strings[self::$language][$string];
 		}
 		// else : Not found, not translated
+		elseif ( self::$language !== REFERENCE_LANGUAGE )
+		{
+			# TODO : record this missing translation into database
+		}
 
 		if (empty($replace_pairs))
 		{
@@ -217,48 +204,31 @@ class Language
 		}
 	}
 
+	private static function load()
+	{
+		// No need to load translation for strings written if reference language
+		if ( self::$language !== REFERENCE_LANGUAGE )
+		{
+			$a = self::load_file(SEDRA_DIR . 'language' . DS . self::$language . '.php');
+			$b = self::load_file(SITE_DIR . 'language' . DS . self::$language . '.php');
+			
+			return $a || $b;
+		}
+		return TRUE;
+	}
+
 	/**
-	 * Load a language file from any directory.
+	 * Load a language file.
 	 *
 	 * @access	private
-	 * @param	string	$path	A folder containing language files
 	 * @return	bool	True if the file was loaded
-         * @todo	log an error if no file is loaded
 	 */
-	private static function load_file( $path )
+	private static function load_file($file)
 	{
-		// No need to be loaded
-		if ( self::$language === REFERENCE_LANGUAGE )
+		if(@include($file) && !empty($lang)) {
+			self::$translated_strings[self::$language] += $lang;
 			return TRUE;
-
-		$file = $path . self::$language.'.php';
-
-		// Already loaded ?
-		if ( isset(self::$loaded_files[$file]) )
-			return self::$loaded_files[$file];
-
-		// Initialize array
-		if ( !isset(self::$translated_strings[self::$language]) )
-			self::$translated_strings[self::$language] = array();
-
-		if( @include($file) )
-		{
-			// Check validity
-			if ( (!isset($lang)) || (!is_array($lang)) )
-			{
-				self::$loaded_files[$file] = FALSE;
-			}
-			else
-			{
-				self::$translated_strings[self::$language] += $lang; // array_merge
-				self::$loaded_files[$file] = TRUE;
-			}
 		}
-		else
-		{
-			self::$loaded_files[$file] = FALSE;
-		}
-
-		return self::$loaded_files[$file];
+		return FALSE;
 	}
 }

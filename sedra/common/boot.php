@@ -6,7 +6,7 @@
  * ---------------------------------------------------------------------------
  */
 
-set_include_path('.' . DS . PATH_SEPARATOR . INCLUDE_DIR);
+set_include_path('.' . DS . PATH_SEPARATOR . SITE_DIR . PATH_SEPARATOR . SEDRA_DIR);
 
 /*
  * ---------------------------------------------------------------------------
@@ -32,11 +32,19 @@ set_error_handler('_error_handler');
 
 /*
  * ---------------------------------------------------------------------------
+ * Set custom error reporting
+ * ---------------------------------------------------------------------------
+ */
+
+error_reporting( E_ALL );
+
+/*
+ * ---------------------------------------------------------------------------
  * Boot
  * ---------------------------------------------------------------------------
  */
 
-unset_globals(); # TODO : comment this if globals not registered on server
+unset_globals();
 config_init();
 
 /*

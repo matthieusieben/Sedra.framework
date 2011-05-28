@@ -1,4 +1,5 @@
-<?php if (DEVEL && Load::library('krumo')): ?>
+<?php if (DEVEL): ?>
+	<?php Load::library('krumo'); ?>
 	<div id="debug">
 		<?php if ($variables = debug()): ?>
 			<h2><?php p('Valiables'); ?></h2>

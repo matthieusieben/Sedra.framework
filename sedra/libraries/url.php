@@ -45,7 +45,7 @@ class Url
 	/**
 	 * Get a uri segment
 	 */
-	public static function segment( $pos = 0, $default = NULL )
+	public static function segment( $pos, $default = NULL )
 	{
 		return akon(self::$segments, $pos, $default);
 	}
@@ -97,11 +97,6 @@ class Url
 		$query_string = rtrim($query_string, '?') . ($id ? '#'.$id : '');
 
 		return BASE_URL.$query_string;
-	}
-
-	public static function media( $file )
-	{
-		return self::file( 'media/'.$file );
 	}
 
 	public static function css( $file )

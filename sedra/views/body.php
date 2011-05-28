@@ -8,8 +8,6 @@
 		<div id="header">
 			<ul id="menu">
 				<li><a href="<?php echo Url::make('/') ?>">Home</a></li>
-				<li><a href="<?php echo Url::make('configurator') ?>">Configurator</a></li>
-				<li><a href="<?php echo Url::make('contact') ?>">Contact</a></li>
 			</ul>
 			<div class="clear"></div>
 		</div>

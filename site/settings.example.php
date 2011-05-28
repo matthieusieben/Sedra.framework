@@ -2,8 +2,8 @@
 
 $config['databases']['default']['default'] = array (
 	'database' =>	'sedra',
-	'username' =>	'root',
-	'password' =>	'',
+	'username' =>	'sedra',
+	'password' =>	'sedra',
 	'host' =>		'localhost',
 	'port' =>		'',
 	'driver' =>		'mysql',
