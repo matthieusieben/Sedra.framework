@@ -2,8 +2,6 @@
 
 require_once 'exception.php';
 
-Load::user();
-
 XSRF::init();
 
 /**

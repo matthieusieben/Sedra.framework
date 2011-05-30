@@ -6,7 +6,7 @@
  * ---------------------------------------------------------------------------
  */
 
-set_include_path('.' . DS . PATH_SEPARATOR . SITE_DIR . PATH_SEPARATOR . SEDRA_DIR);
+set_include_path('./' . PATH_SEPARATOR . SITE_DIR . PATH_SEPARATOR . SYSTEM_DIR);
 
 /*
  * ---------------------------------------------------------------------------
@@ -19,8 +19,6 @@ require 'common/constants.php';
 require 'common/functions.php';
 
 require 'common/exceptions.php';
-
-require 'common/classes.php';
 
 /*
  * ---------------------------------------------------------------------------
@@ -49,8 +47,10 @@ config_init();
 
 /*
  * ---------------------------------------------------------------------------
- * Load core class(es)
+ * Class loader
  * ---------------------------------------------------------------------------
  */
 
-Load::library('url');
+function __autoload($class) {
+	include_module('libraries', $class);
+}

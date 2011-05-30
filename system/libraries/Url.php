@@ -51,7 +51,7 @@ class Url
 	}
 
 	/**
-	 * Get a link to the current page (a correct version of $_SERVER['HTTP_REFERER'])
+	 * Get a link to the current page
 	 *
 	 * @return	string	A link to the current page
 	 */
@@ -101,44 +101,24 @@ class Url
 
 	public static function css( $file )
 	{
-		$u = self::file( 'css/'.$file );
-		
-		if(!$u) {
-			$u = self::file( $file );
-		}
-		
-		return $u;
+		return self::file( 'css/'.$file );
 	}
 
 	public static function js( $file )
 	{
-		$u = self::file( 'js/'.$file );
-		
-		if(!$u) {
-			$u = self::file( $file );
-		}
-		
-		return $u;
+		return self::file( 'js/'.$file );
 	}
 
 	public static function file( $path )
 	{
-		$file = str_replace( '/', DS, $path );
-
-		if( is_file( BASE_DIR . $file ) )
-			return BASE_URL . $path;
-
-		return NULL;
+		return is_file(BASE_DIR.$path) ? BASE_URL.str_replace(DIRECTORY_SEPARATOR,'/',$path) : NULL;
 	}
 
 	public static function is_subpage_of($url)
 	{
-		if(($sl = strlen(self::$uri)) < strlen($url))
+		if(strlen(self::$uri) < ($sl = strlen($url)))
 			return FALSE;
-		// TODO : check next line
-		if((($ss = substr(self::$uri,0,$sl)) === $url) && (!isset(self::$uri[$sl]) || self::$uri[$sl] === '/'))
-			return TRUE;
 		else
-			return FALSE;
+			return substr(self::$uri,0,$sl) === $url;
 	}
 }

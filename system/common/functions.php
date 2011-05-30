@@ -236,6 +236,29 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 				<h2>Previous output</h2>
 				<code><pre><?php echo check_plain($previous_output); ?></pre></code>
 			<?php endif; ?>
+			<?php if ($variables = debug()): ?>
+				<h2><?php p('Valiables'); ?></h2>
+				<?php foreach ($variables as $var): ?>
+					<?php if ($var['message']): ?>
+						<div class="var_dump"><?php echo $var['message']; ?></div>
+					<?php endif ?>
+					<code><pre><?php var_dump($var['variable']); ?></pre></code>
+					<?php if ($var['backtrace']): ?>
+						<code><pre><?php var_dump($var['backtrace']); ?></pre></code>
+					<?php endif ?>
+				<?php endforeach ?>
+			<?php endif ?>
+			<h2><?php p('Environement'); ?></h2>
+			<code><pre><?php var_dump(array(
+				'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
+				'$_ENV' => $_ENV,
+				'$_GET' => $_GET,
+				'$_POST' => $_POST,
+				'$_COOKIE' => $_COOKIE,
+				'$_FILES' => $_FILES,
+				'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
+				'$_REQUEST' => $_REQUEST,
+				)); ?></pre></code>
 		<?php endif; ?>
 	</div>
 </body>
@@ -301,19 +324,19 @@ function generate_salt($size = 20)
 	return $key;
 }
 
-/**
- * Returns the current language the site is displayed n.
- *
- * @return	see description.
- */
-function l()
+function include_module( $dir, $module )
 {
-	if( class_exists('Language') ) {
-		return Language::get();
+	if($path = stream_resolve_include_path("$dir/$module.php")) {
+		require_once $path;
+		return TRUE;
 	}
-	else {
-		return config('language/default', 'en');
+	
+	if($path = stream_resolve_include_path("$dir/$module/$module.php")) {
+		require_once $path;
+		return TRUE;
 	}
+	
+	return FALSE;
 }
 
 /**
@@ -361,15 +384,30 @@ function is_php($version = '5.0.0')
 }
 
 /**
+ * Returns the current language the site is displayed n.
+ *
+ * @return	see description.
+ */
+function l()
+{
+	if( class_exists('Lang') ) {
+		return Lang::current();
+	}
+	else {
+		return config('language', 'en');
+	}
+}
+
+/**
  * Prints the result of t($string, $replace_pairs).
  *
  * @param	string	$string
  * @param	string	$replace_pairs
  * @return	void
  */
-function p($string, $replace_pairs = array())
+function p($string, $replace_pairs = array(), $language = NULL)
 {
-	echo t($string, $replace_pairs);
+	echo Lang::t($string, $replace_pairs, $language = NULL);
 }
 
 /**
@@ -511,35 +549,9 @@ function set_status_header($code = 200, $text = '')
 	}
 }
 
-function t($string, $replace_pairs = array())
+function t($string, $replace_pairs = array(), $language = NULL)
 {
-	if( class_exists('Language') )
-	{
-		return Language::t($string, $replace_pairs);
-	}
-	else
-	{
-		// Transform arguments before inserting them.
-		foreach ($replace_pairs as $key => $value)
-		{
-			switch ($key[0])
-			{
-				case '@':
-				default:
-				$replace_pairs[$key] = check_plain($value);
-				break;
-
-				case '!':
-			}
-		}
-
-		if ( !empty($replace_pairs) )
-		{
-			$string = strtr($string, $replace_pairs);
-		}
-
-		return $string;
-	}
+	return Lang::t($string, $replace_pairs, $language = NULL);
 }
 
 /**

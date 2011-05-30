@@ -1,5 +1,5 @@
 <?php if (DEVEL): ?>
-	<?php Load::library('krumo'); ?>
+	<?php Load::library('Krumo'); ?>
 	<div id="debug">
 		<?php if ($variables = debug()): ?>
 			<h2><?php p('Valiables'); ?></h2>

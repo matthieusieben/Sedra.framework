@@ -8,10 +8,9 @@
 
 define('START_TIME',	microtime());
 define('DEVEL',			TRUE);
-define('DS',			DIRECTORY_SEPARATOR);
-define('BASE_DIR',		dirname(__FILE__).DS);
-define('SEDRA_DIR',		BASE_DIR.'sedra'.DS);
-define('SITE_DIR',		BASE_DIR.'site'.DS);
+define('BASE_DIR',		realpath(dirname(__FILE__)).'/');
+define('SYSTEM_DIR',	BASE_DIR.'system/');
+define('SITE_DIR',		BASE_DIR.'site/');
 
 /*
  * ---------------------------------------------------------------------------
@@ -19,7 +18,7 @@ define('SITE_DIR',		BASE_DIR.'site'.DS);
  * ---------------------------------------------------------------------------
  */
 
-require SEDRA_DIR.'common/boot.php';
+require SYSTEM_DIR.'bootstrap.php';
 
 /*
  * ---------------------------------------------------------------------------
@@ -37,4 +36,4 @@ try {
 }
 
 # XXX : remove this line
-#echo  'Execution time ' . round((microtime() - START_TIME) * 1000) . ' ms';
+echo  'Execution time ' . round((microtime() - START_TIME) * 1000) . ' ms';

@@ -23,10 +23,19 @@ define('SCRIPT_PATH', rtrim(dirname(SCRIPT_NAME),'/') . '/');
 define('BASE_URL', PROTOCOL.$_SERVER['SERVER_NAME'].PORT.SCRIPT_PATH);
 
 /**
+ * ---------------------------------------------------------------------------
  * For convenience, define a short form of the request time global.
+ * ---------------------------------------------------------------------------
  */
 
 define('REQUEST_TIME', $_SERVER['REQUEST_TIME']);
+
+/**
+ * ---------------------------------------------------------------------------
+ * Language in which are written reference strings (English).
+ * ---------------------------------------------------------------------------
+ */
+define('REFERENCE_LANGUAGE', 'en');
 
 /**
  * ---------------------------------------------------------------------------

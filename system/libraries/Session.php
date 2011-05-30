@@ -2,7 +2,6 @@
 
 {
 	Load::db();
-	require_once 'user.php';
 
 	session_set_save_handler(
 		array('Session','open'), // callback $open
@@ -14,9 +13,9 @@
 		);
 	session_start();
 
-	if( isset($_POST['user-login']) && !User::connected() ) {
+	if( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
 		// login
-		User::authenticate($_POST);
+		User::authenticate($_POST['user-name'], $_POST['user-pass']);
 	}
 	elseif( (isset($_POST['user-logout']) || isset($_GET['user-logout'])) && User::connected() ) {
 		// logout
@@ -24,9 +23,11 @@
 	}
 
 	// TODO : REMOVE THESE LINES
-	#User::authenticate(array('name'=>'admin','pass'=>'admin'));
+	#User::authenticate('admin','admin');
 	#User::logout();
 	// ENDTODO
+
+	User::$user->load_session();
 }
 
 class Session
@@ -53,47 +54,40 @@ class Session
 		register_shutdown_function('session_write_close');
 
 		// Handle the case of first time visitors and clients that don't store cookies (eg. web crawlers).
-		if (!isset($_COOKIE[session_name()]))
+		if (isset($_COOKIE[session_name()]))
 		{
-			$user = User::make_anonymous();
-		}
-		else
-		{
-			// Otherwise, if the session is still active, we have a record of the client's session in the database.
-			$user = db_query("SELECT u.*, s.session FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid AND s.hostname = :hostname", array(':sid' => $sid, ':hostname' => ip_address()))->fetchObject();
+			// If the session is still active, we have a record of the client's session in the database.
+			$user_data = db_query("SELECT u.*, s.session FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid AND s.hostname = :hostname", array(':sid' => $sid, ':hostname' => ip_address()))->fetchAssoc();
 
 			// We found the client's session record and they are an authenticated,
 			// active user.
-			if ($user && $user->uid > 0 && $user->status = 1) {
-				// This is done to unserialize the data member of $user
-				$user->data = unserialize($user->data);
-			}
-			// We didn't find the client's record (session has expired), or they are
-			// blocked, or they are an anonymous user.
-			else {
-				$session = isset($user->session) ? $user->session : '';
-				$user = User::make_anonymous($session);
+			if ($user_data && $user_data['uid'] > 0 && $user_data['status'] == 1) {
+				User::set(new User($user_data));
+				return $user_data['session'];
+			} elseif (isset($user_data['session'])) {
+				User::set(new AnonymousUser);
+				return $user_data['session'];
 			}
 		}
 
-		User::set($user);
-
-		return $user->session;
+		User::set(new AnonymousUser);
+		return '';
 	}
 
 	public static function write($sid, $value)
 	{
+		$user = User::current();
 		// If saving of session data is disabled or if the client doesn't have a session,
 		// and one isn't being created ($value), do nothing. This keeps crawlers out of
 		// the session table. This reduces memory and server load, and gives more useful
 		// statistics. We can't eliminate anonymous session table rows without breaking
 		// the throttle module and the "Who's Online" block.
-		if( User::uid() == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
+		if( $user->uid() == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
 			return TRUE;
 		}
 
 		$fields = array(
-			'uid' => User::uid(),
+			'uid' => $user->uid(),
 			'hostname' => ip_address(),
 			'session' => $value,
 			'timestamp' => REQUEST_TIME,
@@ -108,12 +102,12 @@ class Session
 
 		// Last access time is updated no more frequently than once every 180 seconds.
 		// This reduces contention in the users table.
-		if (User::uid() && ((REQUEST_TIME - User::data('access', REQUEST_TIME)) > config('session/write_interval', 180))) {
+		if ($user->uid() && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
 			db_update('users')
 				->fields(array(
 					'access' => REQUEST_TIME
 				))
-				->condition('uid', User::uid())
+				->condition('uid', $user->uid())
 				->execute();
 		}
 

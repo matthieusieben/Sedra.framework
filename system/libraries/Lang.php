@@ -1,12 +1,9 @@
 <?php
 
-// Language in which are written reference strings (English).
-define('REFERENCE_LANGUAGE', 'en');
-
-class Language
+class Lang
 {
 	/**
-	 * The language currently displayed
+	 * The language currently used
 	 *
 	 * @var	string
 	 */
@@ -17,14 +14,14 @@ class Language
 	 *
 	 * @var	array
 	 */
-	private static $translated_strings = array();
+	private static $strings = array();
 
 	/**
-	 * List of all available languages
+	 * List of all valid languages
 	 *
 	 * @var	array
 	 */
-	public static $available_languages = array(
+	public static $languages = array(
 		'af' => 'Afrikaans',
 		'sq' => 'Albanian',
 		'ar' => 'Arabic',
@@ -115,7 +112,7 @@ class Language
 			return $_GET['language'];
 		}
 		
-		return config('language/default', REFERENCE_LANGUAGE);
+		return config('language', REFERENCE_LANGUAGE);
 	}
 
 	/**
@@ -126,9 +123,8 @@ class Language
 	 */
 	public static function set($language)
 	{
-		self::$language = self::validate($language);
-		self::load();
-		return self::$language;
+		$language = self::validate($language);
+		return self::load($language) ? self::$language = $language : self::current();
 	}
 
 	/**
@@ -141,13 +137,13 @@ class Language
 	{
 		foreach((array) $language as $l)
 		{
-			if(isset(self::$available_languages[$l]))
+			if(isset(self::$languages[$l]))
 			{
 				return $l;
 			}
 		}
 
-		return config('language/default', REFERENCE_LANGUAGE);
+		return config('language', REFERENCE_LANGUAGE);
 	}
 
 	/**
@@ -155,9 +151,9 @@ class Language
 	 *
 	 * @return	string	The language currently being used
 	 */
-	public static function get()
+	public static function current()
 	{
-		return self::$language;
+		return self::$language ? self::$language : REFERENCE_LANGUAGE;
 	}
 
 	/**
@@ -168,15 +164,17 @@ class Language
 	 * @param	array $replace_pairs	An array in the form array('from' => 'to', ...) of strings to replace. If 'from' doesn't begin with '!', 'to' will be escaped.
 	 * @return	string	The translated string
 	 */
-	public static function t($string, $replace_pairs = array())
+	public static function t($string, $replace_pairs = array(), $language = NULL)
 	{
-		if ( isset( self::$translated_strings[self::$language][$string] ) )
+		if(!$language) $language = self::current();
+		
+		if ( isset( self::$strings[$language][$string] ) )
 		{
 			// Translation string exists
-			$string = self::$translated_strings[self::$language][$string];
+			$string = self::$strings[$language][$string];
 		}
 		// else : Not found, not translated
-		elseif ( self::$language !== REFERENCE_LANGUAGE )
+		elseif ( $language !== REFERENCE_LANGUAGE )
 		{
 			# TODO : record this missing translation into database
 		}
@@ -204,13 +202,13 @@ class Language
 		}
 	}
 
-	private static function load()
+	private static function load($language)
 	{
 		// No need to load translation for strings written if reference language
-		if ( self::$language !== REFERENCE_LANGUAGE )
+		if ( $language !== REFERENCE_LANGUAGE )
 		{
-			$a = self::load_file(SEDRA_DIR . 'language' . DS . self::$language . '.php');
-			$b = self::load_file(SITE_DIR . 'language' . DS . self::$language . '.php');
+			$a = self::load_file(SYSTEM_DIR . "languages/$language.php", $language);
+			$b = self::load_file(SITE_DIR . "languages/$language.php", $language);
 			
 			return $a || $b;
 		}
@@ -221,12 +219,16 @@ class Language
 	 * Load a language file.
 	 *
 	 * @access	private
+	 * @param	string $file		
+	 * @param	string $language	
 	 * @return	bool	True if the file was loaded
 	 */
-	private static function load_file($file)
+	private static function load_file($file, $language)
 	{
-		if(@include($file) && !empty($lang)) {
-			self::$translated_strings[self::$language] += $lang;
+		isset(self::$strings[$language]) or self::$strings[$language] = array();
+
+		if(is_file($file)) {
+			self::$strings[$language] += (array) require($file);
 			return TRUE;
 		}
 		return FALSE;

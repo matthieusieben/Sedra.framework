@@ -1,10 +1,15 @@
 <?php
 
-$data = array();
+$data = array('title'=>'TITLE');
 
 Load::db();
-Database::startLog('default');
 $r = db_query('SHOW TABLES');
 foreach($r as $a) debug($a);
 
-Render::site_view('index', $data);
+$user = User::current();
+#$user->set_data(array('firstname'=>'Matthieu Sieben'));
+#$user->set_data(array('firstname'=>NULL));
+debug($user->data('firstname'), 'firstname');
+debug($user->uid(), 'User ID');
+
+Render::view('index', $data);

@@ -7,7 +7,7 @@
  */
 
 // Load the compiller library
-Load::library('lessphp');
+Load::library('LessPHP');
 
 // Get the less file path
 $file_path = BASE_DIR . Url::$query_string;
