@@ -47,7 +47,7 @@ class Url
 	 */
 	public static function segment( $pos, $default = NULL )
 	{
-		return akon(self::$segments, $pos, $default);
+		return val(self::$segments[$pos], $default);
 	}
 
 	/**

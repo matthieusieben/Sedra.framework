@@ -192,7 +192,7 @@ class Lang
 				{
 					case '@':
 					default:
-					$replace_pairs[$key] = check_plain($value);
+					$replace_pairs[$key] = html($value);
 					break;
 
 					case '!': // Do not escape the string

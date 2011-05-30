@@ -1,4 +1,10 @@
 <?php
+/**
+ * undocumented 
+ *
+ * @author	Matthieu Sieben
+ * @post	User::$user is a User object. $_SESSION contains the session data.
+ */
 
 {
 	Load::db();
@@ -13,21 +19,20 @@
 		);
 	session_start();
 
-	if( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
+	if ( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
 		// login
 		User::authenticate($_POST['user-name'], $_POST['user-pass']);
 	}
 	elseif( (isset($_POST['user-logout']) || isset($_GET['user-logout'])) && User::connected() ) {
 		// logout
 		User::logout();
+	} elseif($user_data = reg('user_data')) {
+		// Already logged in
+		User::set(new User($user_data));
+	} else {
+		// Anonymous user
+		User::set(new AnonymousUser);
 	}
-
-	// TODO : REMOVE THESE LINES
-	#User::authenticate('admin','admin');
-	#User::logout();
-	// ENDTODO
-
-	User::$user->load_session();
 }
 
 class Session
@@ -59,29 +64,26 @@ class Session
 			// If the session is still active, we have a record of the client's session in the database.
 			$user_data = db_query("SELECT u.*, s.session FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid AND s.hostname = :hostname", array(':sid' => $sid, ':hostname' => ip_address()))->fetchAssoc();
 
-			// We found the client's session record and they are an authenticated,
-			// active user.
-			if ($user_data && $user_data['uid'] > 0 && $user_data['status'] == 1) {
-				User::set(new User($user_data));
-				return $user_data['session'];
-			} elseif (isset($user_data['session'])) {
-				User::set(new AnonymousUser);
+			// We found the client's session record.
+			if ($user_data) {
+				if ($user_data['uid'] > 0 && $user_data['status'] == 1 ) {
+					reg('user_data', $user_data);
+				}
 				return $user_data['session'];
 			}
 		}
 
-		User::set(new AnonymousUser);
 		return '';
 	}
 
 	public static function write($sid, $value)
 	{
 		$user = User::current();
+
 		// If saving of session data is disabled or if the client doesn't have a session,
 		// and one isn't being created ($value), do nothing. This keeps crawlers out of
 		// the session table. This reduces memory and server load, and gives more useful
-		// statistics. We can't eliminate anonymous session table rows without breaking
-		// the throttle module and the "Who's Online" block.
+		// statistics.
 		if( $user->uid == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
 			return TRUE;
 		}

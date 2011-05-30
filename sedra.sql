@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `uid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `rid` int(11) NOT NULL DEFAULT '0',
   `name` varchar(64) NOT NULL,
-  `pass` varchar(32) NOT NULL,
+  `pass` varchar(40) NOT NULL,
   `mail` varchar(128) NOT NULL,
   `language` varchar(3) DEFAULT NULL,
   `timezone` varchar(8) DEFAULT NULL,
@@ -31,4 +31,4 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`uid`, `rid`, `name`, `pass`, `mail`, `language`, `timezone`, `data`, `created`, `access`, `login`, `status`) VALUES
 (0, 0, 'guest', '', '', NULL, NULL, NULL, NULL, NULL, NULL, 0),
-(1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin@example.com', 'fr', '0', 'a:0:{}', 1303911530, 1303911538, 1303918952, 1);
+(1, 1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin@example.com', 'fr', '0', 'a:0:{}', 1303911530, 1303911538, 1303918952, 1);

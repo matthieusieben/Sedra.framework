@@ -59,7 +59,7 @@ class Load
 	 * @param string $data	An array containing variables to be extracted
 	 * @return string	The generated content from the view
 	 */
-	public static function view( $__name, $__data = array() )
+	public static function view( $__name = 'index', $__data = array() )
 	{
 		// Get the file path
 		$__file = stream_resolve_include_path("views/$__name.php");

@@ -14,9 +14,9 @@ set_include_path('./' . PATH_SEPARATOR . SITE_DIR . PATH_SEPARATOR . SYSTEM_DIR)
  * ---------------------------------------------------------------------------
  */
 
-require 'common/constants.php';
-
 require 'common/functions.php';
+
+require 'common/constants.php';
 
 require 'common/exceptions.php';
 
@@ -34,7 +34,7 @@ set_error_handler('_error_handler');
  * ---------------------------------------------------------------------------
  */
 
-error_reporting( E_ALL );
+error_reporting( DEVEL ? E_ALL : E_ERROR | E_PARSE );
 
 /*
  * ---------------------------------------------------------------------------

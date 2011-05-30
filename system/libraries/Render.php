@@ -2,7 +2,7 @@
 
 class Render {
 
-	public static function view($view, $__data = array())
+	public static function view($view = 'index', $__data = array())
 	{
 		echo Load::view($view, $__data);
 	}

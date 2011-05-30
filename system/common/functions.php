@@ -14,25 +14,12 @@ function _error_handler($severity, $message, $filepath, $line)
 {
 	if(($severity === E_STRICT) || ($severity === E_DEPRECATED))
 	{
-		// We don't bother with "strict" notices since they will fill up
-		// the log file with information that isn't normally very
-		// helpful.  For example, if you are running PHP 5 and you
-		// use version 4 style class functions (without prefixes
-		// like "public", "private", etc.) you'll get notices telling
-		// you that these have been deprecated.
+		// We don't bother with "strict" notices.
 	}
 	else if (($severity & error_reporting()) == $severity)
 	{
 		fatal($message, 'PHP Error', 500, $filepath, $line);
 	}
-}
-
-/**
- * Array Key if exists Or Null.
- */
-function akon($array, $key, $default = NULL)
-{
-	return isset($array[$key]) ? $array[$key] : $default;
 }
 
 /**
@@ -43,9 +30,9 @@ function akon($array, $key, $default = NULL)
  * 		An HTML safe version of $text, or an empty string if $text is not
  * 		valid UTF-8.
  */
-function check_plain($text)
+function html($text)
 {
-	return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+	return htmlspecialchars($text, ENT_QUOTES, 'utf-8');
 }
 
 function config_init()
@@ -76,7 +63,7 @@ function config( $item, $default = NULL, $required = FALSE )
 	}
 	else if( $required )
 	{
-		fatal(t('Could not find setting item with reference "@key".',array('@key'=>$item)));
+		fatal(t('Could not find setting item with reference "@key".' ,array('@key'=>$item)));
 	}
 
 	return $default;
@@ -137,8 +124,7 @@ function cookie_set($name, $value, $validity = NULL)
 {
 	static $cookie_prefix, $cookie_path, $cookie_domain, $cookie_secure, $cookie_validity;
 
-	if(!isset($cookie_validity))
-	{
+	if (!isset($cookie_validity)) {
 		$cookie_prefix = config('cookie/prefix');
 		$cookie_path = config('cookie/path');
 		$cookie_domain = config('cookie/domain');
@@ -146,18 +132,17 @@ function cookie_set($name, $value, $validity = NULL)
 		$cookie_validity = intval(config('cookie/validity'));
 	}
 
-	if (!is_numeric($validity))
+	if (!is_numeric($validity)) {
 		$validity = $cookie_validity;
+	}
 
 	$cookie_name = $cookie_prefix.$name;
-	$expire = time() + $validity;
+	$expire = REQUEST_TIME + $validity;
 
-	if (is_php('5.2.0'))
-	{
+	if (is_php('5.2.0')) {
 		return setcookie($cookie_name, serialize($value), $expire, $cookie_path, $cookie_domain, $cookie_secure, TRUE);
 	}
-	else
-	{
+	else {
 		return setcookie($cookie_name, serialize($value), $expire, $cookie_path.'; HttpOnly', $cookie_domain, $cookie_secure);
 	}
 }
@@ -232,9 +217,19 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 					<?php endif; ?>
 				</p>
 			<?php endif; ?>
+			<?php if ($_messages = message()): ?>
+				<h2>Messages</h2>
+				<ul id="messages">
+					<?php foreach ($_messages as $_type => $_list): ?>
+						<?php foreach ($_list as $_message): ?>
+							<li class="<?php echo $_type ?>"><?php echo $_message ?></li>
+						<?php endforeach ?>
+					<?php endforeach ?>
+				</ul>
+			<?php endif ?>
 			<?php if($previous_output): ?>
 				<h2>Previous output</h2>
-				<code><pre><?php echo check_plain($previous_output); ?></pre></code>
+				<code><pre><?php echo html($previous_output); ?></pre></code>
 			<?php endif; ?>
 			<?php if ($variables = debug()): ?>
 				<h2><?php p('Valiables'); ?></h2>
@@ -248,7 +243,7 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 					<?php endif ?>
 				<?php endforeach ?>
 			<?php endif ?>
-			<h2><?php p('Environement'); ?></h2>
+			<h2><?php p('Environment'); ?></h2>
 			<code><pre><?php var_dump(array(
 				'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
 				'$_ENV' => $_ENV,
@@ -302,8 +297,9 @@ if ( !function_exists('file_get_contents') )
  */
 function generate_hash($str, $salt = FALSE)
 {
-	if (!$str || !$salt)
+	if (!$str || !$salt) {
 		$salt = generate_salt();
+	}
 
 	return sha1($salt.sha1($str));
 }
@@ -318,8 +314,9 @@ function generate_salt($size = 20)
 {
 	$key = '';
 
-	while ( $size-- > 0 )
+	while ( $size-- > 0 ) {
 		$key .= chr(mt_rand(33, 126));
+	}
 
 	return $key;
 }
@@ -377,20 +374,33 @@ function is_php($version = '5.0.0')
 	static $is_php;
 	$version = (string)$version;
 
-	if (!isset($is_php[$version]))
+	if (!isset($is_php[$version])) {
 		$is_php[$version] = (version_compare(PHP_VERSION, $version) < 0) ? FALSE : TRUE;
+	}
 
 	return $is_php[$version];
 }
 
 /**
- * Returns the current language the site is displayed n.
+ * Set a message to show to the user (MESSAGE, MESSAGE_SUCCESS, MESSAGE_WARNING, or MESSAGE_ERROR).
  *
- * @return	see description.
+ * @param string $type of message
+ * @param string $value the message to store. This value will be translated.
+ * @return mixed the array of messages if $value is not specified
  */
-function l()
+function message($type = NULL, $value = NULL)
 {
-	return Lang::current();
+	static $messages = array();
+
+	if($value) {
+		return $messages[$type][] = t($value);
+	}
+	elseif($type) {
+		return val($messages[$type]);
+	}
+	else {
+		return $messages;
+	}
 }
 
 /**
@@ -454,6 +464,19 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
 	// some cases this can be wrong, so we make sure none of the code below the
 	// redirect() call gets executed upon redirection.
 	exit();
+}
+
+/**
+ * System registry object for storing global values
+ *
+ * @param string $k the object name
+ * @param mixed $v the object value
+ * @return mixed
+ */
+function reg($k, $v=null)
+{
+	static $r;
+	return (func_num_args() > 1 ? $r[$k] = $v: (isset($r[$k]) ? $r[$k] : NULL));
 }
 
 /**
@@ -572,4 +595,12 @@ function unset_globals() {
 			}
 		}
 	}
+}
+
+/**
+ * Isset ? value : default
+ */
+function val(&$value, $default = NULL)
+{
+	return isset($value) ? $value : $default;
 }

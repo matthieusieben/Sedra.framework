@@ -28,12 +28,8 @@ class User {
 		}
 	}
 
-	public function load_session() {
-		// This class does not store anything in the _session array.
-	}
-
 	public function data($key, $default = NULL) {
-		return akon($this->data, $key, $default);
+		return val($this->data[$key], $default);
 	}
 
 	public function set_data($key, $value = NULL) {
@@ -60,7 +56,7 @@ class User {
 		// Do some validation
 		switch ($field) {
 		case 'pass':
-			$value = md5($value);
+			$value = sha1($value);
 			break;
 		case 'language':
 			$value = Lang::validate($value);
@@ -134,26 +130,33 @@ class User {
 
 	public static function authenticate($name, $pass)
 	{
-		$pass = md5($pass);
+		$pass = sha1($pass);
 
 		$user_data = db_query('SELECT * FROM {users} u WHERE (name = :name OR mail = :name) AND pass = :pass', array(':name' => $name, ':pass' => $pass))->fetchAssoc();
 
-		if($user_data) {
+		// Regenerate the session ID to prevent against session fixation attacks.
+		Session::regenerate();
 
+		if($user_data) {
 			$user = new User($user_data);
 
 			// Update last login field
 			// Setter will not be called from this class, we have to call it manually.
 			$user->__set('login', REQUEST_TIME);
 
-			// Regenerate the session ID to prevent against session fixation attacks.
-			Session::regenerate();
 			User::set($user);
+
+			message(MESSAGE_SUCCESS, 'You were successfully logged in.');
 			
 			return TRUE;
 		}
-		
-		return FALSE;
+		else {
+			User::set(new AnonymousUser);
+
+			message(MESSAGE_WARNING, 'Wrong username or password.');
+			
+			return FALSE;
+		}
 	}
 
 	public static function logout()
@@ -161,20 +164,21 @@ class User {
 		// Regenerate the session ID to prevent against session fixation attacks.
 		Session::regenerate();
 		User::set(new AnonymousUser);
+		message(MESSAGE, 'You are now logged out.');
+		return TRUE;
 	}
 }
 
 class AnonymousUser extends User {
 
 	public function __construct() {
-		$this->language = config('language', REFERENCE_LANGUAGE);
 		$this->timezone = config('timezone');
-	}
 
-	public function load_session() {
 		if(isset($_SESSION['user_data']['data'], $_SESSION['user_data']['language'])) {
 			$this->data = unserialize($_SESSION['user_data']['data']);
 			$this->language = $_SESSION['user_data']['language'];
+		} else {
+			$this->language = Lang::detect();
 		}
 	}
 

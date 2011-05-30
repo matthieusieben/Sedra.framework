@@ -12,21 +12,26 @@
 				<?php endif ?>
 			<?php endforeach ?>
 		<?php endif ?>
-		<h2><?php p('Environement'); ?></h2>
+		<h2><?php p('Environment'); ?></h2>
 		<code><pre><?php var_dump(array(
 			'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
 			'QUERIES' => class_exists('Database', FALSE) ? @Database::getLog('DEVEL') : NULL,
 			'included_files' => get_included_files(),
-			'defined_functions' => get_defined_functions(),
-			'$_ENV' => $_ENV,
 			'$_GET' => $_GET,
 			'$_POST' => $_POST,
 			'$_COOKIE' => $_COOKIE,
 			'$_FILES' => $_FILES,
-			'$_SERVER' => $_SERVER,
 			'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
 			'$_REQUEST' => $_REQUEST,
 			'$GLOBALS' => $GLOBALS,
 			)); ?></pre></code>
+		<h2><?php p('Memory Usage'); ?></h2>
+<pre>
+<?php echo number_format(memory_get_usage() - START_MEMORY_USAGE); ?> <?php p('bytes'); ?> 
+<?php echo number_format(memory_get_usage()); ?> <?php p('bytes'); ?> (<?php p('process'); ?>)
+<?php echo number_format(memory_get_peak_usage(TRUE)); ?> <?php p('bytes'); ?> (<?php p('process peak'); ?>)
+</pre>
+		<h2><?php p('Execution Time'); ?></h2>
+		<pre><?php print round((microtime() - START_TIME) * 1000); ?> <?php p('ms'); ?></pre>
 	</div>
 <?php endif ?>
