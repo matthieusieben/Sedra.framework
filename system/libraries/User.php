@@ -28,28 +28,15 @@ class User {
 		}
 	}
 
-	public function load_session()
-	{
-		
+	public function load_session() {
+		// This class does not store anything in the _session array.
 	}
 
-	public function uid()
-	{
-		return $this->uid;
-	}
-
-	public function rid()
-	{
-		return $this->rid;
-	}
-
-	public function data($key, $default = NULL)
-	{
+	public function data($key, $default = NULL) {
 		return akon($this->data, $key, $default);
 	}
 
-	public function set_data($key, $value = NULL)
-	{
+	public function set_data($key, $value = NULL) {
 		$this->was_updated();
 
 		if(is_array($key)) {
@@ -91,6 +78,12 @@ class User {
 		return TRUE;
 	}
 
+	/**
+	 * undocumented function
+	 *
+	 * @return	void
+	 * @todo	Check that User::current() has the right to do this.
+	 */
 	public function save()
 	{
 		$fields = array(
@@ -150,7 +143,7 @@ class User {
 			$user = new User($user_data);
 
 			// Update last login field
-			// setter not called from this class, have to call it manually.
+			// Setter will not be called from this class, we have to call it manually.
 			$user->__set('login', REQUEST_TIME);
 
 			// Regenerate the session ID to prevent against session fixation attacks.

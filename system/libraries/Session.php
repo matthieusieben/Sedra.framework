@@ -82,12 +82,12 @@ class Session
 		// the session table. This reduces memory and server load, and gives more useful
 		// statistics. We can't eliminate anonymous session table rows without breaking
 		// the throttle module and the "Who's Online" block.
-		if( $user->uid() == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
+		if( $user->uid == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
 			return TRUE;
 		}
 
 		$fields = array(
-			'uid' => $user->uid(),
+			'uid' => $user->uid,
 			'hostname' => ip_address(),
 			'session' => $value,
 			'timestamp' => REQUEST_TIME,
@@ -102,12 +102,12 @@ class Session
 
 		// Last access time is updated no more frequently than once every 180 seconds.
 		// This reduces contention in the users table.
-		if ($user->uid() && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
+		if ($user->uid && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
 			db_update('users')
 				->fields(array(
 					'access' => REQUEST_TIME
 				))
-				->condition('uid', $user->uid())
+				->condition('uid', $user->uid)
 				->execute();
 		}
 

@@ -22,6 +22,6 @@ try {
 		echo '/* Generated in '.round((microtime() - START_TIME) * 1000).' ms */';
 	}
 } catch (Exception $e) {
-	// Print a "file does not exists" message on error
+	// Print a "page does not exists" message on error
 	throw new Sedra404Exception();
 }
