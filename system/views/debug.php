@@ -15,7 +15,7 @@
 		<h2><?php p('Environement'); ?></h2>
 		<code><pre><?php var_dump(array(
 			'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
-			'QUERIES' => class_exists('Database') ? @Database::getLog('DEVEL') : NULL,
+			'QUERIES' => class_exists('Database', FALSE) ? @Database::getLog('DEVEL') : NULL,
 			'included_files' => get_included_files(),
 			'defined_functions' => get_defined_functions(),
 			'$_ENV' => $_ENV,

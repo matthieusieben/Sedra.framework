@@ -390,12 +390,7 @@ function is_php($version = '5.0.0')
  */
 function l()
 {
-	if( class_exists('Lang') ) {
-		return Lang::current();
-	}
-	else {
-		return config('language', 'en');
-	}
+	return Lang::current();
 }
 
 /**
