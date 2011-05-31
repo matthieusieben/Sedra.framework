@@ -1,5 +1,8 @@
 <?php
 
+# Load the user lib, this way the language will be automatically set.
+Load::user();
+
 class Lang
 {
 	/**
@@ -207,9 +210,11 @@ class Lang
 		# No need to load translation for strings written if reference language
 		if ( $language !== REFERENCE_LANGUAGE )
 		{
+			# Load translations
 			$a = self::load_file(SYSTEM_DIR . "languages/$language.php", $language);
 			$b = self::load_file(SITE_DIR . "languages/$language.php", $language);
-			
+
+			# Return true if one of the file loads succeded
 			return $a || $b;
 		}
 		return TRUE;
@@ -225,10 +230,15 @@ class Lang
 	 */
 	private static function load_file($file, $language)
 	{
+		# Init the translation array
 		isset(self::$strings[$language]) or self::$strings[$language] = array();
 
+		# If the file is valid
 		if(is_file($file)) {
+			# Apprend its return value to the current language translation array
 			self::$strings[$language] += (array) require($file);
+
+			# And return a success value
 			return TRUE;
 		}
 		return FALSE;

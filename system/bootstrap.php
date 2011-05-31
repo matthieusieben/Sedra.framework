@@ -61,3 +61,11 @@ function __autoload($class) {
  */
 
 Hook::call(HOOK_BOOT);
+
+/*
+ * ---------------------------------------------------------------------------
+ * Register shutdown hook as first shutdown function
+ * ---------------------------------------------------------------------------
+ */
+
+register_shutdown_function('Hook::call', HOOK_SHUTDOWN);

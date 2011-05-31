@@ -58,11 +58,3 @@ try {
 	# Render the exception if an error occured
 	Output::render_exception($e);
 }
-
-/*
- * ---------------------------------------------------------------------------
- * Shutdown script
- * ---------------------------------------------------------------------------
- */
-
-require SYSTEM_DIR.'shutdown.php';

@@ -2,9 +2,12 @@
 
 debug($args, '$args');
 
-$data = array('title'=>'TITLE');
+$data = array('title'=>t('Hello'));
 
 load::library('Krumo');
+
+$user = User::current();
+debug($user->uid, 'User ID');
 
 #Load::db();
 #$r = db_query('SHOW TABLES');
@@ -12,9 +15,6 @@ load::library('Krumo');
 
 #User::authenticate('admin','admin');
 #User::logout();
-
-$user = User::current();
-debug($user->uid, 'User ID');
 
 #$user->set_data(array('firstname'=>'Matthieu'));
 #$user->set_data(array('lastname'=>'Sieben'));

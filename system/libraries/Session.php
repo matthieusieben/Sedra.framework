@@ -1,6 +1,6 @@
 <?php
 /**
- * undocumented 
+ * Session handler class. 
  *
  * @author	Matthieu Sieben
  * @post	User::$user is a User object. $_SESSION contains the session data.
