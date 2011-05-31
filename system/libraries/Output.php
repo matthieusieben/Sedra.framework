@@ -80,12 +80,10 @@ class Output {
 	 */
 	public static function render()
 	{
+		set_status_header(200);
+
 		echo Hook::call(HOOK_RENDER, self::$content);
 	}
 	
-	public static function render_exception($e)
-	{
-		set_status_header($e instanceof SedraException ? $e->getCode() : 500);
-		echo Load::view('exception', array('e' => $e));
-	}
+
 }

@@ -1,28 +1,6 @@
 <?php
 
 /**
- * Error handler for PHP errors.
- *
- * @access private
- * @param string $severity
- * @param string $message
- * @param string $filepath
- * @param string $line
- * @return void
- */
-function _error_handler($severity, $message, $filepath, $line)
-{
-	if(($severity === E_STRICT) || ($severity === E_DEPRECATED))
-	{
-		# We don't bother with "strict" and "deprecated" notices.
-	}
-	else if (($severity & error_reporting()) == $severity)
-	{
-		fatal($message, 'PHP Error', 500, $filepath, $line);
-	}
-}
-
-/**
  * Encode special characters in a plain-text string for display as HTML.
  *
  * @param	$text	The text to be checked or processed.
@@ -120,7 +98,7 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 	set_status_header($status_code);
 
 	# Clear output buffers
-	$previous_output = close_buffers();
+	close_buffers();
 
 ?><!DOCTYPE html>
 <html>
@@ -158,20 +136,6 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 					<?php endif; ?>
 				</p>
 			<?php endif; ?>
-			<?php if ($_messages = message()): ?>
-				<h2>Messages</h2>
-				<ul id="messages">
-					<?php foreach ($_messages as $_type => $_list): ?>
-						<?php foreach ($_list as $_message): ?>
-							<li class="<?php echo $_type ?>"><?php echo $_message ?></li>
-						<?php endforeach ?>
-					<?php endforeach ?>
-				</ul>
-			<?php endif ?>
-			<?php if($previous_output): ?>
-				<h2>Previous output</h2>
-				<code><pre><?php echo html($previous_output); ?></pre></code>
-			<?php endif; ?>
 			<?php if ($variables = debug()): ?>
 				<h2><?php p('Variables'); ?></h2>
 				<?php foreach ($variables as $var): ?>
@@ -179,22 +143,12 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 						<div class="var_dump"><?php echo $var['message']; ?></div>
 					<?php endif ?>
 					<code><pre><?php var_dump($var['variable']); ?></pre></code>
+					<h2><?php p('Trace'); ?></h2>
 					<?php if ($var['backtrace']): ?>
 						<code><pre><?php var_dump($var['backtrace']); ?></pre></code>
 					<?php endif ?>
 				<?php endforeach ?>
 			<?php endif ?>
-			<h2><?php p('Environment'); ?></h2>
-			<code><pre><?php var_dump(array(
-				'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
-				'$_ENV' => $_ENV,
-				'$_GET' => $_GET,
-				'$_POST' => $_POST,
-				'$_COOKIE' => $_COOKIE,
-				'$_FILES' => $_FILES,
-				'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
-				'$_REQUEST' => $_REQUEST,
-				)); ?></pre></code>
 		<?php endif; ?>
 	</div>
 </body>
@@ -393,6 +347,8 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
 		$url = $path;
 	}
 
+	Hook::call(HOOK_SHUTDOWN);
+
 	# Even though session_write_close() is registered as a shutdown function, we
 	# need all session data written to the database before redirecting.
 	session_write_close();
@@ -428,6 +384,8 @@ function reg($k, $v=null)
  */
 function set_status_header($code = 200, $text = '')
 {
+	if(headers_sent()) return;
+	
 	$stati = array(
 		200	=> 'OK',
 		201	=> 'Created',

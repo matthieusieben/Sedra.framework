@@ -22,14 +22,6 @@ require 'common/exceptions.php';
 
 /*
  * ---------------------------------------------------------------------------
- *  Define a custom error handler to render better PHP errors
- * ---------------------------------------------------------------------------
- */
-
-set_error_handler('_error_handler');
-
-/*
- * ---------------------------------------------------------------------------
  * Set custom error reporting
  * ---------------------------------------------------------------------------
  */
@@ -53,6 +45,15 @@ unset_globals();
 function __autoload($class) {
 	include_module('libraries', $class);
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ *  Define a custom error handler to render better PHP errors
+ * ---------------------------------------------------------------------------
+ */
+
+set_error_handler(array('Error','handler'));
+set_exception_handler(array('Error','exception'));
 
 /*
  * ---------------------------------------------------------------------------
