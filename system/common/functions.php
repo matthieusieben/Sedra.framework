@@ -14,7 +14,7 @@ function _error_handler($severity, $message, $filepath, $line)
 {
 	if(($severity === E_STRICT) || ($severity === E_DEPRECATED))
 	{
-		// We don't bother with "strict" notices.
+		# We don't bother with "strict" and "deprecated" notices.
 	}
 	else if (($severity & error_reporting()) == $severity)
 	{
@@ -35,116 +35,34 @@ function html($text)
 	return htmlspecialchars($text, ENT_QUOTES, 'utf-8');
 }
 
-function config_init()
-{
-	global $config;
-
-	@include('settings.php');
-
-	if( !is_array($config) ) {
-		fatal('Invalid configuration file.');
-	}
-}
-
 /**
- * Get a configuration item from the settings file.
+ * Fetch a config value
+ *
+ * @param string $k the language key name
+ * @param string $d the default value
+ * @return string
  */
-function config( $item, $default = NULL, $required = FALSE )
+function config($i, $d = NULL)
 {
-	global $config;
-
-	if( isset( $config[$item] ) )
-	{
-		return $config[$item];
+	static $config;
+	
+	if(!isset($config)) {
+		$config = require('settings.php');
 	}
-	else if( ! isset($config) )
-	{
-		fatal('Settings are not initialized.');
-	}
-	else if( $required )
-	{
-		fatal(t('Could not find setting item with reference "@key".' ,array('@key'=>$item)));
-	}
-
-	return $default;
+	
+	return val($config[$i], $d);
 }
 
 function close_buffers()
 {
 	$output = '';
 
-	# Do not warn about empty buffers
-	$_er = error_reporting();
-	error_reporting(0);
-
 	# Previous output
 	do {
-		$output = ob_get_contents() . $output;
-	} while (ob_end_clean());
-
-	# Re set error reporting
-	error_reporting($_er);
+		$output = @ob_get_contents() . $output;
+	} while (@ob_end_clean());
 
 	return $output;
-}
-
-/**
- * Delete a cookie
- *
- * @param	string	$name	The name of the cookie to delete
- * @return	@see	cookie_set()'s return value
- */
-function cookie_del($name)
-{
-	return cookie_set($name, NULL, -90000); // -25H
-}
-
-/**
- * Get a cookie value
- *
- * @param	string	$name
- * @param	string	$default
- * @return	mixed
- */
-function cookie_get($name, $default = NULL)
-{
-	$cookie_name = config('cookie/prefix').$name;
-	return isset($_COOKIE[$cookie_name]) ? unserialize($_COOKIE[$cookie_name]) : $default;
-}
-
-/**
- * Store a value into a cookie
- *
- * @param	string	$name
- * @param	mixed	$value
- * @param	string	$validity
- * @return	@see	setcookie()'s return value
- */
-function cookie_set($name, $value, $validity = NULL)
-{
-	static $cookie_prefix, $cookie_path, $cookie_domain, $cookie_secure, $cookie_validity;
-
-	if (!isset($cookie_validity)) {
-		$cookie_prefix = config('cookie/prefix');
-		$cookie_path = config('cookie/path');
-		$cookie_domain = config('cookie/domain');
-		$cookie_secure = config('cookie/secure');
-		$cookie_validity = intval(config('cookie/validity'));
-	}
-
-	if (!is_numeric($validity)) {
-		$validity = $cookie_validity;
-	}
-
-	$cookie_name = $cookie_prefix.$name;
-	$expire = REQUEST_TIME + $validity;
-
-	if (is_php('5.2.0')) {
-		return setcookie($cookie_name, serialize($value), $expire, $cookie_path, $cookie_domain, $cookie_secure, TRUE);
-	}
-	else {
-		return setcookie($cookie_name, serialize($value), $expire, $cookie_path.'; HttpOnly', $cookie_domain, $cookie_secure);
-	}
 }
 
 if (DEVEL) {
@@ -165,6 +83,62 @@ if (DEVEL) {
 }
 
 /**
+ * Return an HTML safe dump of the given variable(s) surrounded by "pre" tags.
+ * You can pass any number of variables (of any type) to this function.
+ *
+ * @param mixed
+ * @return string
+ */
+function dump()
+{	
+	$s = '';
+	if(hook(HOOK_DUMP)) {
+		foreach(func_get_args() as $v) {
+			$s .= hook(HOOK_DUMP, $v);
+		}
+	}
+	else {
+		foreach(func_get_args() as $v) {
+			$s .= '<pre>'. html($v===NULL ? 'NULL' : (is_scalar($v)?$v:print_r($v,1))) ."</pre>\n";
+		}
+	}
+	echo $s;
+}
+
+/**
+ * Attach (or remove) multiple callbacks to an event and trigger those callbacks when that event is called.
+ *
+ * @param string $k the name of the event to run
+ * @param mixed $v the value to pass to each callback
+ * @param mixed $callback the method or function to call - FALSE to remove all callbacks for event
+ */
+function hook($k, $v = NULL, $callback = NULL)
+{
+	static $e;
+	$argc = func_num_args();
+	if($argc > 2) {
+		if(is_callable($callback)) {
+			$e[$k][]=$callback;
+			return TRUE;
+		}
+		elseif($callback === FALSE) {
+			unset($e[$k]);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	elseif($argc === 1) {
+		return isset($e[$k]);
+	}
+	elseif(isset($e[$k])) {
+		foreach($e[$k]as$f) {
+			$v = call_user_func($f,$v);
+		}
+	}
+	return $v;
+}
+
+/**
  * Low level error message.
  *
  * @access	public
@@ -178,7 +152,7 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 {
 	set_status_header($status_code);
 
-	// Clear output buffers
+	# Clear output buffers
 	$previous_output = close_buffers();
 
 ?><!DOCTYPE html>
@@ -259,7 +233,7 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 </body>
 </html><?php
 
-	// Stop script execution
+	# Stop script execution
 	exit();
 }
 
@@ -321,18 +295,16 @@ function generate_salt($size = 20)
 	return $key;
 }
 
-function include_module( $dir, $module )
+function include_module( $__dir, $__module, $args = NULL )
 {
-	if($path = stream_resolve_include_path("$dir/$module.php")) {
-		require_once $path;
-		return TRUE;
+	if($__path = stream_resolve_include_path("$__dir/$__module.php")) {
+		return require_once $__path;
 	}
-	
-	if($path = stream_resolve_include_path("$dir/$module/$module.php")) {
-		require_once $path;
-		return TRUE;
+
+	if($__path = stream_resolve_include_path("$__dir/$__module/$__module.php")) {
+		return require_once $__path;
 	}
-	
+
 	return FALSE;
 }
 
@@ -444,25 +416,25 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
 	$colonpos = strpos($path, ':');
 	if( $colonpos === FALSE || preg_match('![/?#]!', substr($path, 0, $colonpos)) )
 	{
-		// $path is a local uri
+		# $path is a local uri
 		Load::library('url');
 		$url = Url::make($path, $query);
 	}
 	else
 	{
-		// $path is a full url
+		# $path is a full url
 		$url = $path;
 	}
 
-	// Even though session_write_close() is registered as a shutdown function, we
-	// need all session data written to the database before redirecting.
+	# Even though session_write_close() is registered as a shutdown function, we
+	# need all session data written to the database before redirecting.
 	session_write_close();
 
 	header('Location: '. $url, TRUE, $http_response_code);
 
-	// The "Location" header sends a redirect status code to the HTTP daemon. In
-	// some cases this can be wrong, so we make sure none of the code below the
-	// redirect() call gets executed upon redirection.
+	# The "Location" header sends a redirect status code to the HTTP daemon. In
+	# some cases this can be wrong, so we make sure none of the code below the
+	# redirect() call gets executed upon redirection.
 	exit();
 }
 
@@ -598,7 +570,7 @@ function unset_globals() {
 }
 
 /**
- * Isset ? value : default
+ * Isset(value) ? value : default
  */
 function val(&$value, $default = NULL)
 {

@@ -53,7 +53,7 @@ class User {
 
 	public function __set($field, $value)
 	{
-		// Do some validation
+		# Do some validation
 		switch ($field) {
 		case 'pass':
 			$value = sha1($value);
@@ -101,7 +101,7 @@ class User {
 	{
 		if(!$this->updated) {
 			$this->updated = TRUE;
-			register_shutdown_function(array($this,'save'));
+			hook(HOOK_SHUTDOWN, NULL, array($this,'save'));
 		}
 	}
 
@@ -134,34 +134,32 @@ class User {
 
 		$user_data = db_query('SELECT * FROM {users} u WHERE (name = :name OR mail = :name) AND pass = :pass', array(':name' => $name, ':pass' => $pass))->fetchAssoc();
 
-		// Regenerate the session ID to prevent against session fixation attacks.
+		# Regenerate the session ID to prevent against session fixation attacks.
 		Session::regenerate();
 
 		if($user_data) {
 			$user = new User($user_data);
 
-			// Update last login field
-			// Setter will not be called from this class, we have to call it manually.
+			# Update last login field
+			# Setter will not be called from this class, we have to call it manually.
 			$user->__set('login', REQUEST_TIME);
 
 			User::set($user);
 
 			message(MESSAGE_SUCCESS, 'You were successfully logged in.');
-			
+
 			return TRUE;
 		}
 		else {
 			User::set(new AnonymousUser);
-
 			message(MESSAGE_WARNING, 'Wrong username or password.');
-			
 			return FALSE;
 		}
 	}
 
 	public static function logout()
 	{
-		// Regenerate the session ID to prevent against session fixation attacks.
+		# Regenerate the session ID to prevent against session fixation attacks.
 		Session::regenerate();
 		User::set(new AnonymousUser);
 		message(MESSAGE, 'You are now logged out.');
@@ -174,19 +172,21 @@ class AnonymousUser extends User {
 	public function __construct() {
 		$this->timezone = config('timezone');
 
-		if(isset($_SESSION['user_data']['data'], $_SESSION['user_data']['language'])) {
-			$this->data = unserialize($_SESSION['user_data']['data']);
-			$this->language = $_SESSION['user_data']['language'];
+		$user_data = Input::session('user_data');
+
+		if(isset($user_data['data'], $user_data['language'])) {
+			$this->data = unserialize($user_data['data']);
+			$this->language = $user_data['language'];
 		} else {
 			$this->language = Lang::detect();
 		}
 	}
 
 	public function save() {
-		$_SESSION['user_data']['data'] = serialize($this->data);
-		$_SESSION['user_data']['language'] = $this->language;
-
-		// Has to be called again since session_write_close() was registered as shutdown function before this one.
-		Session::write(session_id(), session_encode());
+		$user_data = array(
+			'data' => serialize($this->data),
+			'language' => $this->language,
+		);
+		Output::session('user_data', $user_data);
 	}
 }

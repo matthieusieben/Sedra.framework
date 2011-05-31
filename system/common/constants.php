@@ -74,3 +74,15 @@ define('MESSAGE', 'message');
 define('MESSAGE_SUCCESS', 'success');
 define('MESSAGE_WARNING', 'warning');
 define('MESSAGE_ERROR', 'error');
+
+/**
+ * ---------------------------------------------------------------------------
+ * Events
+ * ---------------------------------------------------------------------------
+ */
+
+define('HOOK_DUMP', 0);
+define('HOOK_BOOT', 1);
+define('HOOK_SHUTDOWN', 2);
+define('HOOK_VIEW', 3);
+define('HOOK_RENDER', 4);

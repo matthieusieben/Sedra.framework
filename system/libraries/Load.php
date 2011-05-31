@@ -20,12 +20,15 @@ class Load
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $name )
+	public static function controller( $name, $args = NULL )
 	{
-		if(	!include_module('controllers', $name) )
-		{
+		$s = include_module('controllers', $name, $args);
+
+		if(	$s === FALSE ) {
 			throw new Sedra404Exception();
 		}
+
+		return $s;
 	}
 
 	public static function library( $name )
@@ -61,23 +64,23 @@ class Load
 	 */
 	public static function view( $__name = 'index', $__data = array() )
 	{
-		// Get the file path
+		# Get the file path
 		$__file = stream_resolve_include_path("views/$__name.php");
 
-		// Throw an exception if the file could not be found
+		# Throw an exception if the file could not be found
 		if(!$__file) throw new LoadException( 'view', $__name );
 		
-		// Buffer the output
+		# Buffer the output
 		ob_start();
 
-		// Excract the varialbes in the current scope
+		# Excract the varialbes in the current scope
 		extract($__data);
 
-		// Include the file
+		# Include the file
 		require $__file;
 
-		// Return the buffered output
-		return ob_get_clean();
+		# Return the buffered output
+		return hook(HOOK_VIEW, ob_get_clean());
 	}
 
 	/*

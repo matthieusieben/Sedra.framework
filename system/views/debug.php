@@ -4,27 +4,29 @@
 			<h2><?php p('Valiables'); ?></h2>
 			<?php foreach ($variables as $var): ?>
 				<?php if ($var['message']): ?>
-					<div class="var_dump"><?php echo $var['message']; ?></div>
+					<div class="dump-title"><?php echo $var['message']; ?></div>
 				<?php endif ?>
-				<code><pre><?php var_dump($var['variable']); ?></pre></code>
+				<?php dump($var['variable']); ?>
 				<?php if ($var['backtrace']): ?>
-					<code><pre><?php var_dump($var['backtrace']); ?></pre></code>
+					<?php dump($var['backtrace']); ?>
 				<?php endif ?>
 			<?php endforeach ?>
 		<?php endif ?>
 		<h2><?php p('Environment'); ?></h2>
-		<code><pre><?php var_dump(array(
-			'Execution time' => round((microtime() - START_TIME) * 1000) . ' ms',
+		<?php dump(array(
 			'QUERIES' => class_exists('Database', FALSE) ? @Database::getLog('DEVEL') : NULL,
 			'included_files' => get_included_files(),
+			'defined_functions' => get_defined_functions(),
+			'$_ENV' => $_ENV,
 			'$_GET' => $_GET,
 			'$_POST' => $_POST,
 			'$_COOKIE' => $_COOKIE,
 			'$_FILES' => $_FILES,
+			'$_SERVER' => $_SERVER,
 			'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
 			'$_REQUEST' => $_REQUEST,
 			'$GLOBALS' => $GLOBALS,
-			)); ?></pre></code>
+			)); ?>
 		<h2><?php p('Memory Usage'); ?></h2>
 <pre>
 <?php echo number_format(memory_get_usage() - START_MEMORY_USAGE); ?> <?php p('bytes'); ?> 

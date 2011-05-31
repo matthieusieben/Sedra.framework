@@ -43,7 +43,6 @@ error_reporting( DEVEL ? E_ALL : E_ERROR | E_PARSE );
  */
 
 unset_globals();
-config_init();
 
 /*
  * ---------------------------------------------------------------------------
@@ -54,3 +53,11 @@ config_init();
 function __autoload($class) {
 	include_module('libraries', $class);
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * Boot hook
+ * ---------------------------------------------------------------------------
+ */
+
+hook(HOOK_BOOT, TRUE);

@@ -6,19 +6,19 @@
  * ---------------------------------------------------------------------------
  */
 
-// System Start Time
+# System Start Time
 define('START_TIME', microtime());
 
-// System Start Memory
+# System Start Memory
 define('START_MEMORY_USAGE', memory_get_usage());
 
-// Absolute path to the base folder
+# Absolute path to the base folder
 define('BASE_DIR', realpath(dirname(__FILE__)).'/');
 
-// Absolute path to the system folder
+# Absolute path to the system folder
 define('SYSTEM_DIR', BASE_DIR.'system/');
 
-// Absolute path to the site folder
+# Absolute path to the site folder
 define('SITE_DIR', BASE_DIR.'site/');
 
 /*
@@ -45,9 +45,24 @@ require SYSTEM_DIR.'bootstrap.php';
 
 try {
 	# Get the controller name. Default is 'index'.
-	$controller = Url::segment(0, 'index');
+	$controller = Url::segment(0, config('controller', 'index'));
+	# Get the method name
+	$method = Url::segment(1, 'index');
 	# Load the controller
-	Load::controller($controller);
+	$output = Load::controller($controller, $method);
+	# Set the controller output as the output
+	Output::set($output);
+	# Render the output
+	Output::render();
 } catch (Exception $e) {
-	Render::exception($e);
+	# Render the exception if an error occured
+	Output::render_exception($e);
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * Shutdown script
+ * ---------------------------------------------------------------------------
+ */
+
+require SYSTEM_DIR.'shutdown.php';

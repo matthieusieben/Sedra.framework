@@ -10,27 +10,27 @@
 	Load::db();
 
 	session_set_save_handler(
-		array('Session','open'), // callback $open
-		array('Session','close'), // callback $close
-		array('Session','read'), // callback $read
-		array('Session','write'), // callback $write
-		array('Session','destroy_sid'), // callback $destroy
-		array('Session','gc') // callback $gc
+		array('Session','open'), # callback $open
+		array('Session','close'), # callback $close
+		array('Session','read'), # callback $read
+		array('Session','write'), # callback $write
+		array('Session','destroy_sid'), # callback $destroy
+		array('Session','gc') # callback $gc
 		);
 	session_start();
 
 	if ( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
-		// login
+		# login
 		User::authenticate($_POST['user-name'], $_POST['user-pass']);
 	}
 	elseif( (isset($_POST['user-logout']) || isset($_GET['user-logout'])) && User::connected() ) {
-		// logout
+		# logout
 		User::logout();
 	} elseif($user_data = reg('user_data')) {
-		// Already logged in
+		# Already logged in
 		User::set(new User($user_data));
 	} else {
-		// Anonymous user
+		# Anonymous user
 		User::set(new AnonymousUser);
 	}
 }
@@ -53,18 +53,18 @@ class Session
 
 	public static function read($sid)
 	{
-		// Write and Close handlers are called after destructing objects since PHP 5.0.5
-		// Thus destructors can use sessions but session handler can't use objects.
-		// So we are moving session closure before destructing objects.
+		# Write and Close handlers are called after destructing objects since PHP 5.0.5
+		# Thus destructors can use sessions but session handler can't use objects.
+		# So we are moving session closure before destructing objects.
 		register_shutdown_function('session_write_close');
 
-		// Handle the case of first time visitors and clients that don't store cookies (eg. web crawlers).
+		# Handle the case of first time visitors and clients that don't store cookies (eg. web crawlers).
 		if (isset($_COOKIE[session_name()]))
 		{
-			// If the session is still active, we have a record of the client's session in the database.
+			# If the session is still active, we have a record of the client's session in the database.
 			$user_data = db_query("SELECT u.*, s.session FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid AND s.hostname = :hostname", array(':sid' => $sid, ':hostname' => ip_address()))->fetchAssoc();
 
-			// We found the client's session record.
+			# We found the client's session record.
 			if ($user_data) {
 				if ($user_data['uid'] > 0 && $user_data['status'] == 1 ) {
 					reg('user_data', $user_data);
@@ -80,10 +80,10 @@ class Session
 	{
 		$user = User::current();
 
-		// If saving of session data is disabled or if the client doesn't have a session,
-		// and one isn't being created ($value), do nothing. This keeps crawlers out of
-		// the session table. This reduces memory and server load, and gives more useful
-		// statistics.
+		# If saving of session data is disabled or if the client doesn't have a session,
+		# and one isn't being created ($value), do nothing. This keeps crawlers out of
+		# the session table. This reduces memory and server load, and gives more useful
+		# statistics.
 		if( $user->uid == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
 			return TRUE;
 		}
@@ -102,8 +102,8 @@ class Session
 			->fields($fields)
 			->execute();
 
-		// Last access time is updated no more frequently than once every 180 seconds.
-		// This reduces contention in the users table.
+		# Last access time is updated no more frequently than once every 180 seconds.
+		# This reduces contention in the users table.
 		if ($user->uid && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
 			db_update('users')
 				->fields(array(

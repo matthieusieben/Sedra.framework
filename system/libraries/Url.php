@@ -15,12 +15,12 @@ class Url
 
 	public static function init()
 	{
-		// Get the query string
+		# Get the query string
 		$uri = isset($_GET['q']) ? trim( $_GET['q'], '/' ) : '';
 
 		self::$query_string = $uri;
 
-		// remove extension from $uri
+		# remove extension from $uri
 		$path_parts = pathinfo($uri);
 		if (isset($path_parts['extension']))
 		{
@@ -28,10 +28,10 @@ class Url
 			$uri = substr($uri, 0, -strlen(self::$extension));
 		}
 
-		// fetch segments
+		# fetch segments
 		foreach(explode('/', preg_replace('|/*(.+?)/*$|', "\\1", $uri)) as $val)
 		{
-			// Filter segments for security
+			# Filter segments for security
 			$val = trim($val);
 			if ($val != '')
 			{

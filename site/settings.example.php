@@ -1,7 +1,16 @@
 <?php
 
+$config['controller'] = 'index';
+$config['language'] = 'en';
+$config['timezone'] = 'Europe/Brussels';
+
+# Is mod_rewrite activated on the server
+$config['uri/rewrite'] = TRUE;
+# Extension that any url should contain. If set, must start with a '.'.
+$config['uri/extension'] = '.html';
+
 $config['databases']['default']['default'] = array (
-	'database' =>	'sedra',
+	'database' =>	'sedra_framework',
 	'username' =>	'sedra',
 	'password' =>	'sedra',
 	'host' =>		'localhost',
@@ -14,14 +23,11 @@ $config['cookie/prefix'] = '';
 $config['cookie/path'] = SCRIPT_PATH;
 $config['cookie/domain'] = '.'.SERVER_NAME;
 $config['cookie/secure'] = FALSE;
-$config['cookie/validity'] = 86400; // 1209600 = 1 month / 86400 = 24 hours
+$config['cookie/validity'] = 86400; # 1209600 = 1 month / 86400 = 24 hours
 
-$config['language'] = 'en';
-$config['timezone'] = 'Europe/Brussels';
-
-$config['uri/rewrite'] = TRUE; // Is mod_rewrite activated on the server
-$config['uri/extension'] = '.html'; // Must start with a '.'
-
-$config['xsrf/key'] = 'QwErTyUiOp1234567890!'; // XSRF hash secret key. DO NOT use this example key.
+# XSRF hash secret key. DO NOT use the example key.
+$config['xsrf/key'] = 'QwErTyUiOp1234567890!';
 $config['xsrf/stateful'] = TRUE;
 $config['xsrf/timeout'] = 3600;
+
+return $config;

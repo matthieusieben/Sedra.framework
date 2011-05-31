@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Less CSS compiler controller.
  *
@@ -6,22 +7,24 @@
  * @todo	Send headers & cache output (if not DEVEL)
  */
 
-// Load the compiller library
+# Load the compiller library
 Load::library('LessPHP');
 
-// Get the less file path
+# Get the less file path
 $file_path = BASE_DIR . Url::$query_string;
 
 try {
-	// Compile the less file
+	# Compile the less file
 	$lessc = new lessc($file_path);
-	// Print the parsed result
+
+	# Print the parsed result
 	echo $lessc->parse();
 	
 	if(DEVEL) {
-		echo '/* Generated in '.round((microtime() - START_TIME) * 1000).' ms */';
+		echo '/* CSS file generated from less code in '.round((microtime() - START_TIME) * 1000).' ms */';
 	}
+
 } catch (Exception $e) {
-	// Print a "page does not exists" message on error
+	# Print a "page does not exists" message on error
 	throw new Sedra404Exception();
 }

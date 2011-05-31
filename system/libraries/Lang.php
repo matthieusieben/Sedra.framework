@@ -170,10 +170,10 @@ class Lang
 		
 		if ( isset( self::$strings[$language][$string] ) )
 		{
-			// Translation string exists
+			# Translation string exists
 			$string = self::$strings[$language][$string];
 		}
-		// else : Not found, not translated
+		# else : Not found, not translated
 		elseif ( $language !== REFERENCE_LANGUAGE )
 		{
 			# TODO : record this missing translation into database
@@ -185,7 +185,7 @@ class Lang
 		}
 		else
 		{
-			// Transform arguments before inserting them.
+			# Transform arguments before inserting them.
 			foreach ($replace_pairs as $key => $value)
 			{
 				switch ($key[0])
@@ -195,7 +195,7 @@ class Lang
 					$replace_pairs[$key] = html($value);
 					break;
 
-					case '!': // Do not escape the string
+					case '!': # Do not escape the string
 				}
 			}
 			return strtr($string, $replace_pairs);
@@ -204,7 +204,7 @@ class Lang
 
 	private static function load($language)
 	{
-		// No need to load translation for strings written if reference language
+		# No need to load translation for strings written if reference language
 		if ( $language !== REFERENCE_LANGUAGE )
 		{
 			$a = self::load_file(SYSTEM_DIR . "languages/$language.php", $language);
