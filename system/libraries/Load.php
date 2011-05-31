@@ -13,22 +13,30 @@ class Load
 	 */
 
 	/**
-	 * Tries to load a system controller (first) or a module controller
-	 * (otherwise) retruns true iif the controller could be loaded and is
+	 * Tries to load a site controller (first) or a system controller
+	 * (otherwise) retruns a controller object if it could be loaded and is
 	 * a subclass of 'Controller'.
 	 *
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $name, $args = NULL )
+	public static function controller( $name, $method, $args = NULL )
 	{
-		$s = include_module('controllers', $name, $args);
-
-		if(	$s === FALSE ) {
+		if(	!include_module('controllers', $name, $args)) {
 			throw new Sedra404Exception();
 		}
 
-		return $s;
+		if( !class_exists($name, FALSE) || !is_subclass_of($name, 'Controller')) {
+			throw new LoadException('controller', $name );
+		}
+
+		$controller = new $name($args);
+
+		if( !is_callable(array($controller, $method))) {
+			throw new Sedra404Exception();
+		}
+
+		return $controller;
 	}
 
 	public static function library( $name )

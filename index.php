@@ -44,12 +44,15 @@ require SYSTEM_DIR.'bootstrap.php';
  */
 
 # Get the controller name. Default is 'index'.
-$controller = Url::segment(0, config('controller', 'index'));
+$controller_name = Url::segment(0, config('controller', 'Home'));
 # Get the method name
 $method = Url::segment(1, 'index');
 # Load the controller
-$output = Load::controller($controller, $method);
-# Set the controller output as the output
-Output::set($output);
-# Render the output
-Output::render();
+$controller = Load::controller($controller_name, $method);
+if(!$controller->in_cache()) {
+	# Load the method
+	$controller->$method();
+	$controller->cache();
+}
+# Render the controller
+$controller->render();

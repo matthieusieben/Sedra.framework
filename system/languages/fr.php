@@ -8,6 +8,7 @@ return array(
 	'A file could not be loaded' => 'Un fichier syst&egrave;me n&#x27;a pas pu &ecirc;tre charg&eacute;',
 	'Access Forbidden' => 'Acc&egrave;s interdit',
 	'Could not load the !kind "@name".' => 'Le(La) !kind "@name" n&#x27;a pas pu &ecirc;tre trouv&eacute;.',
+		'controller' => 'controleur',
 		'library' => 'biblioth&egrave;que de classes',
 		'model' => 'mod&egrave;le',
 		'helper' => 'biblioth&egrave;que de fonctions',

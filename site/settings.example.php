@@ -1,6 +1,6 @@
 <?php
 
-$config['controller'] = 'index';
+$config['controller'] = 'Home';
 $config['language'] = 'en';
 $config['timezone'] = 'Europe/Brussels';
 

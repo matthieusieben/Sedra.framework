@@ -59,31 +59,4 @@ class Output {
 		Load::library('Session');
 		$_SESSION[$k] = $v;
 	}
-
-	public static $content;
-
-	/**
-	 * Set the output content (ie html page)
-	 *
-	 * @param	string $content	
-	 * @return	void
-	 */
-	public static function set($content)
-	{
-		self::$content = $content;
-	}
-
-	/**
-	 * Print the output to the browser
-	 *
-	 * @return	void
-	 */
-	public static function render()
-	{
-		set_status_header(200);
-
-		echo Hook::call(HOOK_RENDER, self::$content);
-	}
-	
-
 }

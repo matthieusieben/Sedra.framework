@@ -36,9 +36,8 @@ function close_buffers()
 	$output = '';
 
 	# Previous output
-	do {
-		$output = @ob_get_contents() . $output;
-	} while (@ob_end_clean());
+	do $output = @ob_get_contents() . $output;
+	while (@ob_end_clean());
 
 	return $output;
 }
@@ -181,39 +180,6 @@ if ( !function_exists('file_get_contents') )
 		fclose($handle);
 		return $contents;
 	}
-}
-
-/**
- * Returns a 40 character long hash
- *
- * @param	string	$str
- * @param	string	$salt
- * @return	string
- */
-function generate_hash($str, $salt = FALSE)
-{
-	if (!$str || !$salt) {
-		$salt = generate_salt();
-	}
-
-	return sha1($salt.sha1($str));
-}
-
-/**
- * Returns a 20 character long random string.
- *
- * @param	int		$size	A custom string lentgh.
- * @return	string
- */
-function generate_salt($size = 20)
-{
-	$key = '';
-
-	while ( $size-- > 0 ) {
-		$key .= chr(mt_rand(33, 126));
-	}
-
-	return $key;
 }
 
 function include_module( $__dir, $__module, $args = NULL )
