@@ -1,7 +1,7 @@
 <?php if (DEVEL): ?>
 	<div id="debug">
 		<?php if ($variables = debug()): ?>
-			<h2><?php p('Valiables'); ?></h2>
+			<h2><?php p('Variables'); ?></h2>
 			<?php foreach ($variables as $var): ?>
 				<?php if ($var['message']): ?>
 					<div class="dump-title"><?php echo $var['message']; ?></div>

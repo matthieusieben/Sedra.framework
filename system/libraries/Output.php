@@ -80,7 +80,7 @@ class Output {
 	 */
 	public static function render()
 	{
-		echo hook(HOOK_RENDER, self::$content);
+		echo Hook::call(HOOK_RENDER, self::$content);
 	}
 	
 	public static function render_exception($e)

@@ -60,4 +60,4 @@ function __autoload($class) {
  * ---------------------------------------------------------------------------
  */
 
-hook(HOOK_BOOT, TRUE);
+Hook::call(HOOK_BOOT);

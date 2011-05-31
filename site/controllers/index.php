@@ -4,7 +4,7 @@ debug($args, '$args');
 
 $data = array('title'=>'TITLE');
 
-#load::library('Krumo');
+load::library('Krumo');
 
 #Load::db();
 #$r = db_query('SHOW TABLES');

@@ -80,7 +80,7 @@ class Load
 		require $__file;
 
 		# Return the buffered output
-		return hook(HOOK_VIEW, ob_get_clean());
+		return Hook::call(HOOK_VIEW, ob_get_clean());
 	}
 
 	/*

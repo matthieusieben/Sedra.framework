@@ -16,6 +16,6 @@ return array(
 	'Memory Usage' => 'Utilisation de la m&eacute;moire',
 	'seconds' => 'secondes',
 	'SQL Query' => 'Requ&ecirc;te SQL',
-	'Valiables' => 'Variables',
+	'Variables' => 'Variables',
 	'Welcome' => 'Bienvenue',
 );

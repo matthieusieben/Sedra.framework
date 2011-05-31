@@ -101,7 +101,7 @@ class User {
 	{
 		if(!$this->updated) {
 			$this->updated = TRUE;
-			hook(HOOK_SHUTDOWN, NULL, array($this,'save'));
+			Hook::register(HOOK_SHUTDOWN, array($this,'save'));
 		}
 	}
 

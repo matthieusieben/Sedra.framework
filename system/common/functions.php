@@ -69,7 +69,7 @@ if (DEVEL) {
 	function debug($variable = NULL, $message = NULL, $backtrace = FALSE) {
 		static $vars = array();
 
-		if (is_null($variable))
+		if (func_num_args() == 0)
 			return $vars;
 
 		$vars[] = array(
@@ -92,9 +92,9 @@ if (DEVEL) {
 function dump()
 {	
 	$s = '';
-	if(hook(HOOK_DUMP)) {
+	if(Hook::registered(HOOK_DUMP)) {
 		foreach(func_get_args() as $v) {
-			$s .= hook(HOOK_DUMP, $v);
+			$s .= Hook::call(HOOK_DUMP, $v);
 		}
 	}
 	else {
@@ -103,39 +103,6 @@ function dump()
 		}
 	}
 	echo $s;
-}
-
-/**
- * Attach (or remove) multiple callbacks to an event and trigger those callbacks when that event is called.
- *
- * @param string $k the name of the event to run
- * @param mixed $v the value to pass to each callback
- * @param mixed $callback the method or function to call - FALSE to remove all callbacks for event
- */
-function hook($k, $v = NULL, $callback = NULL)
-{
-	static $e;
-	$argc = func_num_args();
-	if($argc > 2) {
-		if(is_callable($callback)) {
-			$e[$k][]=$callback;
-			return TRUE;
-		}
-		elseif($callback === FALSE) {
-			unset($e[$k]);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	elseif($argc === 1) {
-		return isset($e[$k]);
-	}
-	elseif(isset($e[$k])) {
-		foreach($e[$k]as$f) {
-			$v = call_user_func($f,$v);
-		}
-	}
-	return $v;
 }
 
 /**
@@ -206,7 +173,7 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 				<code><pre><?php echo html($previous_output); ?></pre></code>
 			<?php endif; ?>
 			<?php if ($variables = debug()): ?>
-				<h2><?php p('Valiables'); ?></h2>
+				<h2><?php p('Variables'); ?></h2>
 				<?php foreach ($variables as $var): ?>
 					<?php if ($var['message']): ?>
 						<div class="var_dump"><?php echo $var['message']; ?></div>
