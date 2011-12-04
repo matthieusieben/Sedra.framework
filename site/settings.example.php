@@ -4,11 +4,6 @@ $config['controller'] = 'Home';
 $config['language'] = 'en';
 $config['timezone'] = 'Europe/Brussels';
 
-# Is mod_rewrite activated on the server
-$config['uri/rewrite'] = TRUE;
-# Extension that any url should contain. If set, must start with a '.'.
-$config['uri/extension'] = '.html';
-
 $config['databases']['default']['default'] = array (
 	'database' =>	'sedra_framework',
 	'username' =>	'sedra',
@@ -18,6 +13,11 @@ $config['databases']['default']['default'] = array (
 	'driver' =>		'mysql',
 	'prefix' =>		'',
 );
+
+# Is mod_rewrite activated on the server
+$config['uri/rewrite'] = TRUE;
+# Extension that any url should contain. If set, must start with a '.'.
+$config['uri/extension'] = '.html';
 
 $config['cookie/prefix'] = '';
 $config['cookie/path'] = SCRIPT_PATH;
@@ -29,5 +29,10 @@ $config['cookie/validity'] = 86400; # 1209600 = 1 month / 86400 = 24 hours
 $config['xsrf/key'] = 'QwErTyUiOp1234567890!';
 $config['xsrf/stateful'] = TRUE;
 $config['xsrf/timeout'] = 3600;
+
+# Libraries to load at boot time
+$config['autoload/libaries'] = array(
+	'Krumo',
+);
 
 return $config;
