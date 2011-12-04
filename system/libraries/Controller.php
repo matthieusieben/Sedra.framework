@@ -1,33 +1,40 @@
 <?php
 
 abstract class Controller {
-	
+
+	public $cache_flags;
+	public $cache_key;
+	public $method;
 	public $content;
 	
-	public function __construct($args = NULL) {
-		# Nothing todo at the moment
+	public function __construct() {
+		# Get the method name
+		$this->method = Url::segment(1, 'index');
+		# Debug contoller
+		debug($this, t('Main controller'));
 	}
 
-	/**
-	 * Default page method
-	 */
-	public abstract function index();
+	public static function generate(Controller $c) {		
+		if(Cache::exists($c)) {
+			$c->content = Cache::get($c);
+		} else {
+			if(method_exists($c, $c->method)) {
+				try {
+					# No way to prevent calling static functions except if they need arguments
+					$c->content = call_user_func(array($c, $c->method));
+				} catch (SedraErrorException $e) {
+					throw new Sedra404Exception();
+				}
+				$c = Hook::call(HOOK_GENERATE_CONTROLLER, $c);
+				Cache::set($c, $c->content);
+			} else {
+				throw new Sedra404Exception();
+			}
+		}
+	}
 
-	/**
-	 * Check if the page is in cache and loads it in $this->content.
-	 */
-	public abstract function in_cache();
-
-	/**
-	 * Cache the content of $this->content in the cache.
-	 */
-	public abstract function cache();
-
-	/**
-	 * Display the content of $this->content in the browser.
-	 */
-	public function render() {
-		$string = Hook::call(HOOK_RENDER, $this->content);
+	public static function render(Controller $c) {
+		$string = Hook::call(HOOK_RENDER_CONTROLLER, $c->content);
 		set_status_header(200);
 		echo $string;
 	}

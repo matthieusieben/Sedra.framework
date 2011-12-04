@@ -16,7 +16,7 @@ class Error
 			}
 		}
 		else if (($severity & error_reporting()) === $severity) {
-			Error::exception(new SedraErrorException($message, $severity, $file, $line));
+			throw new SedraErrorException($message, $severity, $file, $line);
 		}
 		return TRUE;
 	}

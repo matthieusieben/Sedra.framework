@@ -182,7 +182,7 @@ if ( !function_exists('file_get_contents') )
 	}
 }
 
-function include_module( $__dir, $__module, $args = NULL )
+function include_module( $__dir, $__module )
 {
 	if($__path = stream_resolve_include_path("$__dir/$__module.php")) {
 		return require_once $__path;
@@ -271,7 +271,7 @@ function message($type = NULL, $value = NULL)
  */
 function p($string, $replace_pairs = array(), $language = NULL)
 {
-	echo Lang::t($string, $replace_pairs, $language = NULL);
+	echo t($string, $replace_pairs, $language = NULL);
 }
 
 /**

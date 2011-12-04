@@ -5,6 +5,8 @@
 <h1><?php echo $title . ' ('.$e->getCode().')'; ?></h1>
 
 <p class="message"><?php echo $e->getMessage(); ?></p>
+<p class="file"><?php p('File'); ?>: <?php echo $e->getFile(); ?></p>
+<p class="line"><?php p('Line'); ?>: <?php echo $e->getLine(); ?></p>
 
 <?php if (DEVEL && $e instanceof DatabaseException && isset($e->query)): ?>
 	<h2><?php p('SQL Query'); ?></h2>

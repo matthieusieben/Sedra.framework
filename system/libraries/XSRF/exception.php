@@ -1,6 +1,6 @@
 <?php
 
-class XSRFException
+class SedraXSRFException
 extends SedraException
 {
 	public function __construct()

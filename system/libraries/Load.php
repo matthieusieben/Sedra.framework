@@ -5,6 +5,24 @@
  */
 class Load
 {
+	public static function auto()
+	{
+		$libraries = (array) config('autoload/libaries');
+		$models = (array) config('autoload/models');
+		$helpers = (array) config('autoload/helpers');
+
+		foreach($libraries as $library) {
+			Load::library($library);
+		}
+
+		foreach($models as $model) {
+			Load::model($model);
+		}
+
+		foreach($helpers as $helper) {
+			Load::helper($helper);
+		}
+	}
 
 	/*
 	 * -------------------------------------------------------------------------
@@ -20,46 +38,48 @@ class Load
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $name, $method, $args = NULL )
+	public static function controller( $class )
 	{
-		if(	!include_module('controllers', $name, $args)) {
+		if( !include_module('controllers', $class)) {
 			throw new Sedra404Exception();
 		}
 
-		if( !class_exists($name, FALSE) || !is_subclass_of($name, 'Controller')) {
-			throw new LoadException('controller', $name );
+		if( !class_exists($class, FALSE) || !is_subclass_of($class, 'Controller')) {
+			throw new SedraLoadException('controller', $class );
 		}
 
-		$controller = new $name($args);
-
-		if( !is_callable(array($controller, $method))) {
-			throw new Sedra404Exception();
-		}
-
-		return $controller;
+		return new $class;
 	}
 
-	public static function library( $name )
+	public static function library( $class )
 	{
-		if( !include_module( 'libraries', $name ) )
+		if( !include_module( 'libraries', $class ) )
 		{
-			throw new LoadException( 'library', $name );
+			throw new SedraLoadException( 'library', $class );
 		}
 	}
 
-	public static function model( $name )
+	public static function model( $class )
 	{
-		if( !include_module( 'models', $name ) )
+		if( !include_module( 'models', $class ) )
 		{
-			throw new LoadException( 'model', $name );
+			throw new SedraLoadException( 'model', $class );
 		}
 	}
 
-	public static function helper( $name )
+	public static function helper( $file )
 	{
-		if( !include_module( 'helpers', $name ) )
+		if( !include_module( 'helpers', $file ) )
 		{
-			throw new LoadException( 'helper', $name );
+			throw new SedraLoadException( 'helper', $file );
+		}
+	}
+
+	public static function lang_file( $file )
+	{
+		if( !include_module( 'helpers', $file ) )
+		{
+			throw new SedraLoadException( 'helper', $file );
 		}
 	}
 
@@ -72,11 +92,15 @@ class Load
 	 */
 	public static function view( $__name = 'index', $__data = array() )
 	{
+		# Alter parameters by hooks
+		$__name = Hook::call(HOOK_VIEW_NAME, $__name);
+		$__data = Hook::call(HOOK_VIEW_DATA, $__data);
+
 		# Get the file path
 		$__file = stream_resolve_include_path("views/$__name.php");
 
 		# Throw an exception if the file could not be found
-		if(!$__file) throw new LoadException( 'view', $__name );
+		if(!$__file) throw new SedraLoadException( 'view', $__name );
 		
 		# Buffer the output
 		ob_start();
@@ -88,7 +112,7 @@ class Load
 		require $__file;
 
 		# Return the buffered output
-		return Hook::call(HOOK_VIEW, ob_get_clean());
+		return Hook::call(HOOK_VIEW_OUTPUT, ob_get_clean());
 	}
 
 	/*

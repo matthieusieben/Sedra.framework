@@ -66,6 +66,25 @@ define('MEMBER_RID',			2);
 
 /**
  * ---------------------------------------------------------------------------
+ * Cache
+ * ---------------------------------------------------------------------------
+ *
+ * CACHE_ENABLED				TODO
+ * CACHE_LEVEL_URL				TODO
+ * CACHE_LEVEL_USER				User dependent cache level
+ * CACHE_LEVEL_ROLE				Role dependent cache level
+ * CACHE_LEVEL_LANG				Language dependent cache level
+ */
+
+define('CACHE_ENABLED',			0x1);
+define('CACHE_LEVEL_URL',		0x2 | CACHE_ENABLED);
+define('CACHE_LEVEL_USER',		0x4 | CACHE_ENABLED);
+define('CACHE_LEVEL_ROLE',		0x8 | CACHE_ENABLED);
+define('CACHE_LEVEL_LANG',		0x10 | CACHE_ENABLED);
+define('CACHE_LEVEL_METHOD',	0x20 | CACHE_ENABLED);
+
+/**
+ * ---------------------------------------------------------------------------
  * Messages types
  * ---------------------------------------------------------------------------
  */
@@ -81,8 +100,11 @@ define('MESSAGE_ERROR', 'error');
  * ---------------------------------------------------------------------------
  */
 
-define('HOOK_DUMP', 0);
-define('HOOK_BOOT', 1);
-define('HOOK_SHUTDOWN', 2);
-define('HOOK_VIEW', 3);
-define('HOOK_RENDER', 4);
+define('HOOK_BOOT',					0);
+define('HOOK_SHUTDOWN',				1);
+define('HOOK_DUMP',					2);
+define('HOOK_VIEW_NAME',			3);
+define('HOOK_VIEW_DATA',			4);
+define('HOOK_VIEW_OUTPUT',			5);
+define('HOOK_GENERATE_CONTROLLER',	6);
+define('HOOK_RENDER_CONTROLLER',	7);

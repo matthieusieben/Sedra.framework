@@ -1,5 +1,9 @@
 <?php
 
+# Register default lang folders
+Lang::register_folder(SYSTEM_DIR . 'languages');
+Lang::register_folder(SITE_DIR . 'languages');
+
 # Load the user lib, this way the language will be automatically set.
 Load::user();
 
@@ -18,6 +22,13 @@ class Lang
 	 * @var	array
 	 */
 	private static $strings = array();
+
+	/**
+	 * Table containing the language folders registered
+	 *
+	 * @var	array
+	 */
+	private static $folders = array();
 
 	/**
 	 * List of all valid languages
@@ -205,17 +216,23 @@ class Lang
 		}
 	}
 
+	public static function register_folder($dir)
+	{
+		$path = realpath($dir);
+		if($path && !in_array($path, self::$folders))
+		{
+			# Register the language dir
+			self::$folders[] = $path;
+			# And load the current language
+			self::load_file($path, self::current());
+		}
+	}
+
 	private static function load($language)
 	{
-		# No need to load translation for strings written if reference language
-		if ( $language !== REFERENCE_LANGUAGE )
+		foreach(self::$folders as $folder)
 		{
-			# Load translations
-			$a = self::load_file(SYSTEM_DIR . "languages/$language.php", $language);
-			$b = self::load_file(SITE_DIR . "languages/$language.php", $language);
-
-			# Return true if one of the file loads succeded
-			return $a || $b;
+			self::load_file($folder, $language);
 		}
 		return TRUE;
 	}
@@ -224,12 +241,18 @@ class Lang
 	 * Load a language file.
 	 *
 	 * @access	private
-	 * @param	string $file		
+	 * @param	string $folder		
 	 * @param	string $language	
 	 * @return	bool	True if the file was loaded
 	 */
-	private static function load_file($file, $language)
+	private static function load_file($folder, $language)
 	{
+		# No need to load translation for strings written if reference language
+		if ( $language === REFERENCE_LANGUAGE ) return TRUE;
+
+		# File path
+		$file = "$folder/$language.php";
+		
 		# Init the translation array
 		isset(self::$strings[$language]) or self::$strings[$language] = array();
 

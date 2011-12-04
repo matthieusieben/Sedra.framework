@@ -192,7 +192,7 @@ class XSRF {
 	public static function check($req = NULL, $field_name = '__xsrfprotect_tok')
 	{
 		if(self::validate($req, $field_name) !== self::kCheckSuccess) {
-			throw new XSRFException();
+			throw new SedraXSRFException();
 			return FALSE;
 		}
 		return TRUE;

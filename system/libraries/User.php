@@ -86,7 +86,7 @@ class User {
 			'data' => serialize($this->data),
 			);
 
-		foreach(self::$fields as $field) {
+		foreach(User::$fields as $field) {
 			$fields[$field] = $this->{$field};
 		}
 		
@@ -101,7 +101,7 @@ class User {
 	{
 		if(!$this->updated) {
 			$this->updated = TRUE;
-			Hook::register(HOOK_SHUTDOWN, array($this,'save'));
+			Hook::register(HOOK_SHUTDOWN, array($this, 'save'));
 		}
 	}
 
@@ -171,6 +171,7 @@ class AnonymousUser extends User {
 
 	public function __construct() {
 		$this->timezone = config('timezone');
+		$this->name = t('Guest');
 
 		$user_data = Input::session('user_data');
 

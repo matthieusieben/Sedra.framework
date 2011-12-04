@@ -69,7 +69,7 @@ extends SedraException
 	}
 }
 
-class LoadException
+class SedraLoadException
 extends SedraException
 {
 	public function __construct( $what, $name )
