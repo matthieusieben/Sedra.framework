@@ -304,7 +304,6 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
 	if( $colonpos === FALSE || preg_match('![/?#]!', substr($path, 0, $colonpos)) )
 	{
 		# $path is a local uri
-		Load::library('url');
 		$url = Url::make($path, $query);
 	}
 	else

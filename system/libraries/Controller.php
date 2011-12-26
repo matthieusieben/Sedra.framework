@@ -18,12 +18,19 @@ abstract class Controller {
 		if(Cache::exists($c)) {
 			$c->content = Cache::get($c);
 		} else {
-			if(method_exists($c, $c->method)) {
+			if(!isset($c->method)) {
+				throw new SedraException("Programation error","Undefined controller method. Check your controller's constructor.");
+			}
+			elseif(method_exists($c, $c->method)) {
 				try {
 					# No way to prevent calling static functions except if they need arguments
 					$c->content = call_user_func(array($c, $c->method));
 				} catch (SedraErrorException $e) {
-					throw new Sedra404Exception();
+					if(DEVEL) {
+						throw $e;
+					} else {
+						throw new Sedra404Exception();
+					}
 				}
 				$c = Hook::call(HOOK_GENERATE_CONTROLLER, $c);
 				Cache::set($c, $c->content);

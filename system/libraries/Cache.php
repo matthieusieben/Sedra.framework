@@ -39,7 +39,7 @@ class Cache {
 
 	public static function set_key(&$o)
 	{
-		$o->cache_key = self::key($o);
+		$o->cache_key = (isset($o->cache_hint) ? $o->cache_hint : array()) + self::key($o);
 	}
 
 	public static function key($o) {
@@ -49,11 +49,11 @@ class Cache {
 		{
 			return FALSE;
 		}
-		
-		$id = array(
-			'class' => get_class($o),
-		);
-		
+
+		$id = array();
+
+		$id['class'] = get_class($o);
+
 		if( isset($o->id) )
 		{
 			$id['id'] = $o->id;
@@ -69,27 +69,28 @@ class Cache {
 			$id['url'] = Url::current();
 		}
 
-		if(($flags & CACHE_LEVEL_USER) === CACHE_LEVEL_USER) {
-			Load::user();
+		if(($flags & CACHE_LEVEL_USER) === CACHE_LEVEL_USER)
+		{
 			$user = User::current();
 			
 			$id['uid'] = $user->uid;
 			
-			if($user->uid === ANONYMOUS_UID) {
+			if($user->uid === ANONYMOUS_UID)
+			{
 				$id['lang'] = $user->language;
 			}
 		}
 
-		if(($flags & CACHE_LEVEL_ROLE) === CACHE_LEVEL_ROLE) {
-			Load::user();
+		if(($flags & CACHE_LEVEL_ROLE) === CACHE_LEVEL_ROLE)
+		{
 			$user = User::current();
 		
 			$id['rid'] = $user->rid;
 			$id['lang'] = $user->language;
 		}
 
-		if(($flags & CACHE_LEVEL_LANG) === CACHE_LEVEL_LANG) {
-			Load::user();
+		if(($flags & CACHE_LEVEL_LANG) === CACHE_LEVEL_LANG)
+		{
 			$user = User::current();
 		
 			$id['lang'] = $user->language;

@@ -30,7 +30,7 @@ extends SedraException
 	public $severity;
 
 	public function __construct($message, $severity, $file = NULL, $line = NULL) {
-		parent::__construct('Error Exception', "Error $code:\n$message");
+		parent::__construct('Error Exception', "PHP Error:\n$message");
 		$this->severity = $severity;
 		$this->file = $file;
 		$this->line = $line;

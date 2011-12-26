@@ -4,12 +4,12 @@ class Input {
 	
 	public static function post($k, $d = NULL)
 	{
-		return val($_POST[$k], $d);
+		return isset($_POST[$k]) ? $_POST[$k] : $d;
 	}
 	
 	public static function get($k, $d = NULL)
 	{
-		return val($_GET[$k], $d);
+		return isset($_GET[$k]) ? $_GET[$k] : $d;
 	}
 	
 	public static function cookie($k, $d = NULL)
@@ -21,6 +21,6 @@ class Input {
 	public static function session($k, $d = NULL)
 	{
 		Load::library('Session');
-		return val($_SESSION[$k], $d);
+		return isset($_SESSION[$k]) ? $_SESSION[$k] : $d;
 	}
 }

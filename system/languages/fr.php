@@ -15,7 +15,7 @@ return array(
 		'view' => 'vue',
 	'Error Exception' => 'Exception erreur',
 	'Page not found' => 'Page inexistante',
-	'The URL you requested @url was not found on this server.' => 'La page que vous tentez d&#x27;acc&eacute;der&quot;@url&quot; n&#x27;existe pas sur ce serveur.',
+	'The URL you requested @url was not found on this server.' => 'La page que vous tentez d&#x27;acc&eacute;der &quot;@url&quot; n&#x27;existe pas sur ce serveur.',
 	'You do not have the permission to view this page.' => 'Vous ne disposez pas de droits suffisants pour acc&eacute;der &agrave; cette page.',
 	# XSRF
 	'Cross Site Request Forgery Protection' => 'TODO',

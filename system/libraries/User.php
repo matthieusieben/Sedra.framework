@@ -125,7 +125,7 @@ class User {
 
 	public static function connected()
 	{
-		return self::$user->uid !== ANONYMOUS_UID;
+		return isset(self::$user->uid) && self::$user->uid !== ANONYMOUS_UID;
 	}
 
 	public static function authenticate($name, $pass)
