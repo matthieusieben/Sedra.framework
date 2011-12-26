@@ -459,6 +459,11 @@ function unset_globals() {
 	}
 }
 
+function check_flags($value, $flags)
+{
+	return ($value & $flags) === $flags;
+}
+
 /**
  * Isset(value) ? value : default
  */

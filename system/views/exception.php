@@ -9,6 +9,7 @@
 <p class="line"><?php p('Line'); ?>: <?php echo $e->getLine(); ?></p>
 
 <?php if (DEVEL): ?>
+	<h2><?php p('Trace'); ?></h2>
 	<div class="trace"><?php dump($e->getTrace()); ?></div>
 <?php endif ?>
 

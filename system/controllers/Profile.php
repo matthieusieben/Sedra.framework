@@ -7,13 +7,9 @@ Load::user();
  */
 class Profile extends Controller {
 
+	public $allowed_methods = array('index', 'login');
 	public $cache_flags = CACHE_LEVEL_USER;
-
-	function __construct()
-	{
-		parent::__construct();
-		$this->cache_hint = array('uid'=>'prout');
-	}
+	public $cache_hint = array('band' => 'the_rockers');
 
 	public function index() {
 		if(!User::connected()) {

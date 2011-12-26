@@ -1,101 +1,46 @@
 <?php
 
 class Cache {
-	public static function set(&$o, $value)
+	public static function set($key, $value)
 	{
-		if(!self::get_key($o)) {
+		if(empty($key)) {
 			return FALSE;
+		}
+		$key = Hook::call(HOOK_CACHE_KEY, $key);
+
+		list($key, $value) = Hook::call(HOOK_CACHE_SET, array($key, $value));
+
+		# TODO
+		return FALSE;
+	}
+	
+	public static function get($key)
+	{
+		if(empty($key)) {
+			return FALSE;
+		}
+		$key = Hook::call(HOOK_CACHE_KEY, $key);
+
+		if(self::exists($key)) {
+			# TODO
+			$value = NULL;
+
+			list($key, $value) = Hook::call(HOOK_CACHE_GET, array($key, $value));
+			
+			return $value;
 		}
 
 		return FALSE;
 	}
 	
-	public static function get(&$o)
+	public static function exists($key)
 	{
-		if(!self::get_key($o)) {
+		if(empty($key)) {
 			return FALSE;
 		}
+		$key = Hook::call(HOOK_CACHE_KEY, $key);
 
+		# TODO
 		return FALSE;
-	}
-	
-	public static function exists(&$o)
-	{
-		if(!self::get_key($o)) {
-			return FALSE;
-		}
-
-		return FALSE;
-	}
-
-	public static function get_key(&$o)
-	{
-		if(!isset($o->cache_key)) {
-			self::set_key($o);
-		}
-
-		return $o->cache_key;
-	}
-
-	public static function set_key(&$o)
-	{
-		$o->cache_key = (isset($o->cache_hint) ? $o->cache_hint : array()) + self::key($o);
-	}
-
-	public static function key($o) {
-		$flags = isset($o->cache_flags) ? $o->cache_flags : NULL;
-
-		if(($flags & CACHE_ENABLED) !== CACHE_ENABLED)
-		{
-			return FALSE;
-		}
-
-		$id = array();
-
-		$id['class'] = get_class($o);
-
-		if( isset($o->id) )
-		{
-			$id['id'] = $o->id;
-		}
-		
-		if(($flags & CACHE_LEVEL_METHOD) === CACHE_LEVEL_METHOD)
-		{
-			$id['method'] = $o->method;
-		}
-
-		if(($flags & CACHE_LEVEL_URL) === CACHE_LEVEL_URL)
-		{
-			$id['url'] = Url::current();
-		}
-
-		if(($flags & CACHE_LEVEL_USER) === CACHE_LEVEL_USER)
-		{
-			$user = User::current();
-			
-			$id['uid'] = $user->uid;
-			
-			if($user->uid === ANONYMOUS_UID)
-			{
-				$id['lang'] = $user->language;
-			}
-		}
-
-		if(($flags & CACHE_LEVEL_ROLE) === CACHE_LEVEL_ROLE)
-		{
-			$user = User::current();
-		
-			$id['rid'] = $user->rid;
-			$id['lang'] = $user->language;
-		}
-
-		if(($flags & CACHE_LEVEL_LANG) === CACHE_LEVEL_LANG)
-		{
-			$user = User::current();
-		
-			$id['lang'] = $user->language;
-		}
-
-		return $id;
 	}
 }

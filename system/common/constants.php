@@ -76,12 +76,12 @@ define('MEMBER_RID',			2);
  * CACHE_LEVEL_LANG				Language dependent cache level
  */
 
-define('CACHE_ENABLED',			0x1);
-define('CACHE_LEVEL_URL',		0x2 | CACHE_ENABLED);
-define('CACHE_LEVEL_USER',		0x4 | CACHE_ENABLED);
-define('CACHE_LEVEL_ROLE',		0x8 | CACHE_ENABLED);
-define('CACHE_LEVEL_LANG',		0x10 | CACHE_ENABLED);
-define('CACHE_LEVEL_METHOD',	0x20 | CACHE_ENABLED);
+define('CACHE_ENABLED',			($i=1));
+define('CACHE_LEVEL_URL',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_USER',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_ROLE',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_LANG',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_METHOD',	($i*=2) | CACHE_ENABLED);
 
 /**
  * ---------------------------------------------------------------------------
@@ -100,11 +100,14 @@ define('MESSAGE_ERROR', 'error');
  * ---------------------------------------------------------------------------
  */
 
-define('HOOK_BOOT',					0);
-define('HOOK_SHUTDOWN',				1);
-define('HOOK_DUMP',					2);
-define('HOOK_VIEW_NAME',			3);
-define('HOOK_VIEW_DATA',			4);
-define('HOOK_VIEW_OUTPUT',			5);
-define('HOOK_GENERATE_CONTROLLER',	6);
-define('HOOK_RENDER_CONTROLLER',	7);
+define('HOOK_BOOT',					$i=0);
+define('HOOK_SHUTDOWN',				++$i);
+define('HOOK_DUMP',					++$i);
+define('HOOK_VIEW_NAME',			++$i);
+define('HOOK_VIEW_DATA',			++$i);
+define('HOOK_VIEW_OUTPUT',			++$i);
+define('HOOK_GENERATE_CONTROLLER',	++$i);
+define('HOOK_RENDER_CONTROLLER',	++$i);
+define('HOOK_CACHE_KEY',			++$i);
+define('HOOK_CACHE_SET',			++$i);
+define('HOOK_CACHE_GET',			++$i);
