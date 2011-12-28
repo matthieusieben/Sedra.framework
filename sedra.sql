@@ -37,8 +37,10 @@ INSERT INTO `users` (`uid`, `rid`, `name`, `pass`, `mail`, `language`, `timezone
 
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE IF NOT EXISTS `cache` (
-  `timestamp` int(11) unsigned NOT NULL DEFAULT '0',
-  `content` text NOT NULL,
+  `data` text NOT NULL,
+  `created` int(11) unsigned NOT NULL DEFAULT '0',
+  `expire` int(11) unsigned NOT NULL DEFAULT '0',
+  `serialized` smallint(1) NOT NULL DEFAULT '0',
 
   `iid` int(11) unsigned DEFAULT NULL,
   `uid` int(11) unsigned DEFAULT NULL,

@@ -78,42 +78,48 @@ class Session
 
 	public static function write($sid, $value)
 	{
-		$user = User::current();
+		try {
+			$user = User::current();
 
-		# If saving of session data is disabled or if the client doesn't have a session,
-		# and one isn't being created ($value), do nothing. This keeps crawlers out of
-		# the session table. This reduces memory and server load, and gives more useful
-		# statistics.
-		if( $user->uid == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
-			return TRUE;
-		}
+			# If saving of session data is disabled or if the client doesn't have a session,
+			# and one isn't being created ($value), do nothing. This keeps crawlers out of
+			# the session table. This reduces memory and server load, and gives more useful
+			# statistics.
+			if( $user->uid == 0 && empty($_COOKIE[session_name()]) && empty($value) ) {
+				return TRUE;
+			}
 
-		$fields = array(
-			'uid' => $user->uid,
-			'hostname' => ip_address(),
-			'session' => $value,
-			'timestamp' => REQUEST_TIME,
-		);
+			$fields = array(
+				'uid' => $user->uid,
+				'hostname' => ip_address(),
+				'session' => $value,
+				'timestamp' => REQUEST_TIME,
+			);
 
-		$key = array('sid' => $sid);
+			$key = array('sid' => $sid);
 
-		db_merge('sessions')
-			->key($key)
-			->fields($fields)
-			->execute();
-
-		# Last access time is updated no more frequently than once every 180 seconds.
-		# This reduces contention in the users table.
-		if ($user->uid && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
-			db_update('users')
-				->fields(array(
-					'access' => REQUEST_TIME
-				))
-				->condition('uid', $user->uid)
+			db_merge('sessions')
+				->key($key)
+				->fields($fields)
 				->execute();
-		}
 
-		return TRUE;
+			# Last access time is updated no more frequently than once every 180 seconds.
+			# This reduces contention in the users table.
+			if ($user->uid && ((REQUEST_TIME - $user->access) > config('session/write_interval', 180))) {
+				db_update('users')
+					->fields(array(
+						'access' => REQUEST_TIME
+					))
+					->condition('uid', $user->uid)
+					->execute();
+			}
+
+			return TRUE;
+		} catch(Exception $e) {
+			# XXX : what to do when exception arrise during shutdown_function's ?
+			echo '<p>XXX@'.__FILE__.':'.__LINE.'</p>';
+			var_dump($e);
+		}
 	}
 
 	/**

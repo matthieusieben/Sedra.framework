@@ -112,9 +112,9 @@ abstract class Controller {
 
 	public static function generate(Controller $c) {		
 		$cache_key = $c->_get_cache_key();
-		if(Cache::exists($cache_key)) {
+		if($content = Cache::get($cache_key)) {
 			# If in cache, set content from cache
-			$c->content = Cache::get($cache_key);
+			$c->content = $content;
 		} else {
 			# Not in cache, generate and set cache
 			try {
