@@ -25,6 +25,8 @@ $config['cookie/domain'] = '.'.SERVER_NAME;
 $config['cookie/secure'] = FALSE;
 $config['cookie/validity'] = 86400; # 1209600 = 1 month / 86400 = 24 hours
 
+$config['cache/age'] = 3600; # seconds
+
 # XSRF hash secret key. DO NOT use the example key.
 $config['xsrf/key'] = 'QwErTyUiOp1234567890!';
 $config['xsrf/stateful'] = TRUE;

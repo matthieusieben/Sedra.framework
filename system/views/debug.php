@@ -2,6 +2,7 @@
 	<?php debug(array(
 		'included_files' => get_included_files(),
 		'defined_functions' => get_defined_functions(),
+		'defined_vars' => get_defined_vars(),
 		'QUERIES' => class_exists('Database', FALSE) ? @Database::getLog('DEVEL') : NULL,
 		'$_ENV' => $_ENV,
 		'$_GET' => $_GET,

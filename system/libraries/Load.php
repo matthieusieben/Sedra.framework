@@ -38,7 +38,7 @@ class Load
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $class )
+	public static function controller( $class, $arg = NULL )
 	{
 		if( !include_module('controllers', $class)) {
 			throw new Sedra404Exception();
@@ -48,7 +48,7 @@ class Load
 			throw new SedraLoadException('controller', $class );
 		}
 
-		return new $class;
+		return new $class( $arg );
 	}
 
 	public static function library( $class )

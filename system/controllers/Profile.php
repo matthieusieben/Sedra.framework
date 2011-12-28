@@ -2,14 +2,15 @@
 
 Load::user();
 
+define('USER_CONTROLLER_CACHE_LEVEL', CACHE_LEVEL_USER | CACHE_LEVEL_METHOD);
+
 /**
  * @author matthieusieben
  */
 class Profile extends Controller {
 
-	public $allowed_methods = array('index', 'login');
-	public $cache_flags = CACHE_LEVEL_USER;
-	public $cache_hint = array('band' => 'the_rockers');
+	# Each user has a different Profile page.
+	public $cache_flags	= USER_CONTROLLER_CACHE_LEVEL;
 
 	public function index() {
 		if(!User::connected()) {

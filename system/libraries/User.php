@@ -39,6 +39,7 @@ class User {
 			foreach($key as $k => $v) {
 				$this->set_data($k, $v);
 			}
+			return;
 		} elseif(is_null($value)) {
 			unset($this->data[$key]);
 		} else {
@@ -101,7 +102,7 @@ class User {
 	{
 		if(!$this->updated) {
 			$this->updated = TRUE;
-			Hook::register(HOOK_SHUTDOWN, array($this, 'save'));
+			Hook::register(HOOK_SHUTDOWN, array(&$this, 'save'));
 		}
 	}
 
@@ -112,7 +113,7 @@ class User {
 	public static $user = NULL;
 	public static $fields = array('rid','name','pass','mail','language','timezone','created','access','login','status');
 
-	public static function set(User $user)
+	public static function set(User &$user)
 	{
 		self::$user =& $user;
 		Lang::set($user->language);
@@ -162,7 +163,7 @@ class User {
 		# Regenerate the session ID to prevent against session fixation attacks.
 		Session::regenerate();
 		User::set(new AnonymousUser);
-		message(MESSAGE, 'You are now logged out.');
+		message(MESSAGE_SUCCESS, 'You are now logged out.');
 		return TRUE;
 	}
 }

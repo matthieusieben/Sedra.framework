@@ -76,12 +76,16 @@ define('MEMBER_RID',			2);
  * CACHE_LEVEL_LANG				Language dependent cache level
  */
 
-define('CACHE_ENABLED',			($i=1));
-define('CACHE_LEVEL_URL',		($i*=2) | CACHE_ENABLED);
-define('CACHE_LEVEL_USER',		($i*=2) | CACHE_ENABLED);
-define('CACHE_LEVEL_ROLE',		($i*=2) | CACHE_ENABLED);
-define('CACHE_LEVEL_LANG',		($i*=2) | CACHE_ENABLED);
-define('CACHE_LEVEL_METHOD',	($i*=2) | CACHE_ENABLED);
+define('CACHE_ENABLED',			$i =1);
+define('CACHE_LEVEL_URL',		$i*=2);
+define('CACHE_LEVEL_USER',		$i*=2);
+define('CACHE_LEVEL_ROLE',		$i*=2);
+define('CACHE_LEVEL_LANG',		$i*=2);
+define('CACHE_LEVEL_METHOD',	$i*=2);
+
+define('DEFAULT_CACHE_FLAGS',	CACHE_ENABLED | CACHE_LEVEL_METHOD | CACHE_LEVEL_LANG);
+
+define('CACHE_MAX_AGE',			3600*24);
 
 /**
  * ---------------------------------------------------------------------------
@@ -89,10 +93,9 @@ define('CACHE_LEVEL_METHOD',	($i*=2) | CACHE_ENABLED);
  * ---------------------------------------------------------------------------
  */
 
-define('MESSAGE', 'message');
-define('MESSAGE_SUCCESS', 'success');
-define('MESSAGE_WARNING', 'warning');
-define('MESSAGE_ERROR', 'error');
+define('MESSAGE_SUCCESS',		'message_success');
+define('MESSAGE_WARNING',		'message_warning');
+define('MESSAGE_ERROR',			'message_error');
 
 /**
  * ---------------------------------------------------------------------------

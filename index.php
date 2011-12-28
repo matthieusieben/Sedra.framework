@@ -44,6 +44,7 @@ require SYSTEM_DIR.'bootstrap.php';
 $controller_name = Url::segment(0, config('controller', 'Home'));
 # Load the controller
 $controller = Load::controller($controller_name);
+debug($controller, 'Main controller');
 # Generate the page
 Controller::generate($controller);
 # Render the controller

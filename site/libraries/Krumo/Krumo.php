@@ -15,5 +15,5 @@ function krumo_hook($_, $variable) {
 	return $variable;
 }
 
-# Unregister any other dumper and setup krumo as one
+# Setup krumo as dumper
 Hook::register(HOOK_DUMP, 'krumo_hook');

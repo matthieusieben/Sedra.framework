@@ -239,7 +239,7 @@ function is_php($version = '5.0.0')
 }
 
 /**
- * Set a message to show to the user (MESSAGE, MESSAGE_SUCCESS, MESSAGE_WARNING, or MESSAGE_ERROR).
+ * Set a message to show to the user (MESSAGE_SUCCESS, MESSAGE_WARNING, or MESSAGE_ERROR).
  *
  * @param string $type of message
  * @param string $value the message to store. This value will be translated.

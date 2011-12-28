@@ -21,16 +21,16 @@ class Cache {
 		}
 		$key = Hook::call(HOOK_CACHE_KEY, $key);
 
-		if(self::exists($key)) {
-			# TODO
-			$value = NULL;
 
-			list($key, $value) = Hook::call(HOOK_CACHE_GET, array($key, $value));
-			
-			return $value;
-		}
+		
+		$result = $query->execute();
+		
+		$num_rows = $query->countQuery()->execute()->fetchField();
 
-		return FALSE;
+		$value = NULL;
+
+		list($key, $value) = Hook::call(HOOK_CACHE_GET, array($key, $value));
+		return $value;
 	}
 	
 	public static function exists($key)
@@ -42,5 +42,30 @@ class Cache {
 
 		# TODO
 		return FALSE;
+	}
+
+	private static function make_query($conditions) {
+		$max_age = config('cache/age', CACHE_MAX_AGE);
+		
+		$query = db_select('cache', 'c');
+		$query->condition('timestamp', $value, );
+		
+		foreach($conditions as $key => $value) {
+			switch ($key) {
+			case 'content': # text fields
+				$query->condition($key, $value);
+				break;
+
+			default:
+				$query->condition($key, $value);
+				break;
+			}
+		}
+		return $query;
+	}
+
+	public static function delete($key)
+	{
+		# TODO
 	}
 }

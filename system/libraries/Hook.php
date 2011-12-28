@@ -13,7 +13,7 @@ class Hook {
 	 * @param string $event the event to which attach a callback
 	 * @param callback $callback the callback to execute
 	 * @param mixed $argument the first argument that will be used upon hook call
-	 * @return TRUE iif the callback provided is callable
+	 * @return TRUE iif the callback provided is valid (i.e. callable)
 	 */
 	public static function register($event, $callback, $argument = NULL)
 	{
