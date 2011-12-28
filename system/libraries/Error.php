@@ -25,14 +25,12 @@ class Error
 	public static function exception(Exception $e)
 	{
 		$code = 500;
-		$heading = 'Exception Error';
+		$heading = 'Runtime Error';
 
 		if($e instanceof SedraException) {
 			$code = $e->getCode();
 			$heading = $e->getHeading();
 		}
-
-		set_status_header($code);
 
 		try {
 			$data = array(
@@ -42,7 +40,7 @@ class Error
 
 			echo Load::view('exception', $data);
 		} catch (Exception $exception) {
-			fatal($e->getMessage(), $heading, $header, $e->getFile(), $e->getLine());
+			fatal($e->getMessage(), $heading, $code, $e->getFile(), $e->getLine());
 		}
 		exit(1);
 	}

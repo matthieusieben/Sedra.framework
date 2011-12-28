@@ -350,7 +350,7 @@ function reg($k, $v=null)
 function set_status_header($code = 200, $text = '')
 {
 	if(headers_sent()) return;
-	
+
 	$stati = array(
 		200	=> 'OK',
 		201	=> 'Created',

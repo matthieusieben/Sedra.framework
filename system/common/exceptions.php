@@ -31,9 +31,8 @@ extends SedraException
 
 	public function __construct($message, $severity, $file = NULL, $line = NULL) {
 		parent::__construct(
-			'Error Exception',
-			'PHP Error: !message',
-			array('!message' => "\n" . $message));
+			'Runtime Error',
+			t($message));
 		$this->severity = $severity;
 		$this->file = $file;
 		$this->line = $line;

@@ -13,7 +13,7 @@ return array(
 		'model' => 'mod&egrave;le',
 		'helper' => 'biblioth&egrave;que de fonctions',
 		'view' => 'vue',
-	'Error Exception' => 'Exception erreur',
+	'Runtime Error' => 'Erreur d&#x27;ex&eacute;cution',
 	'Page not found' => 'Page inexistante',
 	'The URL you requested @url was not found on this server.' => 'La page que vous tentez d&#x27;acc&eacute;der &quot;@url&quot; n&#x27;existe pas sur ce serveur.',
 	'You do not have the permission to view this page.' => 'Vous ne disposez pas de droits suffisants pour acc&eacute;der &agrave; cette page.',
