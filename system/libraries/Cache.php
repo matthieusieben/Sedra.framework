@@ -1,7 +1,7 @@
 <?php
 
 {
-	define(CACHE_PERMANENT, 0);
+	define('CACHE_PERMANENT', 0);
 
 	Load::db();
 

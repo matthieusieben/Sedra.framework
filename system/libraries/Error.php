@@ -9,8 +9,8 @@ class Error
 {
 	public static function handler($severity, $message, $file, $line)
 	{
-		if(($severity === E_STRICT) || ($severity === E_DEPRECATED)) {
-			# We don't bother with "strict" and "deprecated" notices.
+		if(($severity === E_STRICT) || ($severity === E_WARNING) || ($severity === E_DEPRECATED) || ($severity === E_NOTICE)) {
+			# We don't bother with notices and warnings.
 			if(DEVEL) {
 				message(MESSAGE_WARNING, "PHP notice ({$severity}) :\n{$message}\nIn file: {$file}:{$line}");
 			}
@@ -20,7 +20,6 @@ class Error
 		}
 		return TRUE;
 	}
-
 
 	public static function exception(Exception $e)
 	{
