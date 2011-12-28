@@ -7,31 +7,52 @@ class Hook {
 	
 	public static $hooks = array();
 	
-	public static function register($step, $callback, $unregister_others = FALSE)
+	/**
+	 * Attach (or remove) a callbacks to an event.
+	 *
+	 * @param string $event the event to which attach a callback
+	 * @param callback $callback the callback to execute
+	 * @param mixed $argument the first argument that will be used upon hook call
+	 * @return TRUE iif the callback provided is callable
+	 */
+	public static function register($step, $callback, $argument = NULL)
 	{
-		if($callback === FALSE) {
-			unset(self::$hooks[$step]);
+		if(is_callable($callback)) {
+			self::$hooks[$step][] = array(
+				'callback' => $callback,
+				'argument' => $argument,
+			);
+			return TRUE;
 		}
-		elseif($unregister_others) {
-			self::$hooks[$step] = array($callback);
-		}
-		else {
-			self::$hooks[$step][] = $callback;
-		}
+		return FALSE;
 	}
 
-	public static function call($step, $arg = NULL)
+	/**
+	 * Trigger the callback associated with an event.
+	 *
+	 * @param string $event the event to trigger
+	 * @param mixed $result a second argument for the callable function
+	 * @return the $result variable altered by every callback
+	 */
+	public static function call($step, $result = NULL)
 	{
 		if(self::registered($step)) {
-			foreach(self::$hooks[$step] as $h) {
-				if(is_callable($h)) {
-					$arg = call_user_func($h, $arg);
-				}
+			foreach(self::$hooks[$step] as $hook) {
+				$callback = $hook['callback'];
+				$argument = $hook['argument'];
+				
+				$result = call_user_func($callback, $argument, $result);
 			}
 		}
-		return $arg;
+		return $result;
 	}
 
+	/**
+	 * Allows to know if a callback was associated with some event
+	 *
+	 * @param string $event 
+	 * @return TRUE iif a valid callback was associated the the event
+	 */
 	public static function registered($step)
 	{
 		return !empty(self::$hooks[$step]);

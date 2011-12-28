@@ -68,18 +68,16 @@ if (DEVEL) {
  */
 function dump()
 {	
-	$s = '';
 	if(Hook::registered(HOOK_DUMP)) {
 		foreach(func_get_args() as $v) {
-			$s .= Hook::call(HOOK_DUMP, $v);
+			Hook::call(HOOK_DUMP, $v);
 		}
 	}
 	else {
 		foreach(func_get_args() as $v) {
-			$s .= '<pre>'. html($v===NULL ? 'NULL' : (is_scalar($v)?$v:print_r($v,1))) ."</pre>\n";
+			echo '<pre>'. html($v===NULL ? 'NULL' : (is_scalar($v)?$v:print_r($v,1))) ."</pre>\n";
 		}
 	}
-	echo $s;
 }
 
 /**
