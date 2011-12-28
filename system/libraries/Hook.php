@@ -15,10 +15,10 @@ class Hook {
 	 * @param mixed $argument the first argument that will be used upon hook call
 	 * @return TRUE iif the callback provided is callable
 	 */
-	public static function register($step, $callback, $argument = NULL)
+	public static function register($event, $callback, $argument = NULL)
 	{
 		if(is_callable($callback)) {
-			self::$hooks[$step][] = array(
+			self::$hooks[$event][] = array(
 				'callback' => $callback,
 				'argument' => $argument,
 			);
@@ -34,10 +34,10 @@ class Hook {
 	 * @param mixed $result a second argument for the callable function
 	 * @return the $result variable altered by every callback
 	 */
-	public static function call($step, $result = NULL)
+	public static function call($event, $result = NULL)
 	{
-		if(self::registered($step)) {
-			foreach(self::$hooks[$step] as $hook) {
+		if(self::registered($event)) {
+			foreach(self::$hooks[$event] as $hook) {
 				$callback = $hook['callback'];
 				$argument = $hook['argument'];
 				
@@ -53,8 +53,8 @@ class Hook {
 	 * @param string $event 
 	 * @return TRUE iif a valid callback was associated the the event
 	 */
-	public static function registered($step)
+	public static function registered($event)
 	{
-		return !empty(self::$hooks[$step]);
+		return !empty(self::$hooks[$event]);
 	}
 }
