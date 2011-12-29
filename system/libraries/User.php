@@ -18,6 +18,8 @@ class User {
 	protected $login;
 	protected $status;
 
+	protected $updated = FALSE;
+
 	public function __construct($user_data)
 	{
 		$this->uid = $user_data['uid'];
@@ -33,7 +35,7 @@ class User {
 	}
 
 	public function set_data($key, $value = NULL) {
-		$this->was_updated();
+		$this->updated = TRUE;
 
 		if(is_array($key)) {
 			foreach($key as $k => $v) {
@@ -69,40 +71,34 @@ class User {
 			break;
 		}
 
-		$this->was_updated();
+		$this->updated = TRUE;
 		$this->{$field} = $value;
 		
 		return TRUE;
 	}
 
-	/**
-	 * undocumented function
-	 *
-	 * @return	void
-	 * @todo	Check that User::current() has the right to do this.
-	 */
 	public function save()
 	{
-		$fields = array(
-			'data' => serialize($this->data),
-			);
+		if($this->uid !== ANONYMOUS_UID) {
+			$fields = array(
+				'data' => serialize($this->data),
+				);
 
-		foreach(User::$fields as $field) {
-			$fields[$field] = $this->{$field};
+			foreach(User::$fields as $field) {
+				$fields[$field] = $this->{$field};
+			}
+
+			db_update('users')
+		    	->fields($fields)
+		    	->condition('uid', $this->uid)
+		    	->execute();
 		}
-		
-		db_update('users')
-	    	->fields($fields)
-	    	->condition('uid', $this->uid)
-	    	->execute();
 	}
 
-	private $updated = FALSE;
-	private function was_updated()
+	private function __destruct()
 	{
-		if(!$this->updated) {
-			$this->updated = TRUE;
-			Hook::register(HOOK_SHUTDOWN, array(&$this, 'save'));
+		if($this->updated) {
+			$this->save();
 		}
 	}
 

@@ -137,8 +137,9 @@ class Lang
 	 */
 	public static function set($language)
 	{
-		$language = self::validate($language);
-		return self::load($language) ? self::$language = $language : self::current();
+		self::$language = self::validate($language);
+		self::autoload();
+		return self::current();
 	}
 
 	/**
@@ -228,13 +229,18 @@ class Lang
 		}
 	}
 
+	private static function autoload() {
+		return self::load(self::current());
+	}
+
 	private static function load($language)
 	{
+		$loaded = FALSE;
 		foreach(self::$folders as $folder)
 		{
-			self::load_file($folder, $language);
+			$loaded = self::load_file($folder, $language) || $loaded;
 		}
-		return TRUE;
+		return $loaded;
 	}
 
 	/**

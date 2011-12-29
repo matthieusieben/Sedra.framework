@@ -6,21 +6,19 @@
 	Load::db();
 
 	# Delete old entries
-	debug(Cache::garbageCollection(), 'Cache items deleted');
+	Cache::garbageCollection();
 }
 
 class Cache {
 	public static function set($key, $data, $permanent = FALSE)
 	{
-		if(empty($key)) {
-			return FALSE;
-		}
-		$key = Hook::call(HOOK_CACHE_KEY, $key);
-
+		# Hook
 		list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
 
+		# Cache lifetime
 		$lifetime = config('cache/lifetime', CACHE_MAX_AGE);
 
+		# Setup fields
 		$fields = array(
 			'serialized' => 0,
 			'expire' => $permanent ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
@@ -28,14 +26,15 @@ class Cache {
 			);
 
 		if (!is_string($data)) {
-	      $fields['data'] = serialize($data);
-	      $fields['serialized'] = 1;
-	    }
-	    else {
-	      $fields['data'] = $data;
-	      $fields['serialized'] = 0;
-	    }
+			$fields['data'] = serialize($data);
+			$fields['serialized'] = 1;
+		}
+		else {
+			$fields['data'] = $data;
+			$fields['serialized'] = 0;
+		}
 
+		# Insert into database
 		try {
 			$query = db_merge('cache')
 				->key($key)
@@ -43,17 +42,12 @@ class Cache {
 				->execute();
 		}
 		catch (Exception $e) {
-			# The database may not be available, so we'll ignore cache_set requests.
+			# The database may not be available.
 		}
 	}
 
 	public static function get($key)
 	{
-		if(empty($key)) {
-			return FALSE;
-		}
-		$key = Hook::call(HOOK_CACHE_KEY, $key);
-
 		$query = db_select('cache', 'c')
 			->condition('expire', REQUEST_TIME, '>');
 		self::query_add_keys($query, $key);
