@@ -14,7 +14,7 @@
 		'$_REQUEST' => $_REQUEST,
 		'$GLOBALS' => $GLOBALS,
 		), t('Environment')); ?>
-	<?php debug(round((microtime() - START_TIME) * 1000) . ' ms', t('Execution Time')); ?>
+	<?php debug(round((microtime() - START_TIME) * 1000) . ' ms', t('Generation Time')); ?>
 	<div id="debug">
 		<?php if ($variables = debug()): ?>
 			<?php foreach ($variables as $var): ?>
@@ -28,5 +28,6 @@
 				<?php endif ?>
 			<?php endforeach ?>
 		<?php endif ?>
+		<?php echo "<!-- Execution time : <?php echo round((microtime() - START_TIME) * 1000) . ' ms'; ?> -->"; ?>
 	</div>
-<?php endif ?>
+<?php endif; ?>

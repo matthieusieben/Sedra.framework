@@ -119,12 +119,17 @@ define('MESSAGE_ERROR',			'message_error');
 
 define('HOOK_BOOT',					$i=0);
 define('HOOK_SHUTDOWN',				++$i);
+
 define('HOOK_DUMP',					++$i);
+
 define('HOOK_VIEW_NAME',			++$i);
 define('HOOK_VIEW_DATA',			++$i);
 define('HOOK_VIEW_OUTPUT',			++$i);
-define('HOOK_GENERATE_CONTROLLER',	++$i);
-define('HOOK_RENDER_CONTROLLER',	++$i);
+
+define('HOOK_CONTROLLER_GENERATE',	++$i);
+define('HOOK_CONTROLLER_RENDER',	++$i);
+define('HOOK_CONTROLLER_DISPLAY',	++$i);
+
 define('HOOK_CACHE_KEY',			++$i);
 define('HOOK_CACHE_SET',			++$i);
 define('HOOK_CACHE_GET',			++$i);

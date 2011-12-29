@@ -52,3 +52,5 @@ debug($controller, 'Main controller');
 Controller::generate($controller);
 # Render the controller
 Controller::render($controller);
+# Display the controller
+Controller::display($controller);

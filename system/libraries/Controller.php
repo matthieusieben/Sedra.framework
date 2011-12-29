@@ -7,6 +7,7 @@ abstract class Controller {
 
 	public $method	= 'index';
 	public $content	= NULL;
+	public $html	= NULL;
 
 	/**
 	 * This constructor builds a Controller object
@@ -58,12 +59,35 @@ abstract class Controller {
 	}
 
 	/**
-	 * Prints $this->content
+	 * Evaluates $this->content and stores the result in $this->html
 	 *
 	 * @return void
 	 */
 	public function _render() {
-		echo $this->content;
+		ob_start();
+		
+		eval('?>'.$this->content);
+		
+		$this->html = ob_get_clean();
+	}
+
+	/**
+	 * Prints the result of this controller.
+	 *
+	 * @return void
+	 */
+	public function _display() {
+		echo $this->html;
+	}
+
+	public function __toString() {
+		if(!isset($this->content)) {
+			self::generate($this);
+		}
+		if(!isset($this->html)) {
+			self::render($this);
+		}
+		return $this->html;
 	}
 
 	/**
@@ -132,10 +156,6 @@ abstract class Controller {
 			if($user->uid === ANONYMOUS_UID) {
 				$key['language'] = $user->language;
 			}
-			else {
-				# A user may only diplay the website in one language
-				unset($key['language']);
-			}
 		}
 
 		return $this->cache_key += $key;
@@ -145,26 +165,54 @@ abstract class Controller {
 	/*                    Static functions and variables                    */
 	/************************************************************************/
 
-	public static function generate(Controller $c) {		
-		$cache_key = $c->_get_cache_key();
-		if($cache = Cache::get($cache_key)) {
-			# If in cache, set content from cache
-			$c->content = $cache->data;
-		} else {
-			# Not in cache, generate and set cache
-			try {
-				$c->_generate();
-			} catch (SedraException $e) {
-				throw DEVEL ? $e : new Sedra404Exception();
+	/**
+	 * Setup the content of a controller from the cache if it exists or from
+	 * is _generate() method.
+	 * 
+	 * @param Controller $c The controller to generate
+	 * @return void
+	 */
+	public static function generate(Controller $c) {	
+		if(!isset($c->content)) {	
+			$cache_key = $c->_get_cache_key();
+			if($cache = Cache::get($cache_key)) {
+				# If in cache, set content from cache
+				$c->content = $cache->data;
+			} else {
+				# Not in cache, generate and set cache
+				try {
+					$c->_generate();
+				} catch (SedraException $e) {
+					throw DEVEL ? $e : new Sedra404Exception();
+				}
+				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);
+				Cache::set($cache_key, $c->content);
 			}
-			$c = Hook::call(HOOK_GENERATE_CONTROLLER, $c);
-			Cache::set($cache_key, $c->content);
 		}
 	}
 
+	/**
+	 * This function renders the controller by evaluating the php code contained
+	 * in its $content variable and storing the result in $hmtl.
+	 *
+	 * @param Controller $c 
+	 * @return void
+	 */
 	public static function render(Controller $c) {
-		$c = Hook::call(HOOK_RENDER_CONTROLLER, $c);
-		set_status_header(200);
-		$c->_render();
+		if(!isset($c->html)) {
+			$c = Hook::call(HOOK_CONTROLLER_RENDER, $c);
+			$c->_render();
+		}
+	}
+
+	/**
+	 * Prints the controller's $html attribute.
+	 *
+	 * @param Controller $c 
+	 * @return void
+	 */
+	public static function display(Controller $c) {
+		$c = Hook::call(HOOK_CONTROLLER_DISPLAY, $c);
+		$c->_display();
 	}
 }
