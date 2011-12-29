@@ -18,4 +18,4 @@
 	<code class="sql"><pre><?php echo $e->query ?></pre></code>
 <?php endif ?>
 
-<?php require 'views/foot.php' ?>
+<?php require 'foot.php' ?>

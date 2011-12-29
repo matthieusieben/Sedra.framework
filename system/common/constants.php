@@ -117,14 +117,18 @@ define('MESSAGE_ERROR',			'message_error');
  * ---------------------------------------------------------------------------
  */
 
-define('HOOK_BOOT',					$i=0);
+define('HOOK_BOOTSTRAP',			$i=0);
 define('HOOK_SHUTDOWN',				++$i);
 
 define('HOOK_DUMP',					++$i);
 
-define('HOOK_VIEW_NAME',			++$i);
-define('HOOK_VIEW_DATA',			++$i);
-define('HOOK_VIEW_OUTPUT',			++$i);
+define('HOOK_URL_INITIALIZED',		++$i);
+define('HOOK_URL_MAKE',				++$i);
+define('HOOK_URL_FILE',				++$i);
+
+define('HOOK_LOAD_VIEW_NAME',		++$i);
+define('HOOK_LOAD_VIEW_DATA',		++$i);
+define('HOOK_LOAD_VIEW_OUTPUT',		++$i);
 
 define('HOOK_CONTROLLER_GENERATE',	++$i);
 define('HOOK_CONTROLLER_RENDER',	++$i);

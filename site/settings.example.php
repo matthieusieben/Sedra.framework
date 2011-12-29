@@ -37,4 +37,9 @@ $config['autoload/libaries'] = array(
 	'Krumo',
 );
 
+# Hooks to load at boot time
+$config['autoload/hooks'] = array(
+	'theming',
+);
+
 return $config;

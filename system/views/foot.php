@@ -15,7 +15,7 @@
 				<?php endforeach ?>
 				<div class="clear"></div>
 			<?php endif ?>
-			<?php require 'views/debug.php' ?>
+			<?php require 'debug.php' ?>
 		</div>
 	</div>
 </body>

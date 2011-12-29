@@ -1,6 +1,6 @@
 <?php
 
-Url::init();
+Url::_initialize();
 
 /**
  * Url
@@ -13,7 +13,7 @@ class Url
 
 	public static $segments		= array();
 
-	public static function init()
+	public static function _initialize()
 	{
 		# Get the query string
 		$uri = isset($_GET['q']) ? trim( $_GET['q'], '/' ) : '';
@@ -40,6 +40,8 @@ class Url
 		}
 
 		self::$uri = implode('/',self::$segments);
+		
+		Hook::call(HOOK_URL_INITIALIZED);
 	}
 
 	/**
@@ -96,6 +98,8 @@ class Url
 
 		$query_string = rtrim($query_string, '?') . ($id ? '#'.$id : '');
 
+		$query_string = Hook::call(HOOK_URL_MAKE, $query_string);
+
 		return BASE_URL.$query_string;
 	}
 
@@ -111,6 +115,8 @@ class Url
 
 	public static function file( $path )
 	{
+		$path = Hook::call(HOOK_URL_FILE, $path);
+
 		return is_file(BASE_DIR.$path) ? BASE_URL.str_replace(DIRECTORY_SEPARATOR,'/',$path) : NULL;
 	}
 

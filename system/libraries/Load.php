@@ -10,6 +10,7 @@ class Load
 		$libraries = (array) config('autoload/libaries');
 		$models = (array) config('autoload/models');
 		$helpers = (array) config('autoload/helpers');
+		$hooks = (array) config('autoload/hooks');
 
 		foreach($libraries as $library) {
 			Load::library($library);
@@ -21,6 +22,10 @@ class Load
 
 		foreach($helpers as $helper) {
 			Load::helper($helper);
+		}
+
+		foreach($hooks as $hook) {
+			Load::hook($hook);
 		}
 	}
 
@@ -75,12 +80,17 @@ class Load
 		}
 	}
 
-	public static function lang_file( $file )
+	public static function hook( $filename )
 	{
-		if( !include_module( 'helpers', $file ) )
+		if( !include_module( 'hooks', $filename ) )
 		{
-			throw new SedraLoadException( 'helper', $file );
+			throw new SedraLoadException( 'hook', $class );
 		}
+	}
+
+	public static function lang( $folder )
+	{
+		Lang::register_folder( $folder );
 	}
 
 	/**
@@ -89,18 +99,17 @@ class Load
 	 * @param string $name	The name of the view to load (eg 'admin/my_view')
 	 * @param string $data	An array containing variables to be extracted
 	 * @return string	The generated content from the view
+	 * @throws SedraLoadException if the view file cannot be found
 	 */
 	public static function view( $__name = 'index', $__data = array() )
 	{
 		# Alter parameters by hooks
-		$__name = Hook::call(HOOK_VIEW_NAME, $__name);
-		$__data = Hook::call(HOOK_VIEW_DATA, $__data);
+		$__name = Hook::call(HOOK_LOAD_VIEW_NAME, $__name);
+		$__data = Hook::call(HOOK_LOAD_VIEW_DATA, $__data);
+
 
 		# Get the file path
-		$__file = stream_resolve_include_path("views/$__name.php");
-
-		# Throw an exception if the file could not be found
-		if(!$__file) throw new SedraLoadException( 'view', $__name );
+		$__file = self::view_path( $__name );
 		
 		# Buffer the output
 		ob_start();
@@ -112,7 +121,36 @@ class Load
 		require $__file;
 
 		# Return the buffered output
-		return Hook::call(HOOK_VIEW_OUTPUT, ob_get_clean());
+		return Hook::call(HOOK_LOAD_VIEW_OUTPUT, ob_get_clean());
+	}
+
+	/**
+	 * Get the full path to a view file inside the include path.
+	 *
+	 * @param string $name The name of the view to load
+	 * @return The file name if it exists
+	 * @throws SedraLoadException if the file cannot be found
+	 */
+	public static function view_path($name) {
+		# Get the file path from different folders
+		$file = stream_resolve_include_path("$name.php");
+		if(!$file) $file = stream_resolve_include_path("views/$name.php");
+		# Throw an exception if the file could not be found
+		if(!$file) throw new SedraLoadException( 'view', $name );
+		return $file;
+	}
+
+	/**
+	 * Add a folder to the view path
+	 *
+	 * @param string $folder a folder within SITE_DIR
+	 * @return void
+	 * @see SITE_DIR
+	 */
+	public static function add_view_path($folder) {
+		if(is_dir(SITE_DIR.$folder)) {
+			set_include_path(SITE_DIR.$folder .PATH_SEPARATOR. get_include_path());
+		}
 	}
 
 	/*
