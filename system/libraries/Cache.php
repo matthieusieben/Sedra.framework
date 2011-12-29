@@ -1,41 +1,39 @@
 <?php
 
-{
-	define('CACHE_PERMANENT', 0);
+# Expiration time of permanent cache data
+define('CACHE_PERMANENT', 0);
 
-	Load::db();
-
-	# Delete old entries
-	Cache::garbageCollection();
-}
+# Load the database library
+Load::db();
 
 class Cache {
 	public static function set($key, $data, $permanent = FALSE)
 	{
-		# Hook
-		list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
-
-		# Cache lifetime
-		$lifetime = config('cache/lifetime', CACHE_MAX_AGE);
-
-		# Setup fields
-		$fields = array(
-			'serialized' => 0,
-			'expire' => $permanent ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
-			'created' => REQUEST_TIME,
-			);
-
-		if (!is_string($data)) {
-			$fields['data'] = serialize($data);
-			$fields['serialized'] = 1;
-		}
-		else {
-			$fields['data'] = $data;
-			$fields['serialized'] = 0;
-		}
-
-		# Insert into database
 		try {
+			# Alter key or data
+			list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
+
+			# Cache lifetime
+			$lifetime = config('cache/lifetime', CACHE_MAX_AGE);
+
+			# Setup fields
+			$fields = array(
+				'serialized' => 0,
+				'expire' => $permanent ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
+				'created' => REQUEST_TIME,
+				);
+
+			# Setup data fields
+			if (!is_string($data)) {
+				$fields['data'] = serialize($data);
+				$fields['serialized'] = 1;
+			}
+			else {
+				$fields['data'] = $data;
+				$fields['serialized'] = 0;
+			}
+
+			# Insert into database
 			$query = db_merge('cache')
 				->key($key)
 				->fields($fields)
@@ -43,40 +41,56 @@ class Cache {
 		}
 		catch (Exception $e) {
 			# The database may not be available.
+			var_dump($e); // XXX
 		}
 	}
 
 	public static function get($key)
 	{
-		$query = db_select('cache', 'c')
-			->condition('expire', REQUEST_TIME, '>');
-		self::query_add_keys($query, $key);
-		self::query_add_fields($query);
+		try {
+			# Build the querry
+			$query = db_select('cache', 'c')
+				->fields('c', array('expire', 'created', 'serialized', 'data'))
+				->condition('expire', REQUEST_TIME, '>');
+			foreach($key as $k => $v)
+				$query->condition($k, $v);
 
-		$result = $query->execute();
-		$value = $result->fetchField();
+			# Execute the querry and get the first row
+			$result = $query->execute();
+			$cache = $result->fetch();
 
-		if($value === FALSE OR $result->fetchField() !== FALSE) {
-			// If no or more than one item, return NULL.
-			return FALSE;
+			# Check that there is one and only one row
+			if($cache === FALSE OR $result->fetch() !== FALSE) {
+				return NULL;
+			}
+
+			# Unszerialize data as needed
+			if($cache->serialized) {			
+				$cache->data = unserialize($cache->data);
+			}
+
+			# Alter data
+			list($key, $cache) = Hook::call(HOOK_CACHE_GET, array($key, $cache));
+
+			# Retrun the cache object
+			return $cache;
 		}
-
-		$data = $value->serialized ? unserialize($value->data) : $value->data;
-
-		list($key, $data) = Hook::call(HOOK_CACHE_GET, array($key, $data));
-		return $data;
+		catch (Exception $e) {
+			# The database may not be available.
+			return NULL;
+		}
 	}
 
 	public static function clear($key = array())
 	{
-		# Delete specific entries
+		self::garbageCollection();
 		if(!empty($key)) {
 			$query = db_delete('cache');
-			self::query_add_keys($query, $key);
+			foreach($key as $k => $v)
+				$query->condition($k, $v);
 			$query->execute();
 			return $query->execute();
 		}
-
 		return 0;
 	}
 
@@ -88,16 +102,13 @@ class Cache {
 			->execute();
 	}
 
-	private static function &query_add_fields(&$query) {
-		$query->fields('c', array('data', 'expire'));
-		return $query;
-	}
-
-	private static function &query_add_keys(&$query, $conditions) {
-		unset($condition['data'], $condition['expire']);
-		foreach($conditions as $key => $value) {
-			$query->condition($key, $value);
-		}
-		return $query;
+	public static function isEmpty() {
+		self::garbageCollection();
+		$query = db_select('cache');
+		$query->addExpression('1');
+		$result = $query->range(0, 1)
+			->execute()
+			->fetchField();
+		return empty($result);
 	}
 }

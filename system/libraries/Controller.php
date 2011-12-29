@@ -20,7 +20,7 @@ abstract class Controller {
 	public function __construct($arg) {
 		# Get the method name
 		$this->method = Url::segment(1, 'index');
-		# XXX : Enable hard caching by default. (TODO : make this optional?)
+		# Hard caching enabled by default.
 		$this->cache_flags |= CACHE_ENABLED;
 	}
 
@@ -112,9 +112,9 @@ abstract class Controller {
 
 	public static function generate(Controller $c) {		
 		$cache_key = $c->_get_cache_key();
-		if($content = Cache::get($cache_key)) {
+		if($cache = Cache::get($cache_key)) {
 			# If in cache, set content from cache
-			$c->content = $content;
+			$c->content = $cache->data;
 		} else {
 			# Not in cache, generate and set cache
 			try {
