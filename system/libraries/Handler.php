@@ -1,22 +1,32 @@
 <?php
+
 /**
  * Provides error and exception handling with detailed backtraces.
  *
  * @package		Sedra
  * @author		Matthieu Sieben
  */
-class Error
+class Handler
 {
-	public static function handler($severity, $message, $file, $line)
+	public static function php_error($severity, $message, $file, $line)
 	{
-		if(($severity === E_STRICT) || ($severity === E_WARNING) || ($severity === E_DEPRECATED) || ($severity === E_NOTICE)) {
+		if(	($severity === E_STRICT) || ($severity === E_WARNING) ||
+			($severity === E_DEPRECATED) || ($severity === E_NOTICE) ) {
 			# We don't bother with notices and warnings.
 			if(DEVEL) {
-				message(MESSAGE_WARNING, "PHP notice ({$severity}) :\n{$message}\nIn file: {$file}:{$line}");
+				message(
+					MESSAGE_ERROR,
+					"PHP error (@severity) in file @file:@line\n@message",
+					array(
+						'@severity' => $severity,
+						'@message' => $message,
+						'@file' => $file,
+						'@line' => $line,
+						));
 			}
 		}
 		else if (($severity & error_reporting()) === $severity) {
-			throw new SedraErrorException($message, $severity, $file, $line);
+			throw new SedraPHPErrorException($message, $severity, $file, $line);
 		}
 		return TRUE;
 	}

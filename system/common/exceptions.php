@@ -24,14 +24,14 @@ extends Exception
 	}
 }
 
-class SedraErrorException
+class SedraPHPErrorException
 extends SedraException
 {
 	public $severity;
 
 	public function __construct($message, $severity, $file = NULL, $line = NULL) {
 		parent::__construct(
-			'Runtime Error (severity @severity)',
+			'PHP Error (@severity)',
 			t($message),
 			array(
 			  '@severity' => $severity,

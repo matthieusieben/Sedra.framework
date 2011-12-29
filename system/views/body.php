@@ -13,7 +13,7 @@
 				<ul id="messages">
 					<?php foreach ($_messages as $_type => $_list): ?>
 						<?php foreach ($_list as $_message): ?>
-							<li class="<?php echo $_type ?>"><?php echo $_message ?></li>
+							<li class="<?php echo $_type ?>"><?php echo nl2br($_message); ?></li>
 						<?php endforeach ?>
 					<?php endforeach ?>
 				</ul>

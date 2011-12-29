@@ -155,31 +155,6 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 	exit();
 }
 
-if ( !function_exists('file_put_contents') )
-{
-	function file_put_contents($filename, $contents)
-	{
-		$handle = fopen($filename, FOPEN_WRITE_CREATE);
-		fwrite($handle, $contents);
-		fclose($handle);
-	}
-}
-
-if ( !function_exists('file_get_contents') )
-{
-	function file_get_contents($filename)
-	{
-		$handle = fopen($filename, FOPEN_READ);
-		$contents = '';
-		while (!feof($handle))
-		{
-			$contents .= fread($handle, 8192);
-		}
-		fclose($handle);
-		return $contents;
-	}
-}
-
 function include_module( $__dir, $__module )
 {
 	if($__path = stream_resolve_include_path("$__dir/$__module.php")) {
@@ -245,12 +220,12 @@ function is_php($version = '5.0.0')
  * @param string $value the message to store. This value will be translated.
  * @return mixed the array of messages if $value is not specified
  */
-function message($type = NULL, $value = NULL)
+function message($type = NULL, $value = NULL, $strings = array())
 {
 	static $messages = array();
 
 	if($value) {
-		return $messages[$type][] = t($value);
+		return $messages[$type][] = t($value, $strings);
 	}
 	elseif($type) {
 		return val($messages[$type]);

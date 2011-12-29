@@ -52,8 +52,8 @@ function __autoload($class) {
  * ---------------------------------------------------------------------------
  */
 
-set_error_handler(array('Error','handler'));
-set_exception_handler(array('Error','exception'));
+set_error_handler(array('Handler','php_error'));
+set_exception_handler(array('Handler','exception'));
 
 /*
  * ---------------------------------------------------------------------------

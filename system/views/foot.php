@@ -15,7 +15,7 @@
 				<?php endforeach ?>
 				<div class="clear"></div>
 			<?php endif ?>
-			<?php require 'debug.php' ?>
+			<?php echo file_get_contents('debug.php', TRUE); ?>
 		</div>
 	</div>
 </body>
