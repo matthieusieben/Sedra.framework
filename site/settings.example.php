@@ -1,14 +1,14 @@
 <?php
 
 $config['controller'] = 'Home';
-$config['language'] = 'en';
+$config['language'] = 'fr';
 $config['timezone'] = 'Europe/Brussels';
 
 $config['databases']['default']['default'] = array (
-	'database' =>	'sedra_framework',
+	'database' =>	'sedra',
 	'username' =>	'sedra',
 	'password' =>	'sedra',
-	'host' =>		'localhost',
+	'host' =>		'127.0.0.1',
 	'port' =>		'',
 	'driver' =>		'mysql',
 	'prefix' =>		'',

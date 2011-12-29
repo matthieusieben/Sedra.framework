@@ -16,6 +16,7 @@
  * SCRIPT_PATH					Absolute uri path to this script
  *
  * BASE_URL						Url to base folder
+ * 
  */
 
 define('AJAX_REQUEST', strtolower(val($_SERVER['HTTP_X_REQUESTED_WITH'])) === 'xmlhttprequest');
@@ -36,15 +37,18 @@ define('BASE_URL', PROTOCOL.$_SERVER['SERVER_NAME'].(PORT?':'.PORT:'').SCRIPT_PA
  * ---------------------------------------------------------------------------
  */
 
-define('REQUEST_TIME', $_SERVER['REQUEST_TIME']);
+define('REQUEST_TIME',			$_SERVER['REQUEST_TIME']);
 
 /**
  * ---------------------------------------------------------------------------
  * Language in which are written reference strings (English).
  * ---------------------------------------------------------------------------
+ * 
+ * REFERENCE_LANGUAGE			All reference strings are written in english
+ * 
  */
 
-define('REFERENCE_LANGUAGE', 'en');
+define('REFERENCE_LANGUAGE',	'en');
 
 /**
  * ---------------------------------------------------------------------------
@@ -56,6 +60,7 @@ define('REFERENCE_LANGUAGE', 'en');
  * ANONYMOUS_RID				Guest role id
  * ADMIN_RID					Administrator role id
  * MEMBER_RID					Registered member role id
+ * 
  */
 
 define('ANONYMOUS_UID',			0);
@@ -70,10 +75,15 @@ define('MEMBER_RID',			2);
  * ---------------------------------------------------------------------------
  *
  * CACHE_ENABLED				TODO
- * CACHE_LEVEL_URL				TODO
+ * CACHE_LEVEL_URL				Cache items based on the url
  * CACHE_LEVEL_USER				User dependent cache level
  * CACHE_LEVEL_ROLE				Role dependent cache level
  * CACHE_LEVEL_LANG				Language dependent cache level
+ * CACHE_LEVEL_METHOD			Controller method
+ * 
+ * CACHE_DEFAULT_FLAGS			Cache flags used by the default Controller
+ * CACHE_DEFAULT_LIFETIME		Default lifetime for the cache if not set by config
+ * 
  */
 
 define('CACHE_ENABLED',			$i =1);
@@ -83,14 +93,18 @@ define('CACHE_LEVEL_ROLE',		$i*=2);
 define('CACHE_LEVEL_LANG',		$i*=2);
 define('CACHE_LEVEL_METHOD',	$i*=2);
 
-define('DEFAULT_CACHE_FLAGS',	CACHE_ENABLED | CACHE_LEVEL_METHOD | CACHE_LEVEL_LANG);
-
-define('CACHE_MAX_AGE',			3600*24);
+define('CACHE_DEFAULT_FLAGS',	CACHE_ENABLED | CACHE_LEVEL_METHOD | CACHE_LEVEL_LANG);
+define('CACHE_DEFAULT_LIFETIME',3600*24);
 
 /**
  * ---------------------------------------------------------------------------
- * Messages types
+ * Messages types to use with message()
  * ---------------------------------------------------------------------------
+ * 
+ * MESSAGE_SUCCESS				Success message
+ * MESSAGE_WARNING				User warning
+ * MESSAGE_ERROR				Error message
+ * 
  */
 
 define('MESSAGE_SUCCESS',		'message_success');
@@ -99,7 +113,7 @@ define('MESSAGE_ERROR',			'message_error');
 
 /**
  * ---------------------------------------------------------------------------
- * Events
+ * Events called through the Hook class for which callback ca be registered
  * ---------------------------------------------------------------------------
  */
 

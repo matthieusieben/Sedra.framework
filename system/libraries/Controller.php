@@ -2,7 +2,7 @@
 
 abstract class Controller {
 
-	public $cache_flags	= DEFAULT_CACHE_FLAGS;
+	public $cache_flags	= CACHE_DEFAULT_FLAGS;
 	public $cache_key	= array();
 
 	public $method	= 'index';
@@ -40,7 +40,11 @@ abstract class Controller {
 			throw new Sedra404Exception();
 		}
 
-		return call_user_func($callback);
+		return $this->content = call_user_func($callback);
+	}
+
+	public function _render() {
+		echo $this->content;
 	}
 
 	public function _get_cache_key() {
@@ -118,7 +122,7 @@ abstract class Controller {
 		} else {
 			# Not in cache, generate and set cache
 			try {
-				$c->content = $c->_generate();
+				$c->_generate();
 			} catch (SedraException $e) {
 				throw DEVEL ? $e : new Sedra404Exception();
 			}
@@ -130,6 +134,6 @@ abstract class Controller {
 	public static function render(Controller $c) {
 		$c = Hook::call(HOOK_RENDER_CONTROLLER, $c);
 		set_status_header(200);
-		echo $c->content;
+		$c->_render();
 	}
 }

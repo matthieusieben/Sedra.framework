@@ -6,7 +6,19 @@ define('CACHE_PERMANENT', 0);
 # Load the database library
 Load::db();
 
+/**
+ * Caching class allowing to store and get objects from the database.
+ */
 class Cache {
+
+	/**
+	 * Set a value in the datablase
+	 *
+	 * @param array $key The set of keys identifying this object
+	 * @param mixed $data The data to store
+	 * @param bool $permanent Should this data expire after a certain period of time?
+	 * @return void
+	 */
 	public static function set($key, $data, $permanent = FALSE)
 	{
 		try {
@@ -14,7 +26,7 @@ class Cache {
 			list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
 
 			# Cache lifetime
-			$lifetime = config('cache/lifetime', CACHE_MAX_AGE);
+			$lifetime = config('cache/lifetime', CACHE_DEFAULT_LIFETIME);
 
 			# Setup fields
 			$fields = array(
@@ -41,10 +53,15 @@ class Cache {
 		}
 		catch (Exception $e) {
 			# The database may not be available.
-			var_dump($e); // XXX
 		}
 	}
 
+	/**
+	 * Get content from the cache
+	 *
+	 * @param array $key The set of keys identifying the object to get
+	 * @return sdtClass containing the data and its creation and expiration timestamps
+	 */
 	public static function get($key)
 	{
 		try {
@@ -81,19 +98,27 @@ class Cache {
 		}
 	}
 
+	/**
+	 * Remove data from the cache
+	 *
+	 * @param array $key The set of keys identifying the object to remove. Empty array will remove all.
+	 * @return int The number of items deleted
+	 */
 	public static function clear($key = array())
 	{
 		self::garbageCollection();
-		if(!empty($key)) {
-			$query = db_delete('cache');
-			foreach($key as $k => $v)
-				$query->condition($k, $v);
-			$query->execute();
-			return $query->execute();
-		}
-		return 0;
+		$query = db_delete('cache');
+		foreach($key as $k => $v)
+			$query->condition($k, $v);
+		$query->execute();
+		return $query->execute();
 	}
 
+	/**
+	 * Clear outdated data from the cache
+	 *
+	 * @return void
+	 */
 	public static function garbageCollection()
 	{
 		return db_delete('cache')
@@ -102,6 +127,11 @@ class Cache {
 			->execute();
 	}
 
+	/**
+	 * Check wether there is data in the cache
+	 *
+	 * @return true iif there is no valid data in the cache
+	 */
 	public static function isEmpty() {
 		self::garbageCollection();
 		$query = db_select('cache');
