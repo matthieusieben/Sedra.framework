@@ -22,6 +22,10 @@ class Cache {
 	public static function set($key, $data, $permanent = FALSE)
 	{
 		try {
+			if(empty($key)) {
+				return;
+			}
+
 			# Alter key or data
 			list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
 
@@ -33,7 +37,7 @@ class Cache {
 				'serialized' => 0,
 				'expire' => $permanent ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
 				'created' => REQUEST_TIME,
-				);
+			);
 
 			# Setup data fields
 			if (!is_string($data)) {
@@ -65,8 +69,9 @@ class Cache {
 	public static function get($key)
 	{
 		try {
-			if(empty($key))
+			if(empty($key)) {
 				return NULL;
+			}
 
 			# Build the querry
 			$query = db_select('cache', 'c')
