@@ -15,6 +15,15 @@ class Theme {
 	 * @throws SedraLoadException if the view file cannot be found
 	 */
 	public static function view( $name, $data = array() ) {
+		$data += array(
+			'body_class' => 'two_columns',
+			'blocks' => array(
+				'column' => array(
+				),
+				'footer' => array(
+				),
+			),
+		); # TODO : from cms
 		return Load::view(self::view_path($name), $data);
 	}
 

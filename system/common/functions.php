@@ -44,7 +44,7 @@ function close_buffers()
 }
 
 if (DEVEL) {
-	function debug($variable = NULL, $message = NULL, $backtrace = FALSE) {
+	function debug($variable = NULL, $message = NULL) {
 		static $vars = array();
 
 		if (func_num_args() == 0)
@@ -53,7 +53,6 @@ if (DEVEL) {
 		$vars[] = array(
 			'variable' => $variable,
 			'message' => $message,
-			'backtrace' => $backtrace ? debug_backtrace() : NULL,
 		);
 	}
 } else {

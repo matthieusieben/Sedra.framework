@@ -5,22 +5,6 @@
 * @author Kaloyan K. Tsvetkov <mrasnika@users.sourceforge.net>
 */
 
-.dump-backtrace,
-.dump-title {
-	background: #FADB61;
-	margin-bottom: -1em;
-	padding: 0.2em;
-	border: 1px solid black;
-	border-bottom: none;
-	font-family: arial;
-	font-weight: bold;
-}
-
-.dump-backtrace {
-	margin: -1em 0;
-	border-top: none;
-}
-
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
 ul.krumo-node {

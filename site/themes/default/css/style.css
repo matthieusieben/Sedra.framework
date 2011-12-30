@@ -3,6 +3,8 @@
 body {
 	font : normal 12px "Trebuchet MS", sans-serif;
 	color: #7b7b7b;
+	margin: 0;
+	padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -101,9 +103,18 @@ a:visited {
 
 /************* CONTENT ************/
 
-
+#messages,
 #container {
-
+	width: ;
 }
 
 
+/************* DEVEL ************/
+
+.dump-title {
+	font: normal 11px verdana ;
+	position:relative;
+	top:9px;
+	cursor:default;
+	line-height:2px;
+}

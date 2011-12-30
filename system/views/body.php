@@ -1,10 +1,6 @@
 <?php Load::helper('html'); ?>
 </head>
-<?php if (isset($body_class)): ?>
-	<body class="<?php echo $body_class; ?>">
-<?php else: ?>
-	<body>
-<?php endif ?>
+<body class="<?php echo val($body_class); ?>">
 	<div id="wrapper">
 		<div id="header">
 			<h1 id="name" class="main-box">
