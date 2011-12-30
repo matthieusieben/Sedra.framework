@@ -23,7 +23,7 @@ p {
 
 a {
 	text-decoration: none;
-	color: #4ba4c2;
+	color: #FFB400;
 }
 
 a:hover, a:active {
@@ -31,10 +31,22 @@ a:hover, a:active {
 }
 
 a:visited {
-	color: #6690A7;
+	color: #E4A000;
+}
+
+dl dt {
+	font-weight: bold;
 }
 
 /************* LAYOUT CSS ************/
+
+body {
+	background: #1e1e1e;
+}
+
+#wrapper {
+	background: #fff;
+}
 
 .main-box {
 	width : 768px;
@@ -46,7 +58,7 @@ a:visited {
 #header {
 	margin: 0px auto;
 	background: #565656;
-	border-bottom: 0.5em solid #3c3c3c;
+	border-bottom: 0.5em solid #1e1e1e;
 	overflow: hidden;
 }
 
@@ -67,7 +79,7 @@ a:visited {
 #menu li {
 	display: block;
 	float: left;
-	background : #3c3c3c;
+	background : #1e1e1e;
 	margin: 0;
 	padding: 0;
 }
@@ -124,9 +136,5 @@ a:visited {
 /************* DEVEL ************/
 
 .dump-title {
-	font: normal 11px verdana ;
-	position:relative;
-	top:9px;
-	cursor:default;
-	line-height:2px;
+	display: none;
 }
