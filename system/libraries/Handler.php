@@ -23,7 +23,7 @@ class Handler
 			}
 		}
 		else if (($severity & error_reporting()) === $severity) {
-			# Propagate error
+			# Propagate error as exception
 			throw new SedraPHPErrorException($message, $severity, $file, $line);
 		}
 		# Don't let the default error_handler continue
@@ -32,23 +32,15 @@ class Handler
 
 	public static function exception(Exception $e)
 	{
-		$code = 500;
-		$heading = 'Runtime Error';
-
-		if($e instanceof SedraException) {
-			$code = $e->getCode();
-			$heading = $e->getHeading();
-		}
-
 		try {
-			$data = array(
-				'previous_output' => close_buffers(),
-				'e' => $e,
+			$arg = array(
+				'exception' => $e,
+				'full-page' => TRUE,
 			);
-
-			echo Load::view('exception', $data);
+			$controller = Load::controller('ExceptionController', $arg);
+			echo $controller->__toString();
 		} catch (Exception $exception) {
-			fatal($e->getMessage(), $heading, $code, $e->getFile(), $e->getLine());
+			fatal($e->getMessage(), t('A Fatal Error Was Encountered'), 500, $e->getFile(), $e->getLine());
 		}
 		exit(1);
 	}

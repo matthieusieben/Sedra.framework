@@ -6,7 +6,7 @@
  * ---------------------------------------------------------------------------
  */
 
-set_include_path('./' . PATH_SEPARATOR . SITE_DIR . PATH_SEPARATOR . SYSTEM_DIR);
+set_include_path('./' .PATH_SEPARATOR. SITE_DIR .PATH_SEPARATOR. SYSTEM_DIR);
 
 /*
  * ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ error_reporting( DEVEL ? E_ALL : E_ERROR | E_PARSE );
 
 /*
  * ---------------------------------------------------------------------------
- * Boot
+ * For security, unset globals
  * ---------------------------------------------------------------------------
  */
 
@@ -51,6 +51,8 @@ function __autoload($class) {
  *  Define a custom error handler to render better PHP errors
  * ---------------------------------------------------------------------------
  */
+
+error_reporting(E_ALL);
 
 set_error_handler(array('Handler','php_error'));
 set_exception_handler(array('Handler','exception'));
@@ -73,7 +75,7 @@ Load::auto();
 
 /*
  * ---------------------------------------------------------------------------
- * Boot hook
+ * Early hook
  * ---------------------------------------------------------------------------
  */
 

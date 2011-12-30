@@ -103,23 +103,30 @@ class Url
 		return BASE_URL.$query_string;
 	}
 
-	public static function css( $file )
-	{
-		return self::file( 'css/'.$file );
-	}
-
-	public static function js( $file )
-	{
-		return self::file( 'js/'.$file );
-	}
-
+	/**
+	 * Get the url of a file located inside SITE_DIR.
+	 *
+	 * @param string $path 
+	 * @return string the url
+	 */
 	public static function file( $path )
 	{
-		$path = Hook::call(HOOK_URL_FILE, $path);
-
-		return is_file(BASE_DIR.$path) ? BASE_URL.str_replace(DIRECTORY_SEPARATOR,'/',$path) : NULL;
+		# Normalize $path
+		$real_path = realpath($path);
+		# If $real_path is into $dir
+		if(strpos($real_path, SITE_DIR) === 0) {
+			# Any hook to alter the path ?
+			$real_path = Hook::call(HOOK_URL_FILE, $real_path);
+			# get the location of $real_path relative to SITE_DIR
+			$relative_path = substr($real_path, strlen(SITE_DIR));
+			# make sure the url only contains '/' and no '\' (bacause of realpath)
+			$relative_url = strtr($relative_path, DIRECTORY_SEPARATOR, '/');
+			return SITE_URL.$relative_url;
+		}
+		return NULL;
 	}
 
+	// XXX KEEP THIS ?
 	public static function is_subpage_of($url)
 	{
 		if(strlen(self::$uri) < ($sl = strlen($url)))

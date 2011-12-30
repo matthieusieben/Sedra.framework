@@ -22,7 +22,7 @@ class Profile extends Controller {
 			'user' => User::current(),
 		);
 		
-		return Load::view('profile/index', $data);
+		return Theme::view('profile/index', $data);
 	}
 
 	public function login()
@@ -31,7 +31,7 @@ class Profile extends Controller {
 			'title' => t('Login page'),
 			'action' => Url::make(Input::get('redirect', 'Profile'), $_GET),
 		);
-		return Load::view('profile/login', $data);
+		return Theme::view('profile/login', $data);
 	}
 }
 

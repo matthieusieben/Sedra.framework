@@ -11,11 +11,18 @@ extends Exception
 	 * @param	string	The error message
 	 * @param	mixed	Additionnal parameters for message translation
 	 */
-	public function __construct($heading, $message, $args = array(), $code = 500)
+	public function __construct($heading, $message = NULL, $args = array(), $code = 500)
 	{
-		parent::__construct( t($message, $args), $code );
-		$this->heading = t($heading, $args);
-		$this->code = $code;
+		if(is_null($message) and $heading instanceof Exception) {
+			$e = $heading;
+			parent::__construct( t($e->message), $e->code );
+			$this->heading = t('System exception');
+			$this->code = $code;
+		} else {
+			parent::__construct( t($message, $args), $code );
+			$this->heading = t($heading, $args);
+			$this->code = $code;
+		}
 	}
 
 	public function getHeading()

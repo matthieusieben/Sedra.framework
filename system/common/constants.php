@@ -15,21 +15,24 @@
  * SCRIPT_NAME					Script file name
  * SCRIPT_PATH					Absolute uri path to this script
  *
- * BASE_URL						Url to base folder
+ * BASE_URL						Url to the base folder
+ * SITE_URL						Url to the site folder
  * 
  */
 
-define('AJAX_REQUEST', strtolower(val($_SERVER['HTTP_X_REQUESTED_WITH'])) === 'xmlhttprequest');
+define('AJAX_REQUEST',	strtolower(val($_SERVER['HTTP_X_REQUESTED_WITH'])) === 'xmlhttprequest');
 
-define('HTTPS', strtolower(val($_SERVER['HTTPS'])) === 'on');
-define('PROTOCOL', HTTPS ? 'https://' : 'http://');
-define('DEFAULT_PORT', isset($_SERVER['SERVER_PORT']) ? (HTTPS ? ($_SERVER['SERVER_PORT'] === '443') : ($_SERVER['SERVER_PORT'] == '80')) : TRUE);
+define('HTTPS',			strtolower(val($_SERVER['HTTPS'])) === 'on');
+define('PROTOCOL',		HTTPS ? 'https://' : 'http://');
+define('DEFAULT_PORT',	isset($_SERVER['SERVER_PORT']) ? (HTTPS ? ($_SERVER['SERVER_PORT'] === '443') : ($_SERVER['SERVER_PORT'] == '80')) : TRUE);
 define('PORT', DEFAULT_PORT ? '' : $_SERVER['SERVER_PORT']);
-define('SERVER_NAME', val($_SERVER['HTTP_HOST'], $_SERVER['SERVER_NAME']));
-define('SCRIPT_NAME', $_SERVER['SCRIPT_NAME']);
-define('SCRIPT_PATH', rtrim(dirname(SCRIPT_NAME),'/') . '/' );
+define('SERVER_NAME',	val($_SERVER['HTTP_HOST'], $_SERVER['SERVER_NAME']));
+define('SCRIPT_NAME',	$_SERVER['SCRIPT_NAME']);
+define('SCRIPT_PATH',	rtrim(dirname(SCRIPT_NAME),'/') . '/' );
 
-define('BASE_URL', PROTOCOL.$_SERVER['SERVER_NAME'].(PORT?':'.PORT:'').SCRIPT_PATH);
+if(!defined('BASE_URL'))
+define('BASE_URL',		PROTOCOL.$_SERVER['SERVER_NAME'].(PORT?':'.PORT:'').SCRIPT_PATH);
+define('SITE_URL',		BASE_URL.strtr(SITE_DIR, array(BASE_DIR => NULL)));
 
 /**
  * ---------------------------------------------------------------------------
@@ -82,7 +85,7 @@ define('MEMBER_RID',			2);
  * CACHE_LEVEL_METHOD			Controller method
  * 
  * CACHE_DEFAULT_FLAGS			Cache flags used by the default Controller
- * CACHE_DEFAULT_LIFETIME		Default lifetime for the cache if not set by config
+ * CACHE_DEFAULT_LIFETIME		Default lifetime for the cache if not set by config (one day)
  * 
  */
 
@@ -94,7 +97,7 @@ define('CACHE_LEVEL_LANG',		$i*=2);
 define('CACHE_LEVEL_METHOD',	$i*=2);
 
 define('CACHE_DEFAULT_FLAGS',	CACHE_ENABLED | CACHE_LEVEL_METHOD | CACHE_LEVEL_LANG);
-define('CACHE_DEFAULT_LIFETIME',3600*24);
+define('CACHE_DEFAULT_LIFETIME',86400);
 
 /**
  * ---------------------------------------------------------------------------
@@ -126,7 +129,7 @@ define('HOOK_URL_INITIALIZED',		++$i);
 define('HOOK_URL_MAKE',				++$i);
 define('HOOK_URL_FILE',				++$i);
 
-define('HOOK_LOAD_VIEW_NAME',		++$i);
+define('HOOK_LOAD_VIEW_FILE',		++$i);
 define('HOOK_LOAD_VIEW_DATA',		++$i);
 define('HOOK_LOAD_VIEW_OUTPUT',		++$i);
 

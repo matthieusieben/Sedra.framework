@@ -4,29 +4,22 @@
  * ---------------------------------------------------------------------------
  * Define application constants
  * ---------------------------------------------------------------------------
+ *
+ * START_TIME					Time at which this script is executed
+ * DEVEL						Is the site currently under development ?
+ * 
+ * BASE_DIR						Absolute path to the base folder
+ * SYSTEM_DIR					Absolute path to the system folder, may be anywhere
+ * SITE_DIR						Absolute path to the site folder. Should be equal to BASE_DIR or in a sub directory
+ * 
  */
 
-# System Start Time
-define('START_TIME', microtime());
+define('START_TIME',			microtime());
+define('DEVEL',					TRUE);
 
-# Absolute path to the base folder
-define('BASE_DIR', realpath(dirname(__FILE__)).'/');
-
-# Absolute path to the system folder
-define('SYSTEM_DIR', BASE_DIR.'system/');
-
-# Absolute path to the site folder
-define('SITE_DIR', BASE_DIR.'site/');
-
-/*
- * ---------------------------------------------------------------------------
- * Is the site currently under development ?
- * ---------------------------------------------------------------------------
- */
-
-define('DEVEL', TRUE);
-
-error_reporting(E_ALL & ~E_STRICT & ~E_DEPRECATED);
+define('BASE_DIR',				realpath(dirname(__FILE__)).'/');
+define('SYSTEM_DIR',			BASE_DIR.'system/');
+define('SITE_DIR',				BASE_DIR.'site/');
 
 /*
  * ---------------------------------------------------------------------------

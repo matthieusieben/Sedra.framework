@@ -36,8 +36,9 @@ function close_buffers()
 	$output = '';
 
 	# Previous output
-	do $output = @ob_get_contents() . $output;
-	while (@ob_end_clean());
+	while(ob_get_level() > 0) {
+		$output = ob_get_clean() . $output;
+	}
 
 	return $output;
 }
@@ -90,8 +91,16 @@ function dump()
  * @return	void
  * @post	The execution of the script is stopped and a message is displayed.
  */
-function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_code = 500, $file = NULL, $line = NULL)
+function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $line = NULL)
 {
+	if(empty($heading)) {
+		$heading = 'A Fatal Error Was Encountered';
+	}
+
+	if(!is_numeric($status_code)) {
+		$status_code = 500;
+	}
+
 	set_status_header($status_code);
 
 	# Clear output buffers

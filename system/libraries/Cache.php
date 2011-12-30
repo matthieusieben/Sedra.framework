@@ -65,6 +65,9 @@ class Cache {
 	public static function get($key)
 	{
 		try {
+			if(empty($key))
+				return NULL;
+
 			# Build the querry
 			$query = db_select('cache', 'c')
 				->fields('c', array('expire', 'created', 'serialized', 'data'))

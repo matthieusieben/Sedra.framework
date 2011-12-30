@@ -94,23 +94,24 @@ class Load
 	}
 
 	/**
-	 * Loads a view files and retruns the generated content as a string.
+	 * Loads a view files and returns the generated content as a string.
 	 *
-	 * @param string $name	The name of the view to load (eg 'admin/my_view')
-	 * @param string $data	An array containing variables to be extracted
+	 * @param string $__file	The view file to load
+	 * @param string $__data	An array containing variables to be extracted
 	 * @return string	The generated content from the view
 	 * @throws SedraLoadException if the view file cannot be found
 	 */
-	public static function view( $__name = 'index', $__data = array() )
+	public static function view( $__file, $__data = array() )
 	{
 		# Alter parameters by hooks
-		$__name = Hook::call(HOOK_LOAD_VIEW_NAME, $__name);
+		$__file = Hook::call(HOOK_LOAD_VIEW_FILE, $__file);
 		$__data = Hook::call(HOOK_LOAD_VIEW_DATA, $__data);
 
+		# Tell whether the file exists and is readable
+		if(!is_readable($__file)) {
+			throw new SedraLoadException( 'view', $__file );
+		}
 
-		# Get the file path
-		$__file = self::view_path( $__name );
-		
 		# Buffer the output
 		ob_start();
 
@@ -122,35 +123,6 @@ class Load
 
 		# Return the buffered output
 		return Hook::call(HOOK_LOAD_VIEW_OUTPUT, ob_get_clean());
-	}
-
-	/**
-	 * Get the full path to a view file inside the include path.
-	 *
-	 * @param string $name The name of the view to load
-	 * @return The file name if it exists
-	 * @throws SedraLoadException if the file cannot be found
-	 */
-	public static function view_path($name) {
-		# Get the file path from different folders
-		$file = stream_resolve_include_path("$name.php");
-		if(!$file) $file = stream_resolve_include_path("views/$name.php");
-		# Throw an exception if the file could not be found
-		if(!$file) throw new SedraLoadException( 'view', $name );
-		return $file;
-	}
-
-	/**
-	 * Add a folder to the view path
-	 *
-	 * @param string $folder a folder within SITE_DIR
-	 * @return void
-	 * @see SITE_DIR
-	 */
-	public static function add_view_path($folder) {
-		if(is_dir(SITE_DIR.$folder)) {
-			set_include_path(SITE_DIR.$folder .PATH_SEPARATOR. get_include_path());
-		}
 	}
 
 	/*

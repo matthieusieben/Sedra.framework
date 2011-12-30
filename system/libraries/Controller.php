@@ -180,12 +180,12 @@ abstract class Controller {
 				$c->content = $cache->data;
 			} else {
 				# Not in cache, generate and set cache
+				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);
 				try {
 					$c->_generate();
 				} catch (SedraException $e) {
 					throw DEVEL ? $e : new Sedra404Exception();
 				}
-				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);
 				Cache::set($cache_key, $c->content);
 			}
 		}
@@ -201,7 +201,11 @@ abstract class Controller {
 	public static function render(Controller $c) {
 		if(!isset($c->html)) {
 			$c = Hook::call(HOOK_CONTROLLER_RENDER, $c);
-			$c->_render();
+			try {
+				$c->_render();
+			} catch (SedraException $e) {
+				throw DEVEL ? $e : new Sedra404Exception();
+			}
 		}
 	}
 
@@ -213,6 +217,10 @@ abstract class Controller {
 	 */
 	public static function display(Controller $c) {
 		$c = Hook::call(HOOK_CONTROLLER_DISPLAY, $c);
-		$c->_display();
+		try {
+			$c->_display();
+		} catch (SedraException $e) {
+			throw DEVEL ? $e : new Sedra404Exception();
+		}
 	}
 }

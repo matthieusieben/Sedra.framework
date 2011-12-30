@@ -1,0 +1,109 @@
+/************* GENERAL CSS ************/
+
+body {
+	font : normal 12px "Trebuchet MS", sans-serif;
+	color: #7b7b7b;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 1em 0 0.5em;
+	font-family: "Trebuchet MS", sans-serif;
+	color: #4ba4c2;
+}
+
+h2, h3, h4, h5, h6 {
+	font-weight: normal;
+}
+
+p {
+	margin: 0.5em 0;
+}
+
+a {
+	text-decoration: none;
+	color: #4ba4c2;
+}
+
+a:hover, a:active {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #6690A7;
+}
+
+/************* LAYOUT CSS ************/
+
+.main-box {
+	width : 768px;
+	margin: 0 auto;
+}
+
+/************* HEADER CSS ************/
+
+#header {
+	margin: 0px auto;
+	background: #565656;
+	border-bottom: 0.5em solid #3c3c3c;
+	overflow: hidden;
+}
+
+#name a {
+	display: block;
+	text-decoration: none;
+	color: #4ba4c2;
+	padding: 1em 0 1em 2em;
+	height: 1em;
+}
+
+#menu {
+	list-style: none;
+	text-align: center;
+}
+
+#menu li {
+	display: block;
+	float: left;
+	background : #3c3c3c;
+}
+
+#menu li:first-child {
+	padding-left: 1em;
+}
+
+#menu li + li {
+	padding-left: 1px;
+}
+
+#menu li:last-child {
+	padding-right: 1em;
+}
+
+#menu li a {
+	line-height: 1em;
+	vertical-align: middle;
+	padding: 0.75em 1em 0.5em;
+	display: block;
+	text-decoration: none;
+	font-weight: bold;
+	color: #fff;
+}
+
+#menu li a:hover{
+	background-color:#4ba4c2;
+}
+
+#menu li.selected a {
+	background-color:#4ba4c2;
+	padding-top: 0.85em;
+	margin-top: -0.1em;
+}
+
+/************* CONTENT ************/
+
+
+#container {
+
+}
+
+

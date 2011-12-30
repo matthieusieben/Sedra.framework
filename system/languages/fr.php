@@ -34,4 +34,5 @@ return array(
 	'SQL Query' => 'Requ&ecirc;te SQL',
 	'Variables' => 'Variables',
 	'Welcome' => 'Bienvenue',
+	'Guest' => 'Invit&eacute;',
 );

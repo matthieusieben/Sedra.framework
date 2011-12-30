@@ -44,7 +44,7 @@ DirectoryIndex index.php index.html index.htm
 
 	# Less CSS files
 	RewriteCond %{REQUEST_FILENAME} -f
-	RewriteRule ^(css/.*\.less)$ index.php?q=$1 [L,QSA]
+	RewriteRule ^(.*\.less)$ index.php?q=less/$1 [L,QSA]
 
 	# Pass all requests not referring directly to files in the filesystem to
 	# index.php.
