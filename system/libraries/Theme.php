@@ -17,6 +17,7 @@ class Theme {
 	public static function view( $name, $data = array() ) {
 		$data += array(
 			'body_class' => 'two_columns',
+			'site_name' => 'Sedra',
 			'blocks' => array(
 				'column' => array(
 				),

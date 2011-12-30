@@ -4,7 +4,7 @@
 	<div id="wrapper">
 		<div id="header">
 			<h1 id="name" class="main-box">
-				<?php a('/', 'Sedra'); /* XXX : Site name */ ?>
+				<?php a('/', $site_name); ?>
 			</h1>
 			<ul id="menu" class="main-box">
 				<li><a href="<?php echo Url::make('/') ?>"><?php p('Home'); ?></a></li>

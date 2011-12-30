@@ -1,22 +1,29 @@
 			</div>
 			<div id="column">
-				<?php if (isset($blocks['column'])): ?>
-					<?php foreach ($blocks['column'] as $_block): ?>
-						<?php echo $_block; ?>
-					<?php endforeach ?>
-				<?php endif ?>
+				<div class="block"><h2>Block</h2><p>lorem ipsum</p></div>
 			</div>
+			<?php if (!empty($blocks['column'])): ?>
+				<div id="column">
+					<?php foreach ($blocks['column'] as $_block): ?>
+						<div class="block">
+							<?php echo $_block; ?>
+						</div>
+					<?php endforeach ?>
+				</div>
+			<?php endif ?>
 			<div class="clear"></div>
 		</div>
-		<div id="footer">
+		<div id="footer" class="main-box">
 			<?php if (!empty($blocks['footer'])): ?>
 				<?php foreach ($blocks['footer'] as $_block): ?>
-					<?php echo $_block; ?>
+					<div class="block">
+						<?php echo $_block; ?>
+					</div>
 				<?php endforeach ?>
 				<div class="clear"></div>
 			<?php endif ?>
-			<?php include_source('debug.php'); ?>
-		</div>
+		</div>	
+		<?php include_source('debug.php'); ?>
 	</div>
 </body>
 </html>
