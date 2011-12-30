@@ -17,15 +17,15 @@ function html($text)
  * Fetch a config value
  *
  * @param string $k the language key name
- * @param string $d the default value
- * @return string
+ * @param string $d the default value if $k is missing, NULL by default
+ * @return mixed
  */
 function config($i, $d = NULL)
 {
 	static $config;
 	
 	if(!isset($config)) {
-		$config = require('settings.php');
+		$config = (array) require('settings.php');
 	}
 	
 	return val($config[$i], $d);
@@ -88,7 +88,7 @@ function dump()
  * @param	string	An heading
  * @param	int		The status code (default is 500)
  * @return	void
- * @post	The execution of the script is stopped, a message is displayed.
+ * @post	The execution of the script is stopped and a message is displayed.
  */
 function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_code = 500, $file = NULL, $line = NULL)
 {
@@ -155,14 +155,21 @@ function fatal( $message, $heading = 'A Fatal Error Was Encountered', $status_co
 	exit();
 }
 
-function include_module( $__dir, $__module )
+/**
+ * Look the include path for a file and returns its full path if found
+ *
+ * @param string $dir 
+ * @param string $module 
+ * @return string The file path or FALSE if not found
+ */
+function include_module( $dir, $module )
 {
-	if($__path = stream_resolve_include_path("$__dir/$__module.php")) {
-		return require_once $__path;
+	if($path = stream_resolve_include_path("$dir/$module.php")) {
+		return require_once $path;
 	}
 
-	if($__path = stream_resolve_include_path("$__dir/$__module/$__module.php")) {
-		return require_once $__path;
+	if($path = stream_resolve_include_path("$dir/$module/$module.php")) {
+		return require_once $path;
 	}
 
 	return FALSE;
@@ -239,8 +246,10 @@ function message($type = NULL, $value = NULL, $strings = array())
  * Prints the result of t($string, $replace_pairs).
  *
  * @param	string	$string
- * @param	string	$replace_pairs
- * @return	void
+ * @param	array	$replace_pairs
+ * @param	string	$language
+ * @return	string
+ * @see	Lang::t()
  */
 function p($string, $replace_pairs = array(), $language = NULL)
 {
@@ -304,7 +313,7 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
  *
  * @param string $k the object name
  * @param mixed $v the object value
- * @return mixed
+ * @return mixed the value stored in $k
  */
 function reg($k, $v=null)
 {
@@ -402,6 +411,15 @@ function set_status_header($code = 200, $text = '')
 	}
 }
 
+/**
+ * Shortcut for Lang::t()
+ *
+ * @param string $string 
+ * @param array $replace_pairs 
+ * @param string $language 
+ * @return string
+ * @see Lang::t()
+ */
 function t($string, $replace_pairs = array(), $language = NULL)
 {
 	return Lang::t($string, $replace_pairs, $language = NULL);
@@ -432,15 +450,60 @@ function unset_globals() {
 	}
 }
 
+/**
+ * Checks if an integer has some flags set.
+ *
+ * @param int $value 
+ * @param int $flags 
+ * @return boolean True iif $value has all the '1' bits of $flags set to '1'
+ */
 function check_flags($value, $flags)
 {
 	return ($value & $flags) === $flags;
 }
 
 /**
- * Isset(value) ? value : default
+ * Get a value if it is set of a default value otherwise.
+ *
+ * @param mixed $value 
+ * @param mixed $default 
+ * @return isset(value) ? value : default
  */
 function val(&$value, $default = NULL)
 {
 	return isset($value) ? $value : $default;
+}
+
+/**
+ * Mix between file_get_contents and include. This function prints the content
+ * of $file without evaluating it (as include() would do).
+ *
+ * @param string $file A file in the current include_path.
+ * @return void
+ * @post The content of the file is printed.
+ */
+function include_source($file) {
+	$bt = debug_backtrace();
+	$caller_dir = dirname($bt[0]['file']).'/';
+	
+	$orig = get_include_path();
+	$paths = explode(PATH_SEPARATOR, $orig);
+	$new = '';
+	foreach($paths as $p) {
+		if($p === '.') {
+			$p = $caller_dir;
+		}
+		elseif(substr($p,0,2) === './') {
+			$p = substr_replace($p, $caller_dir, 0, 2);
+		}
+		$new .= empty($new) ? ($p) : (PATH_SEPARATOR.$p);
+	}
+
+	set_include_path($new);
+
+	if($path = stream_resolve_include_path($file)) {
+		echo file_get_contents($path);
+	}
+	
+	set_include_path($orig);
 }

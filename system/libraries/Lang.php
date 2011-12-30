@@ -172,7 +172,7 @@ class Lang
 	}
 
 	/**
-	 * Translate a string from REFERENCE_LANGUAGE in the language being currenly
+	 * Translate a string from REFERENCE_LANGUAGE in the language being currently
 	 * used.
 	 *
 	 * @param	string $string		The string to translate
@@ -182,6 +182,7 @@ class Lang
 	public static function t($string, $replace_pairs = array(), $language = NULL)
 	{
 		if(!$language) $language = self::current();
+		else self::load($language);
 		
 		if ( isset( self::$strings[$language][$string] ) )
 		{
@@ -194,27 +195,20 @@ class Lang
 			# TODO : record this missing translation into database
 		}
 
-		if (empty($replace_pairs))
+		# Transform arguments before inserting them.
+		foreach ($replace_pairs as $key => $value)
 		{
-			return $string;
-		}
-		else
-		{
-			# Transform arguments before inserting them.
-			foreach ($replace_pairs as $key => $value)
+			switch ($key[0])
 			{
-				switch ($key[0])
-				{
-					case '@':
-					default:
-					$replace_pairs[$key] = html($value);
-					break;
+				case '@':
+				default:
+				$replace_pairs[$key] = html($value);
+				break;
 
-					case '!': # Do not escape the string
-				}
+				case '!': # Do not escape the string
 			}
-			return strtr($string, $replace_pairs);
 		}
+		return strtr($string, $replace_pairs);
 	}
 
 	public static function register_folder($dir)

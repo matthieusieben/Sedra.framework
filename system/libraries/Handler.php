@@ -2,9 +2,6 @@
 
 /**
  * Provides error and exception handling with detailed backtraces.
- *
- * @package		Sedra
- * @author		Matthieu Sieben
  */
 class Handler
 {
@@ -26,8 +23,10 @@ class Handler
 			}
 		}
 		else if (($severity & error_reporting()) === $severity) {
+			# Propagate error
 			throw new SedraPHPErrorException($message, $severity, $file, $line);
 		}
+		# Don't let the default error_handler continue
 		return TRUE;
 	}
 
