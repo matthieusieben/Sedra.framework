@@ -1,5 +1,5 @@
 /**
-* Krumo "Blue" Skin
+* Krumo Default Skin
 *
 * @version $Id: skin.css 6 2007-06-16 06:37:27Z mrasnika $
 * @author Kaloyan K. Tsvetkov <mrasnika@users.sourceforge.net>
@@ -18,6 +18,7 @@ ul.krumo-node ul {
 	margin-left: 24px;
 	}
 div.krumo-root {
+	background: #fff;
 	border: solid 1px black;
 	margin: 1em 0em;
 	}
@@ -47,14 +48,14 @@ div.krumo-element {
 	white-space:nowrap;
 
 	border-top: solid 1px white;
-	background: #BFDFFF;
+	background: #E8E8E8;
 	padding-left: 10px;
 	}
 * html div.krumo-element {
 	padding-bottom: 3px;
 	}
 a.krumo-name {
-	color:navy;
+	color:#2C5858;
 	font: bold 13px Arial;
 	}
 a.krumo-name big {
@@ -74,11 +75,11 @@ a.krumo-name big {
 	margin: 0px;
 	}
 div.krumo-expand {
-	background: #AAD5FF;
+	background: #CCCCCC;
 	cursor:pointer;
 	}
 div.krumo-hover {
-	background: #FFBE7D;
+	background: #B7DBDB;
 	}
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
@@ -114,7 +115,7 @@ li.krumo-footnote h6 {
 	font: bold 11px verdana;
 	margin: 0px;
 	padding: 0px;
-	color:navy;
+	color:#366D6D;
 	display:inline;
 	}
 * html li.krumo-footnote h6 {

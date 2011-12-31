@@ -117,7 +117,7 @@ class Url
 		if(strpos($real_path, SITE_DIR) === 0) {
 			# get the location of $real_path relative to SITE_DIR
 			$relative_path = substr($real_path, strlen(SITE_DIR));
-			# make sure the url only contains '/' and no '\' (bacause of realpath)
+			# make sure the url only contains '/' and no '\' (because of realpath)
 			$relative_url = strtr($relative_path, DIRECTORY_SEPARATOR, '/');
 			# Any hook to alter the path ?
 			return Hook::call(HOOK_URL_FILE, SITE_URL.$relative_url);

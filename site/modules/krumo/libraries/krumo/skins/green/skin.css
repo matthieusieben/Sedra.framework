@@ -1,5 +1,5 @@
 /**
-* Krumo `Schablon.com` Skin
+* Krumo "Green" Skin
 *
 * @version $Id: skin.css 6 2007-06-16 06:37:27Z mrasnika $
 * @author Kaloyan K. Tsvetkov <mrasnika@users.sourceforge.net>
@@ -10,7 +10,6 @@
 ul.krumo-node {
 	margin: 0px;
 	padding: 0px;
-	background-color: white;
 	}
 ul.krumo-node ul {
 	margin-left: 20px;
@@ -19,12 +18,15 @@ ul.krumo-node ul {
 	margin-left: 24px;
 	}
 div.krumo-root {
+	background: #fff;
 	border: solid 1px black;
 	margin: 1em 0em;
 	}
 ul.krumo-first {
-	font: normal 11px tahoma, verdana;
-	border: solid 1px white;
+	font: normal 12px arial;
+	border: solid 2px white;
+	border-top-width:1px;
+	background: url(%url%bg.gif);
 	}
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
@@ -38,64 +40,56 @@ li.krumo-child {
 	}
 div.krumo-element {
 	cursor:default;
+
+	line-height: 24px;
 	display:block;
+
 	clear:both;
 	white-space:nowrap;
 
-	background-color: white;
-	background-image: url(%url%empty.gif);
-	background-repeat: no-repeat;
-	background-position: 6px 5px;
-	padding: 2px 0px 3px 20px;
+	border-top: solid 1px white;
+	background: #D7F4CA;
+	padding-left: 10px;
 	}
 * html div.krumo-element {
 	padding-bottom: 3px;
-	line-height: 13px;
-	}
-div.krumo-expand {
-	background-image: url(%url%collapsed.gif);
-	cursor:pointer;
-	}
-div.krumo-hover {
-	background-color: #BFDFFF;
-	}
-div.krumo-opened {
-	background-image: url(%url%expanded.gif);
 	}
 a.krumo-name {
-	color:navy;
-	font: bold 13px courier new;
-	line-height:12px;
+	color:#004000;
+	font: bold 13px Arial;
 	}
 a.krumo-name big {
-	font: bold 16pt Georgia;
-	line-height: 10px;
+	font: bold 20pt Georgia;
+	line-height: 14px;
 	position:relative;
 	top:2px;
 	left:-2px;
 	}
 * html a.krumo-name big {
-	font: bold 15pt Georgia;
-	float:left;
-	top: -5px;
+	font: bold 19pt Georgia;
+	top: 5px;
 	left: 0px;
+	line-height: 9px;
+	height: 12px;
 	padding: 0px;
 	margin: 0px;
 	}
-em.krumo-type {
-	font-style:normal;
-	margin: 0px 2px;
+div.krumo-expand {
+	background: #C0EEAC;
+	cursor:pointer;
+	}
+div.krumo-hover {
+	background: gold;
 	}
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
 div.krumo-preview {
 	font: normal 13px courier new;
-	padding: 5px ;
-	background: lightyellow;
-	border: solid 1px #808000;
+	padding: 5px 5px 14px 5px;
+	background: white;
+	border-top: 0px;
 	overflow:auto;
-	margin: 5px 1em 1em 0px;
 	}
 * html div.krumo-preview {
 	padding-top: 2px;
@@ -104,9 +98,11 @@ div.krumo-preview {
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
 li.krumo-footnote {
-	background: white url(%url%dotted.gif) repeat-x;
-	padding: 4px 5px 3px 5px;
+	background:white;
+	padding: 2px 5px;
 	list-style:none;
+	border-top: solid 1px #bebebe;
+	margin-top:2px;
 	cursor:default;
 	}
 * html li.krumo-footnote {
@@ -119,7 +115,7 @@ li.krumo-footnote h6 {
 	font: bold 11px verdana;
 	margin: 0px;
 	padding: 0px;
-	color:navy;
+	color:#008040;
 	display:inline;
 	}
 * html li.krumo-footnote h6 {
@@ -134,9 +130,8 @@ li.krumo-footnote a:hover {
 	color:black;
 	}
 
-
 li.krumo-footnote span.krumo-call {
-	font:normal 11px tahoma, verdana;
+	font:normal 11px verdana;
 	position: relative;
 	top: 1px;
 	}
@@ -147,7 +142,7 @@ li.krumo-footnote span.krumo-call code {
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
 div.krumo-title {
-	font: normal 11px tahoma, verdana;
+	font: normal 11px verdana ;
 	position:relative;
 	top:9px;
 	cursor:default;
@@ -159,7 +154,6 @@ div.krumo-title {
 strong.krumo-array-length,
 strong.krumo-string-length {
 	font-weight: normal;
-	color: #000099;
 	}
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */

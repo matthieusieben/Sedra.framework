@@ -32,15 +32,11 @@ $config['xsrf/key'] = 'QwErTyUiOp1234567890!';
 $config['xsrf/stateful'] = TRUE;
 $config['xsrf/timeout'] = 3600;
 
-# Libraries to load at boot time (Libraries are autoloaded by default)
-$config['autoload/libaries'] = array(
-);
-
-# Hooks to load at boot time
-$config['autoload/hooks'] = array(
+# Modules to load at boot time
+$config['autoload/modules'] = array(
 	'debug',
-	'krumo',
 	'less',
+	'krumo',
 );
 
 return $config;

@@ -7,25 +7,10 @@ class Load
 {
 	public static function auto()
 	{
-		$libraries = (array) config('autoload/libaries');
-		$models = (array) config('autoload/models');
-		$helpers = (array) config('autoload/helpers');
-		$hooks = (array) config('autoload/hooks');
+		$modules = (array) config('autoload/modules');
 
-		foreach($libraries as $library) {
-			Load::library($library);
-		}
-
-		foreach($models as $model) {
-			Load::model($model);
-		}
-
-		foreach($helpers as $helper) {
-			Load::helper($helper);
-		}
-
-		foreach($hooks as $hook) {
-			Load::hook($hook);
+		foreach($modules as $module) {
+			Load::module($module);
 		}
 	}
 
@@ -34,6 +19,20 @@ class Load
 	 * File loading functions
 	 * -------------------------------------------------------------------------
 	 */
+
+	public static function module( $name )
+	{
+		if( !include_module( 'modules', $name, TRUE ) )
+		{
+			throw new SedraLoadException( 'module', $name );
+		}
+
+		$module_dir = SITE_DIR.'modules/'.$name.'/';
+
+		set_include_path($module_dir .PATH_SEPARATOR. get_include_path());
+
+		Lang::register_folder( $module_dir . '/languages/' );
+	}
 
 	/**
 	 * Tries to load a site controller (first) or a system controller
@@ -72,25 +71,12 @@ class Load
 		}
 	}
 
-	public static function helper( $file )
+	public static function helper( $name )
 	{
-		if( !include_module( 'helpers', $file ) )
+		if( !include_module( 'helpers', $name ) )
 		{
-			throw new SedraLoadException( 'helper', $file );
+			throw new SedraLoadException( 'helper', $name );
 		}
-	}
-
-	public static function hook( $file )
-	{
-		if( !include_module( 'hooks', $file ) )
-		{
-			throw new SedraLoadException( 'hook', $file );
-		}
-	}
-
-	public static function lang( $folder )
-	{
-		Lang::register_folder( $folder );
 	}
 
 	/**

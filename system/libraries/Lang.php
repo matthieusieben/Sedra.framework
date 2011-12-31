@@ -2,7 +2,6 @@
 
 # Register default lang folders
 Lang::register_folder(SYSTEM_DIR . 'languages');
-Lang::register_folder(SITE_DIR . 'languages');
 
 # Load the user lib, this way the language will be automatically set.
 Load::user();

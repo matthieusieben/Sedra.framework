@@ -17,9 +17,9 @@
 define('START_TIME',			microtime());
 define('DEVEL',					TRUE);
 
-define('BASE_DIR',				realpath(dirname(__FILE__)).'/');
-define('SYSTEM_DIR',			BASE_DIR.'system/');
-define('SITE_DIR',				BASE_DIR.'site/');
+define('BASE_DIR',				realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR);
+define('SYSTEM_DIR',			BASE_DIR.'system'.DIRECTORY_SEPARATOR);
+define('SITE_DIR',				BASE_DIR.'site'.DIRECTORY_SEPARATOR);
 
 /*
  * ---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ require SYSTEM_DIR.'bootstrap.php';
 $controller_name = Url::segment(0, config('controller', 'Home'));
 # Load the controller
 $controller = Load::controller($controller_name);
-# Debug
+# Dump the main controller
 debug($controller, 'Main controller');
 # Generate the content of the controller and display it
 Controller::toBrowser($controller);

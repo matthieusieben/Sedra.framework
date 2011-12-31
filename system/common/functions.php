@@ -25,7 +25,7 @@ function config($i, $d = NULL)
 	static $config;
 	
 	if(!isset($config)) {
-		$config = (array) require('settings.php');
+		$config = (array) require(SITE_DIR.'settings.php');
 	}
 	
 	return val($config[$i], $d);
@@ -175,12 +175,14 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
  * @param string $module 
  * @return string The file path or FALSE if not found
  */
-function include_module( $dir, $module )
+function include_module( $dir, $module, $is_dir = NULL)
 {
+	if($is_dir === NULL OR $is_dir === FALSE)
 	if($path = stream_resolve_include_path("$dir/$module.php")) {
 		return require_once $path;
 	}
 
+	if($is_dir === NULL OR $is_dir === TRUE)
 	if($path = stream_resolve_include_path("$dir/$module/$module.php")) {
 		return require_once $path;
 	}
