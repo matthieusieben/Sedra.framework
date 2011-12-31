@@ -4,6 +4,7 @@ abstract class Controller {
 
 	public $cache_flags	= CACHE_DEFAULT_FLAGS;
 	public $cache_key	= array();
+	public $cache		= NULL; # Cache data
 
 	public $method	= 'index';
 	public $content	= NULL;
@@ -169,7 +170,8 @@ abstract class Controller {
 			$cache_key = $c->_get_cache_key();
 			if($cache = Cache::get($cache_key)) {
 				# If in cache, set content from cache
-				$c->content = $cache->data;
+				$c->cache =& $cache;
+				$c->content =& $cache->data;
 			} else {
 				# Not in cache, generate and set cache
 				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);

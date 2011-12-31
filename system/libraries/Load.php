@@ -43,10 +43,10 @@ class Load
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $class, $arg = NULL )
+	public static function controller( $class, $arg = array() )
 	{
 		if( !include_module('controllers', $class)) {
-			throw new Sedra404Exception();
+			throw new SedraLoadException('controller', $class );
 		}
 
 		if( !class_exists($class, FALSE) || !is_subclass_of($class, 'Controller')) {

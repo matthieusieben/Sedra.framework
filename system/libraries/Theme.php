@@ -15,7 +15,7 @@ class Theme {
 	 * @throws SedraLoadException if the view file cannot be found
 	 */
 	public static function view( $name, $data = array() ) {
-		$data += array(
+		$data = (array) $data + array(
 			'body_class' => 'two_columns',
 			'site_name' => 'Sedra',
 			'blocks' => array(
@@ -41,8 +41,8 @@ class Theme {
 	public static function view_path( $name ) {
 		# Get the file path from theme folders
 		$file = self::theme_dir().$name.'.php';
-		# If not found in theme folder, look into the system folder
-		if(!is_readable($file)) $file = SYSTEM_DIR.'views/'.$name.'.php';
+		# If not found in theme folder, look into the views folder
+		if(!is_readable($file)) $file = stream_resolve_include_path('views/'.$name.'.php');
 		# Throw an exception if the file could not be found
 		if(!is_readable($file)) throw new SedraLoadException( 'view', $name );
 		return $file;

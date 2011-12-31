@@ -93,9 +93,11 @@ class Cache {
 			if($cache->serialized) {			
 				$cache->data = unserialize($cache->data);
 			}
+			
+			$cache->key = $key;
 
 			# Alter data
-			list($key, $cache) = Hook::call(HOOK_CACHE_GET, array($key, $cache));
+			$cache = Hook::call(HOOK_CACHE_GET, $cache);
 
 			# Retrun the cache object
 			return $cache;

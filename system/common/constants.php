@@ -84,19 +84,19 @@ define('MEMBER_RID',			2);
  * CACHE_LEVEL_LANG				Language dependent cache level
  * CACHE_LEVEL_METHOD			Controller method
  * 
- * CACHE_DEFAULT_FLAGS			Cache flags used by the default Controller
+ * CACHE_DEFAULT_FLAGS			Default cache flags used by controllers
  * CACHE_DEFAULT_LIFETIME		Default lifetime for the cache if not set by config (one day)
  * 
  */
 
-define('CACHE_ENABLED',			$i =1);
-define('CACHE_LEVEL_URL',		$i*=2);
-define('CACHE_LEVEL_USER',		$i*=2);
-define('CACHE_LEVEL_ROLE',		$i*=2);
-define('CACHE_LEVEL_LANG',		$i*=2);
-define('CACHE_LEVEL_METHOD',	$i*=2);
+define('CACHE_ENABLED',			($i =1));
+define('CACHE_LEVEL_URL',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_USER',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_ROLE',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_LANG',		($i*=2) | CACHE_ENABLED);
+define('CACHE_LEVEL_METHOD',	($i*=2) | CACHE_ENABLED);
 
-define('CACHE_DEFAULT_FLAGS',	CACHE_ENABLED | CACHE_LEVEL_METHOD | CACHE_LEVEL_LANG);
+define('CACHE_DEFAULT_FLAGS',	CACHE_LEVEL_METHOD|CACHE_LEVEL_LANG);
 define('CACHE_DEFAULT_LIFETIME',86400);
 
 /**

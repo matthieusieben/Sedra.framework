@@ -18,12 +18,8 @@
 		<?php foreach ($_variables as $_var): ?>
 			<?php if ($_var['message']): ?>
 				<div class="dump-title"><?php echo $_var['message']; ?></div>
-			<?php endif ?>
+			<?php endif; ?>
 			<?php dump($_var['variable']); ?>
-			<?php if ($_var['backtrace']): ?>
-				<div class="dump-backtrace"><?php p('Backtrace'); ?></div>
-				<?php dump($_var['backtrace']); ?>
-			<?php endif ?>
-		<?php endforeach ?>
-	<?php endif ?>
+		<?php endforeach; ?>
+	<?php endif; ?>
 </div>
