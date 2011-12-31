@@ -19,7 +19,9 @@ class Home extends Controller {
 		$user = User::current();
 
 		$data = array(
-			'title' => t('Welcome') . ', ' . t($user->data('firstname', $user->name)) . '!',
+			'title' => t(
+				'Welcome, !user!',
+				array('!user' => t($user->data('firstname', $user->name)))),
 		);
 
 		return Theme::view('home', $data);

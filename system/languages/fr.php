@@ -33,6 +33,6 @@ return array(
 	'seconds' => 'secondes',
 	'SQL Query' => 'Requ&ecirc;te SQL',
 	'Variables' => 'Variables',
-	'Welcome' => 'Bienvenue',
+	'Welcome, !user!' => 'Bienvenue, !user!',
 	'Guest' => 'Invit&eacute;',
 );

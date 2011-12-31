@@ -67,7 +67,7 @@ register_shutdown_function('Hook::call', HOOK_SHUTDOWN);
 
 /*
  * ---------------------------------------------------------------------------
- * Load modules/libraries/helpers
+ * Load modules/libraries/helpers/hooks
  * ---------------------------------------------------------------------------
  */
 
