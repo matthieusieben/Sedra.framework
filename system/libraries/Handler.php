@@ -35,10 +35,10 @@ class Handler
 		try {
 			$arg = array(
 				'exception' => $e,
-				'full-page' => TRUE,
+				'method' => 'page',
 			);
 			$controller = Load::controller('ExceptionController', $arg);
-			echo $controller->__toString();
+			Controller::toBrowser($controller);
 		} catch (Exception $exception) {
 			fatal($e->getMessage(), t('A Fatal Error Was Encountered'), 500, $e->getFile(), $e->getLine());
 		}

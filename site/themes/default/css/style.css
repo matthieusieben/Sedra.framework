@@ -114,6 +114,9 @@ body {
 	background-color:#4ba4c2;
 	padding-top: 0.85em;
 	margin-top: -0.1em;
+	
+	padding-bottom: 0.6em;
+	margin-bottom: -0.1em;
 }
 
 /************* CONTENT ************/
@@ -133,8 +136,3 @@ body {
 	float: right;
 }
 
-/************* DEVEL ************/
-
-.dump-title {
-	display: none;
-}

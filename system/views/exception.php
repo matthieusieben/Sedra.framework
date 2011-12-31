@@ -12,6 +12,6 @@
 		<?php else: ?>
 			<h3><?php p('Trace'); ?></h3>
 			<div class="trace"><?php dump($e->getTrace()); ?></div>
-		<?php endif ?>		
-	<?php endif ?>
+		<?php endif; ?>	
+	<?php endif; ?>
 </div>

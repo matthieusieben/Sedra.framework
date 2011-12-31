@@ -67,10 +67,15 @@ if (DEVEL) {
  * @return string
  */
 function dump()
-{	
+{
 	if(Hook::registered(HOOK_DUMP)) {
 		foreach(func_get_args() as $v) {
 			Hook::call(HOOK_DUMP, $v);
+		}
+	}
+	elseif(@ini_get('html_errors')) {
+		foreach(func_get_args() as $v) {
+			var_dump($v);
 		}
 	}
 	else {

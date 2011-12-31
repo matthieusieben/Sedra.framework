@@ -41,9 +41,5 @@ $controller_name = Url::segment(0, config('controller', 'Home'));
 $controller = Load::controller($controller_name);
 # Debug
 debug($controller, 'Main controller');
-# Generate the page
-Controller::generate($controller);
-# Render the controller
-Controller::render($controller);
-# Display the controller
-Controller::display($controller);
+# Generate the content of the controller and display it
+Controller::toBrowser($controller);

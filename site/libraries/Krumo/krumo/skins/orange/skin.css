@@ -18,8 +18,8 @@ ul.krumo-node ul {
 	margin-left: 24px;
 	}
 div.krumo-root {
-	border: solid 1px black;
-	margin: 1em 0em;
+	border: none;
+	margin: 1px 0;
 	}
 ul.krumo-first {
 	font: normal 12px arial;

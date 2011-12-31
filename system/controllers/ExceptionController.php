@@ -8,35 +8,38 @@ class ExceptionController extends Controller {
 	public $cache_flags	= 0;
 
 	protected $exception;
-	protected $full_page;
-	
-	public function __construct($arg) {
-		$this->exception = $arg['exception'];
-		$this->full_page = val($arg['full-page'], TRUE);
+
+	public function page() {
+		$data = $this->_data();
+		$data['previous_output'] = close_buffers();
+		return Theme::view('exception_page', $data);
 	}
 
-	public function _generate() {
-		$code = 500;
-		$heading = t('Runtime Error');
-		$view = 'exception';
+	public function block() {
+		$data = $this->_data();
+		return Theme::view('exception', $data);
+	}
+
+	private function _data() {
+		if(!isset($this->exception) OR !($this->exception instanceof Exception)) {
+			$d = debug_backtrace();
+			$caller = @$d[1];
+			throw new SedraPHPErrorException(
+				'Invalid use of the ExceptionController.',
+				E_WARNING, @$caller['file'], @$caller['line']);
+		}
+		
+		$data = array('e' => $this->exception);
 
 		if($this->exception instanceof SedraException) {
-			$code = $this->exception->getCode();
-			$heading = $this->exception->getHeading();
+			$data['code'] = $this->exception->getCode();
+			$data['title'] = $this->exception->getHeading();
+		} else {
+			$data['code'] = 500;
+			$data['title'] = t('Runtime Error');
 		}
 
-		$data = array(
-			'code' => $code,
-			'title' => $heading,
-			'e' => $this->exception,
-		);
-		
-		if($this->full_page) {
-			$data['previous_output'] = close_buffers();
-			$view = 'exception_page';
-		}
-
-		return $this->content = Theme::view($view, $data);
+		return $data;
 	}
 }
 

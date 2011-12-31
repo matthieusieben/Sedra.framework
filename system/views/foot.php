@@ -23,7 +23,8 @@
 				<div class="clear"></div>
 			<?php endif ?>
 		</div>	
-		<?php include_source('debug.php'); ?>
 	</div>
+	<?php include_source('debug.php'); ?>
+	<?php Hook::call(HOOK_HTML_BODY_END); ?>
 </body>
 </html>

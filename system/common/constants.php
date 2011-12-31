@@ -140,3 +140,7 @@ define('HOOK_CONTROLLER_DISPLAY',	++$i);
 define('HOOK_CACHE_KEY',			++$i);
 define('HOOK_CACHE_SET',			++$i);
 define('HOOK_CACHE_GET',			++$i);
+
+define('HOOK_HTML_HEAD',			++$i);
+define('HOOK_HTML_BODY_START',		++$i);
+define('HOOK_HTML_BODY_END',		++$i);

@@ -1,6 +1,7 @@
 <?php Load::helper('html'); ?>
 </head>
 <body class="<?php echo val($body_class); ?>">
+	<?php Hook::call(HOOK_HTML_BODY_START); ?>
 	<div id="wrapper">
 		<div id="header">
 			<h1 id="name" class="main-box">

@@ -40,3 +40,5 @@
 	<?php else: ?>
 		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<?php endif; ?>
+
+	<?php Hook::call(HOOK_HTML_HEAD); ?>

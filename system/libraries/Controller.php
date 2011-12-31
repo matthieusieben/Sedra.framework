@@ -18,11 +18,13 @@ abstract class Controller {
 	 * "public $cache_key" are correctly defined.
 	 * 
 	 */
-	public function __construct($arg) {
+	public function __construct($arg = array()) {
 		# Get the method name
 		$this->method = Url::segment(1, 'index');
-		# Hard caching enabled by default.
-		$this->cache_flags |= CACHE_ENABLED;
+		# Set attributes from the argument array
+		foreach((array) $arg as $k => $v) {
+			$this->$k = $v;
+		}
 	}
 
 	/**
@@ -78,16 +80,6 @@ abstract class Controller {
 	 */
 	public function _display() {
 		echo $this->html;
-	}
-
-	public function __toString() {
-		if(!isset($this->content)) {
-			self::generate($this);
-		}
-		if(!isset($this->html)) {
-			self::render($this);
-		}
-		return $this->html;
 	}
 
 	/**
@@ -181,10 +173,13 @@ abstract class Controller {
 			} else {
 				# Not in cache, generate and set cache
 				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);
-				try {
-					$c->_generate();
-				} catch (SedraException $e) {
-					throw DEVEL ? $e : new Sedra404Exception();
+				# Hooks could set the content
+				if(!isset($c->content)) {
+					try {
+						$c->_generate();
+					} catch (SedraException $e) {
+						throw DEVEL ? $e : new Sedra404Exception();
+					}
 				}
 				Cache::set($cache_key, $c->content);
 			}
@@ -199,8 +194,8 @@ abstract class Controller {
 	 * @return void
 	 */
 	public static function render(Controller $c) {
+		$c = Hook::call(HOOK_CONTROLLER_RENDER, $c);
 		if(!isset($c->html)) {
-			$c = Hook::call(HOOK_CONTROLLER_RENDER, $c);
 			try {
 				$c->_render();
 			} catch (SedraException $e) {
@@ -222,5 +217,11 @@ abstract class Controller {
 		} catch (SedraException $e) {
 			throw DEVEL ? $e : new Sedra404Exception();
 		}
+	}
+	
+	public static function toBrowser(Controller $c) {
+		self::generate($c);
+		self::render($c);
+		self::display($c);
 	}
 }
