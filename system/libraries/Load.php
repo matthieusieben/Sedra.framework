@@ -80,11 +80,11 @@ class Load
 		}
 	}
 
-	public static function hook( $filename )
+	public static function hook( $file )
 	{
-		if( !include_module( 'hooks', $filename ) )
+		if( !include_module( 'hooks', $file ) )
 		{
-			throw new SedraLoadException( 'hook', $class );
+			throw new SedraLoadException( 'hook', $file );
 		}
 	}
 

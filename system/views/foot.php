@@ -24,7 +24,6 @@
 			<?php endif ?>
 		</div>	
 	</div>
-	<?php include_source('debug.php'); ?>
 	<?php Hook::call(HOOK_HTML_BODY_END); ?>
 </body>
 </html>
