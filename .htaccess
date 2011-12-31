@@ -42,10 +42,6 @@ DirectoryIndex index.php index.html index.htm
 	# modify the following line:
 	RewriteBase /~matthieusieben/Sedra.framework
 
-	# Less CSS files
-	RewriteCond %{REQUEST_FILENAME} -f
-	RewriteRule ^(.*\.less)$ index.php?q=less/$1 [L,QSA]
-
 	# Pass all requests not referring directly to files in the filesystem to
 	# index.php.
 	RewriteCond %{REQUEST_FILENAME} !-f
@@ -54,5 +50,5 @@ DirectoryIndex index.php index.html index.htm
 	RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
 
 	# Protect files and directories from prying eyes.
-	RewriteRule ^((system|site).*(\.php|\.inc|\.ini/))$ index.php?q=$1 [L,QSA]
+	RewriteRule ^((system|site)(.*)(\.php|\.inc|\.ini/))$ index.php?q=$1 [L,QSA]
 </IfModule>

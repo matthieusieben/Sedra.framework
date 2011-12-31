@@ -1,5 +1,5 @@
-<?php require 'head.php' ?>
-<?php require 'body.php' ?>
+<?php require 'views/head.php' ?>
+<?php require 'views/body.php' ?>
 
 <h2><?php echo $title; ?></h2>
 <p><?php p('This is Sedra\'s default page.'); ?></p>
@@ -20,4 +20,4 @@
 	<dd>consectetuer adipiscing elit.</dd>
 </dl>
 
-<?php require 'foot.php' ?>
+<?php require 'views/foot.php' ?>

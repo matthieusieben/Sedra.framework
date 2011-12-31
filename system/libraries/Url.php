@@ -115,13 +115,12 @@ class Url
 		$real_path = realpath($path);
 		# If $real_path is into $dir
 		if(strpos($real_path, SITE_DIR) === 0) {
-			# Any hook to alter the path ?
-			$real_path = Hook::call(HOOK_URL_FILE, $real_path);
 			# get the location of $real_path relative to SITE_DIR
 			$relative_path = substr($real_path, strlen(SITE_DIR));
 			# make sure the url only contains '/' and no '\' (bacause of realpath)
 			$relative_url = strtr($relative_path, DIRECTORY_SEPARATOR, '/');
-			return SITE_URL.$relative_url;
+			# Any hook to alter the path ?
+			return Hook::call(HOOK_URL_FILE, SITE_URL.$relative_url);
 		}
 		return NULL;
 	}

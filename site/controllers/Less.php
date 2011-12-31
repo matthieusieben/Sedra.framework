@@ -1,6 +1,6 @@
 <?php
 
-load::library('LessPHP');
+define('LESS_CONTROLLER_COMMENT', '/* generated in <?php echo round((microtime() - START_TIME) * 1000); ?> ms */');
 
 /**
  * Less CSS compiler controller.
@@ -14,17 +14,20 @@ class Less extends Controller {
 
 	public function _generate() {
 		try {
-			# The .htaccess file adds "less/" to trigger this controller.
+			# Load the less compiler class
+			load::library('lessphp');
+
+			# Remove "less/" from the url
 			$relative_path = substr(Url::$query_string, 5);
 			
-			# Get the css/less file path
-			$file_path = BASE_DIR . $relative_path;
+			# Get the less file path
+			$file_path = Theme::css_path($relative_path);
 
 			# Compile the less file
 			$lessc = new lessc($file_path);
 
 			# Set the content to the parsed result
-			return $this->content = $lessc->parse();
+			return $this->content = $lessc->parse() . LESS_CONTROLLER_COMMENT;
 		} catch(Exception $e) {
 			throw new SedraException($e);
 		}
