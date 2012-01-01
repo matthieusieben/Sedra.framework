@@ -22,16 +22,28 @@ class Load
 
 	public static function module( $name )
 	{
+		# Alter the name by a hook
+		$name = Hook::call(HOOK_LOAD_MODULE_NAME, $name);
+
+		# Folder in which the module resides
+		$module_dir = SITE_DIR.'modules/'.$name.'/';
+
+		# Load the language file
+		Lang::register_folder( $module_dir . '/languages/' );
+
+		# Setup new path
+		$current_path = get_include_path();
+		$new_path = './' .PATH_SEPARATOR. $module_dir .PATH_SEPARATOR. $current_path;
+		set_include_path($new_path);
+
 		if( !include_module( 'modules', $name, TRUE ) )
 		{
+			# Reset path if the module was not loaded
+			set_include_path($old_path);
 			throw new SedraLoadException( 'module', $name );
 		}
 
-		$module_dir = SITE_DIR.'modules/'.$name.'/';
-
-		set_include_path($module_dir .PATH_SEPARATOR. get_include_path());
-
-		Lang::register_folder( $module_dir . '/languages/' );
+		Hook::call(HOOK_LOAD_MODULE_LOADED, $name);
 	}
 
 	/**
@@ -42,41 +54,57 @@ class Load
 	 * @param string $name	The controller to load
 	 * @return bool
 	 */
-	public static function controller( $class, $arg = array() )
+	public static function controller( $name, $arg = array() )
 	{
-		if( !include_module('controllers', $class)) {
-			throw new SedraLoadException('controller', $class );
+		$name = Hook::call(HOOK_LOAD_CONTROLLER_NAME, $name);
+
+		if( !include_module('controllers', $name)) {
+			throw new SedraLoadException('controller', $name );
 		}
 
-		if( !class_exists($class, FALSE) || !is_subclass_of($class, 'Controller')) {
-			throw new SedraLoadException('controller', $class );
+		if( !class_exists($name, FALSE) || !is_subclass_of($name, 'Controller')) {
+			throw new SedraLoadException('controller', $name );
 		}
 
-		return new $class( $arg );
+		$controller = new $name( $arg );
+
+		return Hook::call(HOOK_LOAD_CONTROLLER_LOADED, $controller);
 	}
 
-	public static function library( $class )
+	public static function library( $name )
 	{
-		if( !include_module( 'libraries', $class ) )
+		$name = Hook::call(HOOK_LOAD_LIBRARY_NAME, $name);
+
+		if( !include_module( 'libraries', $name ) )
 		{
-			throw new SedraLoadException( 'library', $class );
+			throw new SedraLoadException( 'library', $name );
 		}
+		
+		Hook::call(HOOK_LOAD_LIBRARY_LOADED, $name);
 	}
 
-	public static function model( $class )
+	public static function model( $name )
 	{
-		if( !include_module( 'models', $class ) )
+		$name = Hook::call(HOOK_LOAD_MODEL_NAME, $name);
+
+		if( !include_module( 'models', $name ) )
 		{
-			throw new SedraLoadException( 'model', $class );
+			throw new SedraLoadException( 'model', $name );
 		}
+
+		Hook::call(HOOK_LOAD_MODEL_LOADED, $name);
 	}
 
 	public static function helper( $name )
 	{
+		$name = Hook::call(HOOK_LOAD_HELPER_NAME, $name);
+
 		if( !include_module( 'helpers', $name ) )
 		{
 			throw new SedraLoadException( 'helper', $name );
 		}
+
+		Hook::call(HOOK_LOAD_HELPER_LOADED, $name);
 	}
 
 	/**
@@ -120,10 +148,6 @@ class Load
 	public static function db()
 	{
 		Load::library('Database');
-		
-		if(DEVEL) {
-			Database::startLog('DEVEL');
-		}
 	}
 	
 	public static function user()

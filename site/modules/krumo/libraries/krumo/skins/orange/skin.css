@@ -18,9 +18,8 @@ ul.krumo-node ul {
 	margin-left: 24px;
 	}
 div.krumo-root {
-	background: #fff;
-	border: none;
-	margin: 1px 0;
+	border: solid 1px black;
+	margin: 1em 0em;
 	}
 ul.krumo-first {
 	font: normal 12px arial;
@@ -43,10 +42,10 @@ div.krumo-element {
 
 	line-height: 24px;
 	display:block;
-
+	
 	clear:both;
 	white-space:nowrap;
-
+	
 	border-top: solid 1px white;
 	background: #FCEBA9;
 	padding-left: 10px;

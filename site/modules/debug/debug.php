@@ -1,9 +1,29 @@
 <?php
 
-function hook_print_debug_variables() {
-	# Look for the themed debug.php file and prints its source
-	include_source(Theme::view_path('debug'));
+require_once 'hooks.php';
+
+function debug($variable = NULL, $message = NULL) {
+	static $vars = array();
+
+	if (func_num_args() == 0)
+		return $vars;
+
+	$vars[] = array(
+		'variable' => $variable,
+		'message' => $message,
+	);
 }
 
-# Calls include_source('views/debug.php'); at the very end of the <body> tag.
-Hook::register(HOOK_HTML_BODY_END, 'hook_print_debug_variables');
+debug(array(
+	'included_files' => get_included_files(),
+	'defined_functions' => get_defined_functions(),
+	'$_ENV' => $_ENV,
+	'$_GET' => $_GET,
+	'$_POST' => $_POST,
+	'$_COOKIE' => $_COOKIE,
+	'$_FILES' => $_FILES,
+	'$_SERVER' => $_SERVER,
+	'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
+	'$_REQUEST' => $_REQUEST,
+	'$GLOBALS' => $GLOBALS,
+	), t('Environment'));

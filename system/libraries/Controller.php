@@ -20,8 +20,6 @@ abstract class Controller {
 	 * 
 	 */
 	public function __construct($arg = array()) {
-		# Get the method name
-		$this->method = Url::segment(1, 'index');
 		# Set attributes from the argument array
 		foreach((array) $arg as $k => $v) {
 			$this->$k = $v;

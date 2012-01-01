@@ -43,22 +43,6 @@ function close_buffers()
 	return $output;
 }
 
-if (DEVEL) {
-	function debug($variable = NULL, $message = NULL) {
-		static $vars = array();
-
-		if (func_num_args() == 0)
-			return $vars;
-
-		$vars[] = array(
-			'variable' => $variable,
-			'message' => $message,
-		);
-	}
-} else {
-	function debug(){ }
-}
-
 /**
  * Return an HTML safe dump of the given variable(s) surrounded by "pre" tags.
  * You can pass any number of variables (of any type) to this function.
@@ -179,12 +163,14 @@ function include_module( $dir, $module, $is_dir = NULL)
 {
 	if($is_dir === NULL OR $is_dir === FALSE)
 	if($path = stream_resolve_include_path("$dir/$module.php")) {
-		return require_once $path;
+		require_once $path;
+		return TRUE;
 	}
 
 	if($is_dir === NULL OR $is_dir === TRUE)
 	if($path = stream_resolve_include_path("$dir/$module/$module.php")) {
-		return require_once $path;
+		require_once $path;
+		return TRUE;
 	}
 
 	return FALSE;
@@ -255,20 +241,6 @@ function message($type = NULL, $value = NULL, $strings = array())
 	else {
 		return $messages;
 	}
-}
-
-/**
- * Prints the result of t($string, $replace_pairs).
- *
- * @param	string	$string
- * @param	array	$replace_pairs
- * @param	string	$language
- * @return	string
- * @see	Lang::t()
- */
-function p($string, $replace_pairs = array(), $language = NULL)
-{
-	echo t($string, $replace_pairs, $language = NULL);
 }
 
 /**
@@ -438,6 +410,20 @@ function set_status_header($code = 200, $text = '')
 function t($string, $replace_pairs = array(), $language = NULL)
 {
 	return Lang::t($string, $replace_pairs, $language = NULL);
+}
+
+/**
+ * Prints the result of t($string, $replace_pairs).
+ *
+ * @param	string	$string
+ * @param	array	$replace_pairs
+ * @param	string	$language
+ * @return	string
+ * @see	Lang::t()
+ */
+function p($string, $replace_pairs = array(), $language = NULL)
+{
+	echo Lang::t($string, $replace_pairs, $language = NULL);
 }
 
 /**

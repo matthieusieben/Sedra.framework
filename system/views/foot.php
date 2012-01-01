@@ -1,7 +1,4 @@
 			</div>
-			<div id="column">
-				<div class="block"><h2>Block</h2><p>lorem ipsum</p></div>
-			</div>
 			<?php if (!empty($blocks['column'])): ?>
 				<div id="column">
 					<?php foreach ($blocks['column'] as $_block): ?>
@@ -13,16 +10,16 @@
 			<?php endif ?>
 			<div class="clear"></div>
 		</div>
-		<div id="footer" class="main-box">
-			<?php if (!empty($blocks['footer'])): ?>
+		<?php if (!empty($blocks['footer'])): ?>
+			<div id="footer" class="main-box">
 				<?php foreach ($blocks['footer'] as $_block): ?>
-					<div class="block">
+					<div class="black block">
 						<?php echo $_block; ?>
 					</div>
 				<?php endforeach ?>
 				<div class="clear"></div>
-			<?php endif ?>
-		</div>	
+			</div>
+		<?php endif ?>
 	</div>
 	<?php Hook::call(HOOK_HTML_BODY_END); ?>
 </body>

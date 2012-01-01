@@ -18,7 +18,6 @@ ul.krumo-node ul {
 	margin-left: 24px;
 	}
 div.krumo-root {
-	background: #fff;
 	border: solid 1px black;
 	margin: 1em 0em;
 	}
@@ -43,10 +42,10 @@ div.krumo-element {
 
 	line-height: 24px;
 	display:block;
-
+	
 	clear:both;
 	white-space:nowrap;
-
+	
 	border-top: solid 1px white;
 	background: #BFDFFF;
 	padding-left: 10px;

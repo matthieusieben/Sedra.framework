@@ -124,11 +124,22 @@ define('HOOK_BOOTSTRAP',			$i=0);
 define('HOOK_SHUTDOWN',				++$i);
 
 define('HOOK_DUMP',					++$i);
+define('HOOK_MAIN_CONTROLLER',		++$i);
 
 define('HOOK_URL_INITIALIZED',		++$i);
 define('HOOK_URL_MAKE',				++$i);
 define('HOOK_URL_FILE',				++$i);
 
+define('HOOK_LOAD_MODULE_NAME',		++$i);
+define('HOOK_LOAD_MODULE_LOADED',	++$i);
+define('HOOK_LOAD_CONTROLLER_NAME',	++$i);
+define('HOOK_LOAD_CONTROLLER_LOADED',++$i);
+define('HOOK_LOAD_LIBRARY_NAME',	++$i);
+define('HOOK_LOAD_LIBRARY_LOADED',	++$i);
+define('HOOK_LOAD_MODEL_NAME',		++$i);
+define('HOOK_LOAD_MODEL_LOADED',	++$i);
+define('HOOK_LOAD_HELPER_NAME',		++$i);
+define('HOOK_LOAD_HELPER_LOADED',	++$i);
 define('HOOK_LOAD_VIEW_FILE',		++$i);
 define('HOOK_LOAD_VIEW_DATA',		++$i);
 define('HOOK_LOAD_VIEW_OUTPUT',		++$i);

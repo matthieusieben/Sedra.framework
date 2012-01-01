@@ -1,0 +1,73 @@
+#debug {
+	color: black;
+	background: white;
+	font-size: 12px;
+	line-height: 1em;
+}
+
+#debug-title {
+	padding: 1em;
+	border-top: 2px solid #ccc;
+	border-bottom: 2px solid #ccc;
+}
+
+#debug-content {
+	
+}
+
+#debug .dump {
+	
+}
+
+#debug .dump > div {
+	border-bottom: 1px solid #E9E9E9;
+}
+
+#debug .dump-title {
+	padding: 1em;
+	background: #F8F8F8;
+	font-weight: bold;
+}
+
+#debug .dump-content {
+	margin: 0;
+	padding: 0;
+}
+
+.krumo-version {
+	display: none !important;
+}
+
+#debug .krumo-root {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+#debug .krumo-footnote {
+	border-color: #E9E9E9;
+}
+
+#debug-queries table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+#debug-queries tr.odd {
+	background: #F8F8F8;
+}
+
+#debug-queries th,
+#debug-queries td {
+	padding: 1em 0.5em;
+	border-bottom: 1px solid #E9E9E9;
+}
+
+#debug-queries tbody {
+	color: #333;
+}
+
+#debug .sql {
+	font-family: 'Andale Mono', monospace;
+}
