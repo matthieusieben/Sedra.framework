@@ -29,9 +29,7 @@ class Less extends Controller {
 			# Set the content to the parsed result
 			return $this->content = $lessc->parse() . LESS_CONTROLLER_COMMENT;
 		} catch(Exception $e) {
-			throw new SedraException($e);
+			throw $e instanceof SedraException ? $e : new SedraException($e);
 		}
 	}
 }
-
-?>

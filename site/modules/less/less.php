@@ -2,8 +2,8 @@
 
 function hook_less_alter_url($_, $url) {
 	$pathinfo = pathinfo($url);
-	if(@$pathinfo['extension'] === 'less') {
-		return BASE_URL.'less/' . $pathinfo['basename'];
+	if(strToLower(@$pathinfo['extension']) === 'less') {
+		return Url::make('less/' . $pathinfo['basename']);
 	}
 	return $url;
 }

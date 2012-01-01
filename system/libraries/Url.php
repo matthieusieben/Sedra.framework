@@ -9,7 +9,6 @@ class Url
 {
 	public static $query_string	= NULL;
 	public static $uri			= NULL;
-	public static $extension	= NULL;
 
 	public static $segments		= array();
 
@@ -19,14 +18,6 @@ class Url
 		$uri = isset($_GET['q']) ? trim( $_GET['q'], '/' ) : '';
 
 		self::$query_string = $uri;
-
-		# remove extension from $uri
-		$path_parts = pathinfo($uri);
-		if (isset($path_parts['extension']))
-		{
-			self::$extension = '.'.$path_parts['extension'];
-			$uri = substr($uri, 0, -strlen(self::$extension));
-		}
 
 		# fetch segments
 		foreach(explode('/', preg_replace('|/*(.+?)/*$|', "\\1", $uri)) as $val)
@@ -63,7 +54,7 @@ class Url
 	}
 
 	/**
-	 * Encode an url acordingly to the parsing method.
+	 * Encode an url accordingly to the parsing method.
 	 *
 	 * @param	string	$url	A string composed of the controller and its arguments
 	 * @param	string	$GET	An array of "GET" value to add into the URL
@@ -72,26 +63,17 @@ class Url
 	 */
 	public static function make($url = '', $GET = NULL, $id = NULL)
 	{
-		if ( isset($GET['q']) )
-		{
-			if( !$url ) $url = $GET['q'];
-			unset($GET['q']);
-		}
-
-		$ext = config('uri/extension');
-		$url = trim($url, '/');
-		$page = empty($url) ? '' : $url.$ext;
-
 		if (config('uri/rewrite')) {
-			$query_string = $page.'?';
+			$query_string = $url.'?';
 		}
-		elseif ($page) {
-			$query_string = 'index.php?q=/'.$page;
+		elseif ($url) {
+			$query_string = 'index.php?q=/'.$url;
 		}
 		else {
-			$query_string = '?';
+			$query_string = 'index.php?';
 		}
 
+		unset($GET['q']);
 		foreach((array) $GET as $key => $value)
 			if (is_string($key)) $query_string .= '&'.urlencode($key).'='.urlencode($value);
 			else $query_string .= '&'.urlencode($value);

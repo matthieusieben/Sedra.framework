@@ -37,8 +37,10 @@ require SYSTEM_DIR.'bootstrap.php';
 
 # Get the controller name. Default is 'Home'.
 $controller_name = Url::segment(0, config('controller', 'Home'));
+# Make the controller arguments
+$arguments = array('method' => Url::segment(1, 'index'));
 # Load the controller
-$controller = Load::controller($controller_name, array('method' => Url::segment(1, 'index')));
+$controller = Load::controller($controller_name, $arguments);
 # Main controller
 Hook::call(HOOK_MAIN_CONTROLLER);
 # Generate the content of the controller and display it
