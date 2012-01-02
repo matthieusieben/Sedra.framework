@@ -1,5 +1,4 @@
 <?php
-// $Id: log.inc,v 1.8 2010/03/31 15:09:21 dries Exp $
 
 /**
  * @file
@@ -129,7 +128,7 @@ class DatabaseLog {
    * Determine the routine that called this query.
    *
    * We define "the routine that called this query" as the first entry in
-   * the call stack that is not inside database/. That makes the
+   * the call stack that is not inside includes/database. That makes the
    * climbing logic very simple, and handles the variable stack depth caused
    * by the query builders.
    *

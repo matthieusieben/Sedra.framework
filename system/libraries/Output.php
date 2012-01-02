@@ -56,7 +56,7 @@ class Output {
 	 */
 	public static function session($k, $v)
 	{
-		Load::library('Session');
+		Load::library('session');
 		$_SESSION[$k] = $v;
 	}
 }

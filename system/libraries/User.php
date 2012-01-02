@@ -1,7 +1,7 @@
 <?php
 
 # User methods work together with sessions
-require_once 'Session.php';
+require_once 'session.php';
 
 class User {
 	protected $uid = ANONYMOUS_UID;

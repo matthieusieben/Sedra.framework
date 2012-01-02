@@ -20,7 +20,7 @@ class Input {
 	
 	public static function session($k, $d = NULL)
 	{
-		Load::library('Session');
+		Load::library('session');
 		return isset($_SESSION[$k]) ? $_SESSION[$k] : $d;
 	}
 }

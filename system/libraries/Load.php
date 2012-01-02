@@ -137,11 +137,11 @@ class Load
 
 	public static function db()
 	{
-		Load::library('Database');
+		Load::library('database');
 	}
 	
 	public static function user()
 	{
-		Load::library('Session');
+		Load::library('session');
 	}
 }

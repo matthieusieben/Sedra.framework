@@ -79,6 +79,8 @@ function unset_globals() {
  */
 function include_module( $dir, $module, $is_dir = NULL)
 {
+	$module = strtolower($module);
+
 	if($is_dir === NULL OR $is_dir === FALSE)
 	if($path = stream_resolve_include_path("$dir/$module.php")) {
 		require_once $path;

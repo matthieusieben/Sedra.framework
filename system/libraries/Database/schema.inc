@@ -1,5 +1,4 @@
 <?php
-// $Id: schema.inc,v 1.44 2011/01/03 18:03:54 webchick Exp $
 
 /**
  * @file
@@ -177,10 +176,33 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
    */
   protected $defaultSchema = 'public';
 
+  /**
+   * A unique identifier for this query object.
+   */
+  protected $uniqueIdentifier;
+
   public function __construct($connection) {
+    $this->uniqueIdentifier = uniqid('', TRUE);
     $this->connection = $connection;
   }
 
+  /**
+   * Implements the magic __clone function.
+   */
+  public function __clone() {
+    $this->uniqueIdentifier = uniqid('', TRUE);
+  }
+
+  /**
+   * Implements QueryPlaceHolderInterface::uniqueIdentifier().
+   */
+  public function uniqueIdentifier() {
+    return $this->uniqueIdentifier;
+  }
+
+  /**
+   * Implements QueryPlaceHolderInterface::nextPlaceholder().
+   */
   public function nextPlaceholder() {
     return $this->placeholder++;
   }
@@ -246,7 +268,7 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
    * method should be overwritten by a database driver if the database provider
    * uses alternate methods. Because information_schema.tables is used in a few
    * different functions, a database driver will only need to override this function
-   * to make all the others work. For example see databases/mysql/schema.inc.
+   * to make all the others work. For example see includes/databases/mysql/schema.inc.
    *
    * @param $table_name
    *   The name of the table in question.
