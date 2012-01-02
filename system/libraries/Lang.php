@@ -3,9 +3,6 @@
 # Register default lang folders
 Lang::register_folder(SYSTEM_DIR . 'languages');
 
-# Load the user lib, this way the language will be automatically set.
-Load::user();
-
 class Lang
 {
 	/**
@@ -180,6 +177,9 @@ class Lang
 	 */
 	public static function t($string, $replace_pairs = array(), $language = NULL)
 	{
+		# Load the user lib, this way the language will be automatically set.
+		Load::user();
+
 		if(!$language) $language = self::current();
 		else self::load($language);
 		

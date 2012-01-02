@@ -6,12 +6,26 @@ function a($page, $title) {
 
 function css($file, $media = 'screen')
 {
-	if($href = Theme::css($file))
+	$href = $file;
+	if(!is_url($file)) {
+		$href = Theme::css($file);
+		if(!$href) $href = Url::file($file);
+	}
+
+	if($href) {
 		echo '<link rel="stylesheet" type="text/css" href="'.$href.'" media="'.$media.'" />';
+	}
 }
 
 function js($file, $charset = 'utf-8')
 {
-	if($src = Theme::js($file))
+	$src = $file;
+	if(!is_url($file)) {
+		$src = Theme::js($file);
+		if(!$src) $src = Url::file($file);
+	}
+
+	if($src) {
 		echo '<script type="text/javascript" charset="'.$charset.'" src="'.$src.'"></script>';
+	}
 }

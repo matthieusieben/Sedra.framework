@@ -71,11 +71,11 @@ set_exception_handler(array('Handler','exception'));
  * ---------------------------------------------------------------------------
  */
 
-register_shutdown_function('Hook::call', HOOK_SHUTDOWN);
+register_shutdown_function('Hook::call', 'shutdown');
 
 /*
  * ---------------------------------------------------------------------------
- * Load modules/libraries/helpers/hooks
+ * Load modules
  * ---------------------------------------------------------------------------
  */
 
@@ -87,7 +87,7 @@ Load::auto();
  * ---------------------------------------------------------------------------
  */
 
-Hook::call(HOOK_BOOTSTRAP);
+Hook::call('bootstrap');
 
 /*
  * ---------------------------------------------------------------------------

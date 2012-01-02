@@ -172,7 +172,7 @@ abstract class Controller {
 				$c->content =& $cache->data;
 			} else {
 				# Not in cache, generate and set cache
-				$c = Hook::call(HOOK_CONTROLLER_GENERATE, $c);
+				$c = Hook::call('generate_controller', $c);
 				# Hooks could set the content
 				if(!isset($c->content)) {
 					try {
@@ -194,7 +194,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	public static function render(Controller $c) {
-		$c = Hook::call(HOOK_CONTROLLER_RENDER, $c);
+		$c = Hook::call('render_controller', $c);
 		if(!isset($c->html)) {
 			try {
 				$c->_render();
@@ -211,7 +211,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	public static function display(Controller $c) {
-		$c = Hook::call(HOOK_CONTROLLER_DISPLAY, $c);
+		$c = Hook::call('display_controller', $c);
 		try {
 			$c->_display();
 		} catch (SedraException $e) {

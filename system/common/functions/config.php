@@ -14,8 +14,6 @@ function config_init()
 
 	if( ! is_array($config) )
 		fatal('Invalid configuration file.');
-
-	$config = Hook::call(HOOK_CONFIG_INIT, $config);
 }
 
 /**

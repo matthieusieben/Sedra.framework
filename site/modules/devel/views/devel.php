@@ -46,6 +46,7 @@
 							<tr>
 								<th><?php p('ms'); ?></th>
 								<th><?php p('where'); ?></th>
+								<th><?php p('ops'); ?></th>
 								<th><?php p('query'); ?></th>
 								<th><?php p('target'); ?></th>
 							</tr>
@@ -55,18 +56,30 @@
 								<?php $_i = 0; ?>
 								<?php foreach ($_queries as $_query): ?>
 									<tr class="<?php echo (++$_i % 2 == 0) ? 'odd' : 'even'; ?>">
-										<td><?php echo round($_query['time'] * 1000, 2); ?></td>
-										<td>
-										<?php $_where = !empty($_query['caller']['class']) ? $_query['caller']['class'] . '::' : ''; ?>
-										<?php $_where .= $_query['caller']['function']; ?>
-										<?php echo html($_where); ?></td>
-										<td class="sql"><?php echo html($_query['query']); ?></td>
-										<td><?php echo html($_query['target']); ?></td>
+										<td class="ms">
+											<?php echo round($_query['time'] * 1000, 2); ?>
+										</td>
+										<td class="where">
+											<?php $_where = !empty($_query['caller']['class']) ? $_query['caller']['class'] . '::' : ''; ?>
+											<?php $_where .= $_query['caller']['function']; ?>
+											<?php echo html($_where); ?>
+										</td>
+										<td class="ops">
+											<a href="#" class="placeholders" title="<?php p('Show placeholders'); ?>">P</a>
+											<a href="#" class="arguments" title="<?php p('Show arguments'); ?>">A</a>
+										</td>
+										<td class="query">
+											<div class="placeholders"><?php echo html($_query['query']); ?></div>
+											<div class="arguments" style="display: none"><?php echo html(strtr($_query['query'], $_query['args'])); ?></div>
+										</td>
+										<td class="target">
+											<?php echo html($_query['target']); ?>
+										</td>
 									</tr>
 								<?php endforeach; ?>
 							<?php else: ?>
 								<tr>
-									<td colspan="4"><?php p('No query.'); ?></td>
+									<td colspan="5"><?php p('No query.'); ?></td>
 								</tr>
 							<?php endif; ?>
 						</tbody>

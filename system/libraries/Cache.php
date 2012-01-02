@@ -22,12 +22,12 @@ class Cache {
 	public static function set($key, $data, $permanent = FALSE)
 	{
 		try {
+			# Alter key or data
+			list($key, $data) = Hook::call('set_cache', array($key, $data));
+
 			if(empty($key)) {
 				return;
 			}
-
-			# Alter key or data
-			list($key, $data) = Hook::call(HOOK_CACHE_SET, array($key, $data));
 
 			# Cache lifetime
 			$lifetime = config('cache/lifetime', CACHE_DEFAULT_LIFETIME);
@@ -35,7 +35,7 @@ class Cache {
 			# Setup fields
 			$fields = array(
 				'serialized' => 0,
-				'expire' => $permanent ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
+				'expire' => (!DEVEL AND $permanent) ? CACHE_PERMANENT : (REQUEST_TIME + $lifetime),
 				'created' => REQUEST_TIME,
 			);
 
@@ -76,7 +76,7 @@ class Cache {
 			# Build the querry
 			$query = db_select('cache', 'c')
 				->fields('c', array('expire', 'created', 'serialized', 'data'))
-				->condition('expire', REQUEST_TIME, '>');
+				->condition(db_or()->condition('expire', REQUEST_TIME, '>')->condition('expire', 0));
 			foreach($key as $k => $v)
 				$query->condition($k, $v);
 
@@ -97,7 +97,7 @@ class Cache {
 			$cache->key = $key;
 
 			# Alter data
-			$cache = Hook::call(HOOK_CACHE_GET, $cache);
+			$cache = Hook::call('get_cache', $cache);
 
 			# Retrun the cache object
 			return $cache;

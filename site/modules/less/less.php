@@ -1,11 +1,14 @@
 <?php
 
-function hook_less_alter_url($_, $url) {
+/**
+ * Modify url to less files so that they use the Less controller
+ *
+ * @param string $url 
+ * @return void
+ */
+function less_alter_file_url($url) {
 	$pathinfo = pathinfo($url);
 	if(strToLower(@$pathinfo['extension']) === 'less') {
-		return Url::make('less/' . $pathinfo['basename']);
+		$url = Url::make('less/' . $pathinfo['basename']);
 	}
-	return $url;
 }
-
-Hook::register(HOOK_URL_FILE, 'hook_less_alter_url');

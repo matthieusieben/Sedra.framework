@@ -107,19 +107,18 @@ function redirect($path = '', $query = NULL, $http_response_code = 302)
 {
 	set_status_header($http_response_code);
 
-	$colonpos = strpos($path, ':');
-	if( $colonpos === FALSE || preg_match('![/?#]!', substr($path, 0, $colonpos)) )
-	{
-		# $path is a local uri
-		$url = Url::make($path, $query);
-	}
-	else
+	if( is_url($path) )
 	{
 		# $path is a full url
 		$url = $path;
 	}
+	else {
+		# $path is a local uri
+		$url = Url::make($path, $query);
+	}
 
-	Hook::call(HOOK_SHUTDOWN);
+	Hook::call('shutdown');
+	# TODO : unset 'shutdown' hooks
 
 	# Even though session_write_close() is registered as a shutdown function, we
 	# need all session data written to the database before redirecting.

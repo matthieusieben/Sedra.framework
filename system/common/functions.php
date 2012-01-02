@@ -39,9 +39,9 @@ function html($text)
  */
 function dump()
 {
-	if(Hook::registered(HOOK_DUMP)) {
+	if(Hook::registered('dump')) {
 		foreach(func_get_args() as $v) {
-			Hook::call(HOOK_DUMP, $v);
+			Hook::call('dump', $v);
 		}
 	}
 	elseif(@ini_get('html_errors')) {
@@ -141,4 +141,9 @@ function check_flags($value, $flags)
 function val(&$value, $default = NULL)
 {
 	return isset($value) ? $value : $default;
+}
+
+function is_url($url) {
+	# TODO : find better ?
+	return preg_match("/^[a-zA-Z]+[:\/\/]+[A-Za-z0-9\-_]+\\.+[A-Za-z0-9\.\/%&=\?\-_]+$/i", $url);
 }

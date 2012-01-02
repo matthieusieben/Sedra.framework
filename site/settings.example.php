@@ -1,7 +1,7 @@
 <?php
 
 $config['controller'] = 'Home';
-$config['language'] = 'fr';
+$config['language'] = 'en';
 $config['timezone'] = 'Europe/Brussels';
 
 $config['databases']['default']['default'] = array (
@@ -31,7 +31,8 @@ $config['xsrf/stateful'] = TRUE;
 $config['xsrf/timeout'] = 3600;
 
 # Modules to load at boot time
-$config['autoload/modules'] = array(
+$config['modules'] = array(
+	'jquery',
 	'devel',
 #	'less',
 	'krumo',

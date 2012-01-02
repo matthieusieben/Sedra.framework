@@ -1,42 +1,48 @@
 <?php
+
+Session::start();
+
 /**
- * Session handler class. 
- *
- * @author	Matthieu Sieben
- * @post	User::$user is a User object. $_SESSION contains the session data.
+ * Session handler class.
  */
-
-{
-	Load::db();
-
-	session_set_save_handler(
-		array('Session','open'), # callback $open
-		array('Session','close'), # callback $close
-		array('Session','read'), # callback $read
-		array('Session','write'), # callback $write
-		array('Session','destroy_sid'), # callback $destroy
-		array('Session','gc') # callback $gc
-		);
-	session_start();
-
-	if ( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
-		# login
-		User::authenticate($_POST['user-name'], $_POST['user-pass']);
-	}
-	elseif( (isset($_POST['user-logout']) || isset($_GET['user-logout'])) && User::connected() ) {
-		# logout
-		User::logout();
-	} elseif($user_data = reg('user_data')) {
-		# Already logged in
-		User::set(new User($user_data));
-	} else {
-		# Anonymous user
-		User::set(new AnonymousUser);
-	}
-}
-
 class Session
 {
+	/**
+	 * Initialize Sedra's session handling
+	 *
+	 * @return void
+	 * @post User::$user is a User object. $_SESSION contains the session data.
+	 */
+	public static function start() {
+		Load::db();
+
+		session_set_save_handler(
+			array('Session','open'), # callback $open
+			array('Session','close'), # callback $close
+			array('Session','read'), # callback $read
+			array('Session','write'), # callback $write
+			array('Session','destroy_sid'), # callback $destroy
+			array('Session','gc') # callback $gc
+			);
+		session_start();
+
+		if ( isset($_POST['user-login'], $_POST['user-name'], $_POST['user-pass']) && !User::connected() ) {
+			# login
+			User::authenticate($_POST['user-name'], $_POST['user-pass']);
+		}
+		elseif( (isset($_POST['user-logout']) || isset($_GET['user-logout'])) && User::connected() ) {
+			# logout
+			User::logout();
+		} elseif($user_data = reg('user_data')) {
+			# Already logged in
+			User::set(new User($user_data));
+		} else {
+			# Anonymous user
+			User::set(new AnonymousUser);
+		}
+	}
+	
+	
 	/************************************************************************/
 	/*                        session save handlers                         */
 	/************************************************************************/

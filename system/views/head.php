@@ -35,10 +35,4 @@
 	<?php css('common.css'); ?>
 	<?php css('style.css'); ?>
 
-	<?php if(DEVEL): ?>
-		<?php js('jquery.js'); ?>
-	<?php else: ?>
-		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<?php endif; ?>
-
-	<?php Hook::call(HOOK_HTML_HEAD); ?>
+	<?php Hook::call('html_head'); ?>

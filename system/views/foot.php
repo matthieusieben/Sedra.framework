@@ -21,6 +21,6 @@
 			</div>
 		<?php endif ?>
 	</div>
-	<?php Hook::call(HOOK_HTML_BODY_END); ?>
+	<?php Hook::call('html_body_end'); ?>
 </body>
 </html>
