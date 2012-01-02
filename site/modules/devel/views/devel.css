@@ -1,35 +1,35 @@
-#debug {
+#devel {
 	color: black;
 	background: white;
 	font-size: 12px;
 	line-height: 1em;
 }
 
-#debug-title {
+#devel-title {
 	padding: 1em;
 	border-top: 2px solid #ccc;
 	border-bottom: 2px solid #ccc;
 }
 
-#debug-content {
+#devel-content {
 	
 }
 
-#debug .dump {
+#devel .dump {
 	
 }
 
-#debug .dump > div {
+#devel .dump > div {
 	border-bottom: 1px solid #E9E9E9;
 }
 
-#debug .dump-title {
-	padding: 1em;
+#devel .dump-title {
+	padding: 0.75em 1em;
 	background: #F8F8F8;
 	font-weight: bold;
 }
 
-#debug .dump-content {
+#devel .dump-content {
 	margin: 0;
 	padding: 0;
 }
@@ -38,36 +38,36 @@
 	display: none !important;
 }
 
-#debug .krumo-root {
+#devel .krumo-root {
 	border: none;
 	padding: 0;
 	margin: 0;
 }
 
-#debug .krumo-footnote {
+#devel .krumo-footnote {
 	display: none;
 }
 
-#debug-queries table {
+#devel-queries table {
 	border-spacing: 0px;
 	border-collapse: collapse;
 	text-align: left;
 }
 
-#debug-queries tr.odd {
+#devel-queries tr.odd {
 	background: #F8F8F8;
 }
 
-#debug-queries th,
-#debug-queries td {
+#devel-queries th,
+#devel-queries td {
 	padding: 1em 0.5em;
 	border-bottom: 1px solid #E9E9E9;
 }
 
-#debug-queries tbody {
+#devel-queries tbody {
 	color: #444;
 }
 
-#debug .sql {
+#devel .sql {
 	font-family: 'Andale Mono', monospace;
 }

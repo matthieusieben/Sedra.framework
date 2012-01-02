@@ -11,7 +11,7 @@ class ExceptionController extends Controller {
 
 	public function page() {
 		$data = $this->_data();
-		$data['previous_output'] = close_buffers();
+		$data['previous_output'] = ob_get_clean_all();
 		return Theme::view('exception_page', $data);
 	}
 

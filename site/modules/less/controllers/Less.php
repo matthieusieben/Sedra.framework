@@ -1,6 +1,6 @@
 <?php
 
-define('LESS_CONTROLLER_COMMENT', '/* generated in <?php echo round((microtime() - START_TIME) * 1000); ?> ms */');
+define('LESS_CONTROLLER_COMMENT', '/* generated in <?php echo round((microtime(TRUE) - START_TIME) * 1000); ?> ms */');
 
 /**
  * Less CSS compiler controller.

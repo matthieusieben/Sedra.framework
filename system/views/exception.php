@@ -1,9 +1,8 @@
 <div class="exception">
 	<h2><?php echo $title . ' ('.$e->getCode().')'; ?></h2>
 
-	<p class="message"><?php echo $e->getMessage(); ?></p>
-	<p class="file"><?php p('File'); ?>: <?php echo $e->getFile(); ?></p>
-	<p class="line"><?php p('Line'); ?>: <?php echo $e->getLine(); ?></p>
+	<p class="exception-message"><?php echo $e->getMessage(); ?></p>
+	<p class="exception-file"><?php p('Called from <b>@file</b>, line <b>@line</b>', array('@file'=>$e->getFile(), '@line'=>$e->getLine())); ?></p>
 
 	<?php if (DEVEL): ?>
 		<?php if ($e instanceof DatabaseException && isset($e->query)): ?>

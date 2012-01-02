@@ -4,7 +4,7 @@
  * Attach (or remove) multiple callbacks to an event and trigger those callbacks when that event is called.
  */
 class Hook {
-	
+
 	public static $hooks = array();
 	
 	/**

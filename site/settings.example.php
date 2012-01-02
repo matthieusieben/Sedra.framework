@@ -16,8 +16,6 @@ $config['databases']['default']['default'] = array (
 
 # Is mod_rewrite activated on the server
 $config['uri/rewrite'] = TRUE;
-# Extension that any url should contain. If set, must start with a '.'.
-$config['uri/extension'] = '.html';
 
 $config['cookie/prefix'] = '';
 $config['cookie/path'] = SCRIPT_PATH;
@@ -34,8 +32,8 @@ $config['xsrf/timeout'] = 3600;
 
 # Modules to load at boot time
 $config['autoload/modules'] = array(
-	'debug',
-	'less',
+	'devel',
+#	'less',
 	'krumo',
 );
 
