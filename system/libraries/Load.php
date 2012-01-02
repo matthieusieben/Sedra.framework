@@ -7,7 +7,7 @@ class Load
 {
 	public static function auto()
 	{
-		foreach(Modules::loaded() as $module) {
+		foreach((array) config('modules') as $module) {
 			Load::module($module);
 		}
 	}

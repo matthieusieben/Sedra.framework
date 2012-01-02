@@ -47,4 +47,3 @@ function devel_library_loaded($library) {
 		Database::startLog('DEVEL');
 	}
 }
-

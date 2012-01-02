@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `cache` (
   `uid` int(11) unsigned DEFAULT NULL,
   `rid` int(11) unsigned DEFAULT NULL,
   `class` varchar(128) DEFAULT NULL,
+  `method` varchar(128) DEFAULT NULL,
   `language` varchar(3) DEFAULT NULL,
   `url` varchar(128) DEFAULT NULL,
 

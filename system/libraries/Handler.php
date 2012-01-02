@@ -13,7 +13,7 @@ class Handler
 			if(DEVEL) {
 				message(
 					MESSAGE_ERROR,
-					"PHP error (@severity) in file @file:@line\n@message",
+					"PHP error (@severity) in file @file, at line @line.\n@message",
 					array(
 						'@severity' => $severity,
 						'@message' => $message,
