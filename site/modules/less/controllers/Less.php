@@ -1,6 +1,13 @@
 <?php
 
-define('LESS_CONTROLLER_COMMENT', '/* generated in <?php echo round((microtime(TRUE) - START_TIME) * 1000); ?> ms */');
+define('LESS_CONTROLLER_COMMENT', <<<EOF
+/*
+ * This less file was generated in <?php echo round((microtime(TRUE) - START_TIME) * 1000); ?> ms by LessPHP 0.3.0.
+ * http://leafo.net/lessphp
+ */
+
+EOF
+);
 
 /**
  * Less CSS compiler controller.

@@ -1,16 +1,16 @@
-# lessphp v0.2.0
+# lessphp v0.3.0
 #### <http://leafo.net/lessphp>
 
-`lessphp` is a compiler for LESS written in php.
-For a complete description of the language see <http://leafo.net/lessphp/docs/>
+`lessphp` is a compiler for LESS written in PHP. The documentation is great,
+so check it out: <http://leafo.net/lessphp/docs/>. Here's a quick tutorial:
 
 ### How to use in your php project
 
-Copy less.inc.php to your include directory and include it into your project.
+Copy `lessc.inc.php` to your include directory and include it into your project.
 
 There are a few ways to interface with the compiler. The easiest is to have it
 compile a LESS file when the page is requested. The static function 
-`less::ccompile`, checked compile, will compile the input LESS file only when it
+`lessc::ccompile`, checked compile, will compile the input LESS file only when it
 is newer than the output file.
 
 	try {
