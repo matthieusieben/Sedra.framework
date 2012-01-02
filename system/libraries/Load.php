@@ -5,13 +5,6 @@
  */
 class Load
 {
-	public static function auto()
-	{
-		foreach((array) config('modules') as $module) {
-			Load::module($module);
-		}
-	}
-
 	/*
 	 * -------------------------------------------------------------------------
 	 * File loading functions

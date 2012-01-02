@@ -27,7 +27,7 @@ class Less extends Controller {
 			$lessc = new lessc($file_path);
 
 			# Set the content to the parsed result
-			return $this->content = $lessc->parse() . LESS_CONTROLLER_COMMENT;
+			return $this->content = LESS_CONTROLLER_COMMENT . $lessc->parse();
 		} catch(Exception $e) {
 			throw $e instanceof SedraException ? $e : new SedraException($e);
 		}

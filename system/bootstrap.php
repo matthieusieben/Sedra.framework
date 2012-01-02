@@ -79,7 +79,9 @@ register_shutdown_function('Hook::call', 'shutdown');
  * ---------------------------------------------------------------------------
  */
 
-Load::auto();
+foreach((array) config('modules') as $module) {
+	Load::module($module);
+}
 
 /*
  * ---------------------------------------------------------------------------
