@@ -77,7 +77,7 @@ function unset_globals() {
  * @param string $module 
  * @return string The file path or FALSE if not found
  */
-function include_module( $dir, $module, $is_dir = NULL)
+function include_file( $dir, $module, $is_dir = NULL)
 {
 	$module = strtolower($module);
 

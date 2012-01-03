@@ -21,7 +21,7 @@ class Load
 		$new_path = './' .PATH_SEPARATOR. $module_dir .PATH_SEPARATOR. $current_path;
 		set_include_path($new_path);
 
-		if( !include_module( 'modules', $name, TRUE ) ) {
+		if( !include_file( 'modules', $name, TRUE ) ) {
 			# Reset path if the module was not loaded
 			set_include_path($old_path);
 			throw new SedraLoadException( 'module', $name );
@@ -47,7 +47,7 @@ class Load
 	 */
 	public static function controller( $name, $arg = array() )
 	{
-		if( !include_module('controllers', $name)) {
+		if( !include_file('controllers', $name)) {
 			throw new SedraLoadException('controller', $name );
 		}
 
@@ -62,7 +62,7 @@ class Load
 
 	public static function library( $name )
 	{
-		if( !include_module( 'libraries', $name ) )
+		if( !include_file( 'libraries', $name ) )
 		{
 			throw new SedraLoadException( 'library', $name );
 		}
@@ -72,7 +72,7 @@ class Load
 
 	public static function model( $name )
 	{
-		if( !include_module( 'models', $name ) )
+		if( !include_file( 'models', $name ) )
 		{
 			throw new SedraLoadException( 'model', $name );
 		}
@@ -82,7 +82,7 @@ class Load
 
 	public static function helper( $name )
 	{
-		if( !include_module( 'helpers', $name ) )
+		if( !include_file( 'helpers', $name ) )
 		{
 			throw new SedraLoadException( 'helper', $name );
 		}

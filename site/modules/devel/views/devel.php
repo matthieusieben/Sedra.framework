@@ -1,31 +1,9 @@
-<?php $_variables = devel(); ?>
-<?php array_unshift($_variables, array(
-	'message' => t('Timers'),
-	'variable' => timer_read_all(),
-	)); ?>
-<?php array_unshift($_variables, array(
-	'message' => t('Included files'),
-	'variable' => get_included_files(),
-	)); ?>
-<?php array_unshift($_variables, array(
-	'message' => t('Environment'),
-	'variable' => array(
-		'$_ENV' => $_ENV,
-		'$_GET' => $_GET,
-		'$_POST' => $_POST,
-		'$_COOKIE' => $_COOKIE,
-		'$_FILES' => $_FILES,
-		'$_SERVER' => $_SERVER,
-		'$_SESSION' => isset($_SESSION) ? $_SESSION : NULL,
-		'$_REQUEST' => $_REQUEST,
-		'$GLOBALS' => $GLOBALS,
-		)
-	)); ?>
 <div id="devel">
 	<div id="devel-title">
 		<?php p('Page generated in <b>@time</b> ms.', array('@time' => round(((microtime(TRUE)-START_TIME)*1000), 2))); ?>
 	</div>
 	<div id="devel-content">
+		<?php $_variables = array_merge(devel_get_system_array(), devel()); ?>
 		<?php foreach ($_variables as $_var): ?>
 			<div class="dump">
 				<?php if ($_var['message']): ?>

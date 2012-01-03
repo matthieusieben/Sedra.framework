@@ -51,7 +51,7 @@ config_init();
  */
 
 function __autoload($class) {
-	include_module('libraries', $class);
+	include_file('libraries', $class) OR include_file('models', $class);
 }
 
 /*
