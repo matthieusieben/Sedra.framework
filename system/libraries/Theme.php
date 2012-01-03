@@ -4,6 +4,7 @@
  * 
  */
 class Theme {
+	# TODO
 	public static $theme = 'default';
 	
 	/**
@@ -51,5 +52,22 @@ class Theme {
 
 	public static function theme_dir() {
 		return SITE_DIR.'themes/'.self::$theme .'/';
+	}
+
+	public static function get_info($theme = NULL)
+	{
+		$info = NULL;
+		$info_file = $theme ?
+			SITE_DIR."themes/${theme}/info.php" :
+			self::theme_dir() ;
+		if(file_exists($info_file)) {
+			$info = include($info_file);
+		}
+		return (array) $info;
+	}
+
+	public static function get_block_placeholders($theme = NULL) {
+		$info = self::get_info($theme);
+		return (array) val($info['block_placeholders']);
 	}
 }

@@ -1,8 +1,10 @@
 <?php
 
 function blocks_html_head() {
-	Load::helper('html');
-	css(stream_resolve_include_path('blocks.css'));
+	if(count(Blocks::get())) {
+		Load::helper('html');
+		css(stream_resolve_include_path('blocks.css'));
+	}
 }
 
 function blocks_alter_view_data($data) {
