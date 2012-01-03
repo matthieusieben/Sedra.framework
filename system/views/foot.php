@@ -1,25 +1,13 @@
 			</div>
-			<?php if (!empty($blocks['column'])): ?>
-				<div id="column">
-					<?php foreach ($blocks['column'] as $_block): ?>
-						<div class="block">
-							<?php echo $_block; ?>
-						</div>
-					<?php endforeach ?>
-				</div>
-			<?php endif ?>
-			<div class="clear"></div>
 		</div>
-		<?php if (!empty($blocks['footer'])): ?>
-			<div id="footer" class="main-box">
-				<?php foreach ($blocks['footer'] as $_block): ?>
-					<div class="black block">
-						<?php echo $_block; ?>
-					</div>
-				<?php endforeach ?>
-				<div class="clear"></div>
+		<div id="footer" class="main-box">
+			<div id="footnote">
+				<span id="copyright">Copyright &copy; <?php date('Y'); ?></span>
+				<?php if (!empty($footnote)): ?>
+					<span> - <?php echo $footnote; ?></span>
+				<?php endif ?>
 			</div>
-		<?php endif ?>
+		</div>
 	</div>
 	<?php Hook::call('html_body_end'); ?>
 </body>

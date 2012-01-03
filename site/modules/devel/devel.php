@@ -7,7 +7,7 @@ Load::helper('devel');
  *
  * @return void
  */
-function devel_alter_main_controller() {
+function devel_main_controller_loaded() {
 	global $controller;
 
 	# Dump the main controller

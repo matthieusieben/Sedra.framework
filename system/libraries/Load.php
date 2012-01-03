@@ -57,7 +57,7 @@ class Load
 
 		$controller = new $name( $arg );
 
-		return Hook::call('controller_loaded', $controller);
+		return Hook::alter('alter_controller_on_load', $controller);
 	}
 
 	public static function library( $name )
@@ -101,8 +101,8 @@ class Load
 	public static function view( $__file, $__data = array() )
 	{
 		# Alter parameters by hooks
-		$__file = Hook::call('load_view_file', $__file);
-		$__data = Hook::call('load_view_data', $__data);
+		$__file = Hook::alter('alter_view_file', $__file);
+		$__data = Hook::alter('alter_view_data', $__data);
 
 		# Tell whether the file exists and is readable
 		if(!is_readable($__file)) {
@@ -119,7 +119,7 @@ class Load
 		require $__file;
 
 		# Return the buffered output
-		return Hook::call('view_output', ob_get_clean());
+		return Hook::alter('alter_view_output', ob_get_clean());
 	}
 
 	/*

@@ -19,27 +19,27 @@ class Hook {
 			'alter_controller' => array(),
 			'alter_controller_name' => array(),
 			'alter_controller_arguments' => array(),
-			'alter_main_controller' => array(),
+			'main_controller_loaded' => array(),
 
 			'alter_query_string' => array(),
 			'alter_file_url' => array(),
 
 			'module_loaded' => array(),
-			'controller_loaded' => array(),
+			'alter_controller_on_load' => array(),
 			'library_loaded' => array(),
 			'model_loaded' => array(),
 			'helper_loaded' => array(),
 
-			'load_view_file' => array(),
-			'load_view_data' => array(),
-			'view_output' => array(),
+			'alter_view_file' => array(),
+			'alter_view_data' => array(),
+			'alter_view_output' => array(),
 
-			'generate_controller' => array(),
-			'render_controller' => array(),
-			'display_controller' => array(),
+			'set_controller_content' => array(),
+			'set_controller_html' => array(),
+			'alter_controller_before_display' => array(),
 
-			'set_cache' => array(),
-			'get_cache' => array(),
+			'alter_to_cache' => array(),
+			'alter_from_cache' => array(),
 
 			'html_head' => array(),
 			'html_body_start' => array(),
@@ -101,6 +101,16 @@ class Hook {
 			}
 		}
 		return $result;
+	}
+
+	public static function alter($event, $value)
+	{
+		if(self::registered($event)) {
+			foreach(self::$data['hooks'][$event] as $callback) {
+				$value = call_user_func($callback, $value);
+			}
+		}
+		return $value;
 	}
 
 	/**

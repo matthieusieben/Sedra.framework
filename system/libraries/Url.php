@@ -78,7 +78,7 @@ class Url
 
 		$query_string = rtrim($query_string, '?') . ($id ? '#'.$id : '');
 
-		$query_string = Hook::call('alter_query_string', $query_string);
+		$query_string = Hook::alter('alter_query_string', $query_string);
 
 		return BASE_URL.$query_string;
 	}
@@ -100,7 +100,7 @@ class Url
 			# make sure the url only contains '/' and no '\' (because of realpath)
 			$relative_url = strtr($relative_path, DIRECTORY_SEPARATOR, '/');
 			# Any hook to alter the path ?
-			return Hook::call('alter_file_url', SITE_URL.$relative_url);
+			return Hook::alter('alter_file_url', SITE_URL.$relative_url);
 		}
 		return NULL;
 	}

@@ -14,11 +14,11 @@ set_include_path('./' .PATH_SEPARATOR. SITE_DIR .PATH_SEPARATOR. SYSTEM_DIR);
  * ---------------------------------------------------------------------------
  */
 
-require 'common/functions.php';
+require_once 'common/functions.php';
 
-require 'common/constants.php';
+require_once 'common/constants.php';
 
-require 'common/exceptions.php';
+require_once 'common/exceptions.php';
 
 /*
  * ---------------------------------------------------------------------------
@@ -61,7 +61,6 @@ function __autoload($class) {
  */
 
 error_reporting(E_ALL);
-
 set_error_handler(array('Handler','php_error'));
 set_exception_handler(array('Handler','exception'));
 

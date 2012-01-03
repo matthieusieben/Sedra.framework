@@ -10,6 +10,8 @@ abstract class Controller {
 	public $content	= NULL;
 	public $html	= NULL;
 
+	public $is_main = FALSE;
+
 	/**
 	 * This constructor builds a Controller object
 	 *
@@ -172,7 +174,7 @@ abstract class Controller {
 				$c->content =& $cache->data;
 			} else {
 				# Not in cache, generate and set cache
-				$c = Hook::call('generate_controller', $c);
+				$c = Hook::alter('set_controller_content', $c);
 				# Hooks could set the content
 				if(!isset($c->content)) {
 					try {
@@ -194,7 +196,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	public static function render(Controller $c) {
-		$c = Hook::call('render_controller', $c);
+		$c = Hook::alter('set_controller_html', $c);
 		if(!isset($c->html)) {
 			try {
 				$c->_render();
@@ -211,7 +213,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	public static function display(Controller $c) {
-		$c = Hook::call('display_controller', $c);
+		$c = Hook::alter('alter_controller_before_display', $c);
 		try {
 			$c->_display();
 		} catch (SedraException $e) {

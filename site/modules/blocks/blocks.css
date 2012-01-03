@@ -1,0 +1,57 @@
+
+.block {
+	margin: 1em 0 0;
+}
+
+.block > h1,
+.block > h2 {
+	font-size: 1.5em;
+	margin-bottom: 0;
+}
+
+.block > ul {
+	margin: 0;
+	padding: 0;
+	list-style-position: inside;
+}
+
+.block > ul li,
+.block > div,
+.block > p {
+	padding: 1em 0 0;
+	margin: 0;
+}
+
+.black.block {
+	background: #1e1e1e;
+}
+
+.black.block h1,
+.black.block h2 {
+	margin: 0;
+	padding: 15px;
+	background: #333;
+	color: #4ba4c2;
+	font-weight: 100;
+}
+
+.black.block > ul {
+	margin: 0;
+	padding: 0;
+	list-style-position: inside;
+}
+
+.black.block > ul li,
+.black.block > div,
+.black.block > p {
+	padding: 15px;
+	margin: 0;
+	border-top: 1px solid #333;
+	color: #ccc;
+}
+
+.black.block > ul li:hover,
+.black.block > div:hover,
+.black.block > p:hover {
+	background: #333;
+}

@@ -23,7 +23,7 @@ class Cache {
 	{
 		try {
 			# Alter key or data
-			list($key, $data) = Hook::call('set_cache', array($key, $data));
+			list($key, $data) = Hook::alter('alter_to_cache', array($key, $data));
 
 			if(empty($key)) {
 				return;
@@ -97,7 +97,7 @@ class Cache {
 			$cache->key = $key;
 
 			# Alter data
-			$cache = Hook::call('get_cache', $cache);
+			$cache = Hook::alter('alter_from_cache', $cache);
 
 			# Retrun the cache object
 			return $cache;

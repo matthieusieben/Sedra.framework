@@ -42,17 +42,17 @@ $default_controller = config('controller', 'Home');
 # Get the main controller name from the URL
 $controller_name = Url::segment(0, $default_controller);
 # Alter the main controller name
-$controller_name = Hook::call('alter_controller_name', $controller_name);
+$controller_name = Hook::alter('alter_controller_name', $controller_name);
 # Build the controller arguments
 $arguments = array(
-	'controller' => $controller_name,
+	'is_main' => TRUE,
 	'method' => Url::segment(1, 'index'),
 );
 # Alter the arguments
-$arguments = Hook::call('alter_controller_arguments', $arguments);
+$arguments = Hook::alter('alter_controller_arguments', $arguments);
 # Load the controller
 $controller = Load::controller($controller_name, $arguments);
 # Main controller
-Hook::call('alter_main_controller');
+Hook::call('main_controller_loaded');
 # Generate the content of the controller and display it
 Controller::toBrowser($controller);

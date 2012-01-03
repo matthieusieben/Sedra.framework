@@ -101,10 +101,11 @@ function include_file( $dir, $module, $is_dir = NULL)
  * of $file without evaluating it (as include() would do).
  *
  * @param string $file A file in the current include_path.
+ * @param boolean $return_source should the file be printed or returned as string ?
  * @return void
  * @post The content of the file is printed.
  */
-function include_source($file) {
+function include_source($file, $return_source = FALSE) {
 	$orig = get_include_path();
 
 	$bt = debug_backtrace();
@@ -126,9 +127,17 @@ function include_source($file) {
 		set_include_path($new);
 	}
 
+	$content = NULL;
+
 	if($path = stream_resolve_include_path($file)) {
-		echo file_get_contents($path);
+		$content = file_get_contents($path);
 	}
 	
 	set_include_path($orig);
+	
+	if($return_source) {
+		return $content;
+	} else {
+		echo $content;
+	}
 }

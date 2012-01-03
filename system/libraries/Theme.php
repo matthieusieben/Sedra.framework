@@ -16,14 +16,7 @@ class Theme {
 	 */
 	public static function view( $name, $data = array() ) {
 		$data = (array) $data + array(
-			'body_class' => 'two_columns',
 			'site_name' => 'Sedra',
-			'blocks' => array(
-				'column' => array(
-				),
-				'footer' => array(
-				),
-			),
 		); # TODO : from cms
 		return Load::view(self::view_path($name), $data);
 	}

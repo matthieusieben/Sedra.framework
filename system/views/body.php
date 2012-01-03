@@ -1,6 +1,6 @@
 <?php Load::helper('html'); ?>
 </head>
-<body class="<?php echo val($body_class); ?>">
+<body class="<?php echo implode(' ', (array) val($body['class'])); ?>">
 	<?php Hook::call('html_body_start'); ?>
 	<div id="wrapper">
 		<div id="header">
