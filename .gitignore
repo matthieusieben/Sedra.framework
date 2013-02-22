@@ -1,6 +1,4 @@
 *~
 *.DS_Store
 *.bak
-*.bak.php
-site/settings.php
-*.pxm
+application/settings.php

@@ -1,0 +1,63 @@
+#
+# Apache/PHP settings:
+#
+
+# Disable MultiViews
+Options -MultiViews
+
+# Use UTF-8 encoding for anything served text/plain or text/html
+AddDefaultCharset utf-8
+
+# Force UTF-8 for a number of file formats
+AddCharset utf-8 .atom .css .js .json .rss .xml
+
+# Protect production files
+RedirectMatch 404 ^/(framework|application).*\.(php|sql)$
+RedirectMatch 404 (\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$
+RedirectMatch 404 (^|/)\.
+
+# Error documents
+ErrorDocument 403 /index.php/error/403
+ErrorDocument 404 /index.php/error/404
+
+# Force simple error message for requests for non-existent favicon.ico.
+<Files favicon.ico>
+	ErrorDocument 404 "The requested file favicon.ico was not found."
+</Files>
+
+# Override PHP settings that cannot be changed at runtime.
+<IfModule mod_php5.c>
+	php_flag magic_quotes_gpc                 off
+	php_flag magic_quotes_sybase              off
+	php_flag register_globals                 off
+	php_flag session.auto_start               off
+	php_value mbstring.http_input             pass
+	php_value mbstring.http_output            pass
+	php_flag mbstring.encoding_translation    off
+	php_flag log_errors                       on
+</IfModule>
+
+# Disable folder indexing
+<IfModule mod_autoindex.c>
+	Options -Indexes
+</IfModule>
+
+# Various rewrite rules.
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+
+	# If your site is running in a VirtualDocumentRoot at http://example.com/,
+	# uncomment the following line:
+	RewriteBase /
+
+	# Redirect all users to access the site WITHOUT the 'www.' prefix
+	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+	RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
+
+	# Pass all requests not referring directly to files in the filesystem to
+	# index.php.
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_URI} !=/favicon.ico
+	RewriteRule (.*) index.php/$1 [L]
+
+</IfModule>
