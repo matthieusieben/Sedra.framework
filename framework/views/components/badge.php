@@ -1,0 +1,1 @@
+<span class="badge badge-<?php echo $type; ?>"><?php echo $title; ?></span>

@@ -1,0 +1,83 @@
+<?php
+
+define('START_TIME', microtime(TRUE));
+define('REQUEST_TIME', (int) $_SERVER['REQUEST_TIME']);
+
+# Root directory
+$caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+defined('SITE_ROOT') or define('SITE_ROOT', dirname($caller[0]['file']).'/');
+
+# Application folder
+defined('APP_ROOT') or define('APP_ROOT', SITE_ROOT.'application/');
+define('APP_MODELS', APP_ROOT.'models/');
+
+# Framework folders
+defined('FRAMEWORK_ROOT') or define('FRAMEWORK_ROOT', __DIR__.'/');
+define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
+
+# Public folders
+defined('ASSETS_DIR') or define('ASSETS_DIR', SITE_ROOT.'assets/');
+defined('PUBLIC_DIR') or define('PUBLIC_DIR', SITE_ROOT.'public/');
+
+# Private folders
+defined('PRIVATE_DIR') or define('PRIVATE_DIR', SITE_ROOT.'private/');
+
+# Framework variables
+define('SEDRA_VERSION', '1.0');
+
+# Add INCLUDES_DIR to the path
+set_include_path('.'.PATH_SEPARATOR.APP_MODELS.PATH_SEPARATOR.FRAMEWORK_MODELS);
+
+# Unset globals
+if (ini_get('register_globals')) {
+	foreach ($GLOBALS as $key => $value) {
+		$allowed = array(
+			'_ENV' => TRUE,
+			'_GET' => TRUE,
+			'_POST' => TRUE,
+			'_COOKIE' => TRUE,
+			'_FILES' => TRUE,
+			'_SERVER' => TRUE,
+			'_REQUEST' => TRUE,
+			'GLOBALS' => TRUE
+		);
+		if (!isset($allowed[$key])) {
+			unset($GLOBALS[$key]);
+		}
+	}
+}
+
+# Load settings
+global $config;
+global $databases;
+global $models;
+
+require APP_ROOT.'settings.php';
+
+# Load core files
+require 'functions.php';
+require 'hook.php';
+require 'error.php';
+require 'url.php';
+require 'lang.php';
+
+# if(DEVEL)
+require 'devel.php';
+
+# Shutdown function
+register_shutdown_function('hook_invoke', 'shutdown');
+
+# Setup error handling
+error_reporting(config('log.reporting', E_ALL));
+set_error_handler('__error_handler');
+set_exception_handler('__exception_handler');
+
+# Global variables
+global $controller;
+
+$controller = url_segment(0, 'index');
+
+# Include default files
+foreach((array) @$models as $_) {
+	require_once $_;
+}

@@ -1,0 +1,75 @@
+html, body {
+	min-height: 100%;
+}
+
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
+}
+
+select {
+	width: auto;
+	max-width: 220px;
+}
+
+.clear {
+	clear: both;
+	overflow: hidden;
+}
+
+.align-left {
+	text-align: left;
+}
+
+.align-right {
+	text-align: right;
+}
+
+.align-justify {
+	text-align: justify;
+}
+
+.float-right {
+	float: right;
+}
+
+.float-left {
+	float: left;
+}
+
+.label {
+	padding: 2px 4px 3px;
+	font-weight: bold;
+	margin-right: 0.5em;
+}
+
+.form-actions > *,
+.form-inline .control-group {
+	display: inline-block;
+	margin: 0 5px 5px 0;
+}
+
+.control-group.error input,
+.control-group.error select,
+.control-group.error textarea,
+.control-group.error .checkbox,
+.control-group.error .radio,
+.control-group.error .help-block {
+	color: inherit;
+}
+
+.input-max {
+	width: 95%;
+}
+
+.navbar .brand img {
+	margin: -1em 0;
+	padding: 0;
+	border: 0;
+	max-height: 2em;
+}
+
+.avatar .avatar-image,
+.avatar .avatar-caption {
+	display: block;
+}

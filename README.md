@@ -28,9 +28,9 @@ The development version can be checked out with this command:
 
 ## Installation
 
-1.	Copy `settings.example.php` to `settings.php` in `site/`.
+1.	Copy `settings.example.php` to `settings.php` in `application/`.
 2.	Adjust all the variables in `settings.php`.
-3.	Allow write permission for the HTTP server the `site` sub-folders.
+3.	Allow write permission for the HTTP server the `public` and `private` sub-folders.
 4.	Import `sedra.sql` into your SQL database.
 
 ## Licence
