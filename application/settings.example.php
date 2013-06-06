@@ -70,6 +70,7 @@ $models = array();
 
 # Libraries to load by default ('name' => mandatory[TRUE/FALSE])
 $libraries = array(
+	'html5' => TRUE,
 	'bootstrap' => TRUE,
 	'analytics' => TRUE,
 );

@@ -1,6 +1,6 @@
 <?php
 
-define('DRUPAL_ROOT', __DIR__.'/');
+define('DRUPAL_ROOT', __DIR__.'/drupal/');
 
 set_include_path(get_include_path().PATH_SEPARATOR.DRUPAL_ROOT);
 
