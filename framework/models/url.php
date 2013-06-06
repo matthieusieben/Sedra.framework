@@ -100,7 +100,15 @@ function url_is_active($path) {
 }
 
 function file_url($file) {
-	if(is_file(SITE_ROOT.$file)) {
+	if(is_file(APP_ROOT.$file)) {
+		global $request_folder;
+		return $request_folder . 'application/' . $file;
+	}
+	else if(is_file(FRAMEWORK_ROOT.$file)) {
+		global $request_folder;
+		return $request_folder. 'framework/' . $file;
+	}
+	else if(is_file(SITE_ROOT.$file)) {
 		global $request_folder;
 		return $request_folder . $file;
 	}

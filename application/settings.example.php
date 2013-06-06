@@ -11,7 +11,7 @@ $config['site.home'] = 'index';
 $config['site.name'] = 'My great website';
 $config['site.slogan'] = 'My Sedra based website';
 $config['site.logo'] = ''; // file path relative to the root dir or absolute url
-$config['site.email'] = 'example@example.com';
+$config['site.email'] = 'admin@example.com';
 $config['site.ga'] = NULL; // UA-XXXXX-X
 $config['site.language'] = 'en';
 $config['site.languages'] = array(
@@ -67,6 +67,12 @@ $databases['default']['default'] = array (
 
 # Model files to include by default
 $models = array();
+
+# Libraries to load by default ('name' => mandatory[TRUE/FALSE])
+$libraries = array(
+	'bootstrap' => TRUE,
+	'analytics' => TRUE,
+);
 
 # User session parameters
 $config['session.write_interval'] = 180;

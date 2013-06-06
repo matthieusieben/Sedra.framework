@@ -21,11 +21,10 @@ define('FRAMEWORK_LIBRARIES', FRAMEWORK_ROOT.'libraries/');
 define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
 define('FRAMEWORK_VIEWS', FRAMEWORK_ROOT.'views/');
 
-# Public folders
-defined('ASSETS_DIR') or define('ASSETS_DIR', SITE_ROOT.'assets/');
+# Public folder
 defined('PUBLIC_DIR') or define('PUBLIC_DIR', SITE_ROOT.'public/');
 
-# Private folders
+# Private folder
 defined('PRIVATE_DIR') or define('PRIVATE_DIR', SITE_ROOT.'private/');
 
 # Framework variables
@@ -57,6 +56,7 @@ if (ini_get('register_globals')) {
 global $config;
 global $databases;
 global $models;
+global $libraries;
 
 require APP_ROOT.'settings.php';
 
@@ -81,7 +81,12 @@ global $controller;
 
 $controller = url_segment(0, 'index');
 
-# Include default files
+# Include libraries
+foreach((array) @$libraries as $_ => $_m) {
+	load_library($_, $_m);
+}
+
+# Include modules
 foreach((array) @$models as $_) {
 	require_once $_;
 }

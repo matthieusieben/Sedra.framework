@@ -15,10 +15,10 @@ $_library_ref_js = ref::config('scriptPath', NULL);
 ref::config('stylePath', FALSE);
 ref::config('scriptPath', FALSE);
 
-# Include JS and CSS ad end of page
+# Include JS and CSS at end of page
 hook_register('html_foot', function () {
 	global $_library_ref_css, $_library_ref_js;
 
-	echo theme_css(str_replace('{:dir}', 'framework/libraries/ref/php-ref', $_library_ref_css));
-	echo theme_js(str_replace('{:dir}', 'framework/libraries/ref/php-ref', $_library_ref_js));
+	echo theme_css(str_replace('{:dir}', 'libraries/ref/php-ref', $_library_ref_css));
+	echo theme_js(str_replace('{:dir}', 'libraries/ref/php-ref', $_library_ref_js));
 });

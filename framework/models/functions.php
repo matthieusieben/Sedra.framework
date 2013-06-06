@@ -210,16 +210,16 @@ function load_controller($controller) {
 function load_library($library, $required = TRUE) {
 
 	if(file_exists($file = APP_LIBRARIES . $library . '.php'))
-		return include($file);
+		return require_once($file);
 
 	if(file_exists($file = APP_LIBRARIES . $library . '/bridge.php'))
-		return include($file);
+		return require_once($file);
 
 	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '.php'))
-		return include($file);
+		return require_once($file);
 
 	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '/bridge.php'))
-		return include($file);
+		return require_once($file);
 
 	if($required)
 		throw new FrameworkException(t('Cannot load library @library', array('@library' => $library)));

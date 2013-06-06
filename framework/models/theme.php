@@ -10,6 +10,8 @@ require_once 'data.php';
 require_once 'file.php';
 require_once 'avatar.php';
 
+define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
+
 function attributes($attributes = array(), $filter_empty = FALSE) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
@@ -95,7 +97,7 @@ function theme($__view, array $__data = array()) {
 
 	# Avoid file name conflicts
 	$__current_include_path = get_include_path();
-	set_include_path(APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
+	set_include_path(VIEW_PATH);
 
 	try {
 		# Resolve the file

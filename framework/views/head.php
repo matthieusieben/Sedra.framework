@@ -10,33 +10,21 @@
 		<link type="text/plain" rel="author" href="<?php echo $_; ?>" />
 	<?php endif; ?>
 
-	<?php if(DEVEL): ?>
-		<?php echo theme_css('assets/css/bootstrap.css'); ?>
-		<?php echo theme_css('assets/css/bootstrap-responsive.css'); ?>
-	<?php else: ?>
-		<?php echo theme_css('assets/css/bootstrap.min.css'); ?>
-		<?php echo theme_css('assets/css/bootstrap-responsive.min.css'); ?>
-	<?php endif; ?>
-
-	<?php echo theme_css('assets/css/sedra.css'); ?>
-	<?php echo theme_css('assets/css/custom.css'); ?>
-
 	<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 
+	<?php /*
 	<link rel="shortcut icon" href="<?php echo file_url('assets/ico/favicon.ico'); ?>">
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?php echo file_url('assets/ico/apple-touch-icon-144-precomposed.png'); ?>">
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo file_url('assets/ico/apple-touch-icon-114-precomposed.png'); ?>">
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo file_url('assets/ico/apple-touch-icon-72-precomposed.png'); ?>">
 	<link rel="apple-touch-icon-precomposed" href="<?php echo file_url('assets/ico/apple-touch-icon-57-precomposed.png'); ?>">
-
-	<?php global $controller; ?>
-	<?php echo theme_css('assets/css/'.$controller.'.css'); ?>
-
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script>window.jQuery || document.write('<script src="<?php echo file_url('assets/js/jquery.min.js'); ?>"><\/script>')</script>
-
-	<?php echo theme_js('assets/js/bootstrap.min.js'); ?>
+	*/ ?>
 
 	<?php hook_invoke('html_head'); ?>
+
+	<?php global $controller; ?>
+	<?php echo theme_css('views/css/sedra.css'); ?>
+	<?php echo theme_css('views/css/custom.css'); ?>
+	<?php echo theme_css('views/css/'.$controller.'.css'); ?>

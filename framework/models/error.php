@@ -106,8 +106,8 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<?php if(function_exists('theme_css')): ?>
-			<?php echo theme_css('assets/css/bootstrap.min.css'); ?>
-			<?php echo theme_css('assets/css/bootstrap-responsive.min.css'); ?>
+			<?php echo theme_css('libraries/bootstrap/css/bootstrap.min.css'); ?>
+			<?php echo theme_css('libraries/bootstrap/css/bootstrap-responsive.min.css'); ?>
 		<?php endif; ?>
 
 		<style>
