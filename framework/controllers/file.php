@@ -12,7 +12,7 @@ if (!$info) {
 	show_404();
 }
 
-hook_invoque('file', $info);
+hook_invoke('file', $info);
 
 set_status_header(200);
 

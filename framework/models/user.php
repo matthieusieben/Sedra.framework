@@ -51,9 +51,9 @@ class User {
 			# Some default values
 			switch($field) {
 			case 'timezone':
-				return config('date.timezone', @date_default_timezone_get());
+				return config('date.timezone', date_default_timezone_get());
 			case 'language':
-				return config('site.language', 'fr');
+				return config('site.language', 'en');
 			}
 		}
 
@@ -162,6 +162,7 @@ function anonymous_user() {
 
 function user_has_role($role) {
 	global $user;
+
 	if($user->uid == 0 || $user->rid == ANONYMOUS_RID) {
 		return $role == ANONYMOUS_RID;
 	}
@@ -311,7 +312,7 @@ function user_register($data) {
 	global $user;
 
 	$language = $user->language ? $user->language : config('site.language', 'en');
-	$timezone = $user->timezone ? $user->timezone :  config('date.timezone', @date_default_timezone_get());
+	$timezone = $user->timezone ? $user->timezone :  config('date.timezone', date_default_timezone_get());
 
 	$data = array(
 		'created' => REQUEST_TIME,

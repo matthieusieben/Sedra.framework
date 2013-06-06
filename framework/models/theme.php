@@ -10,7 +10,10 @@ require_once 'data.php';
 require_once 'file.php';
 require_once 'avatar.php';
 
-function attributes(array $attributes = array(), $filter_empty = FALSE) {
+function attributes($attributes = array(), $filter_empty = FALSE) {
+	if(empty($attributes) || !is_array($attributes))
+		return '';
+
 	foreach ($attributes as $attribute => &$data) {
 		if($filter_empty && empty($data))
 			continue;
@@ -18,7 +21,7 @@ function attributes(array $attributes = array(), $filter_empty = FALSE) {
 		$data = implode(' ', (array) $data);
 		$data = $attribute . '="' . check_plain($data) . '"';
 	}
-	return $attributes ? ' ' . implode(' ', $attributes) : '';
+	return ' ' . implode(' ', $attributes);
 }
 
 function attributes_setup(array &$attributes) {
@@ -92,7 +95,7 @@ function theme($__view, array $__data = array()) {
 
 	# Avoid file name conflicts
 	$__current_include_path = get_include_path();
-	set_include_path(APP_ROOT.'/views/'.PATH_SEPARATOR.FRAMEWORK_ROOT.'/views/'.PATH_SEPARATOR.'.');
+	set_include_path(APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
 
 	try {
 		# Resolve the file

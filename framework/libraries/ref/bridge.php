@@ -1,14 +1,24 @@
 <?php
 
+global $_library_ref_css, $_library_ref_js;
+
 require_once __DIR__.'/php-ref/ref.php';
 
 ref::config('shortcutFunc', array('r', 'rt', 'kprintr', 'dvm', 'devel'));
 ref::config('expandDepth', 0);
 
+# Get default css and js files
+$_library_ref_css = ref::config('stylePath', NULL);
+$_library_ref_js = ref::config('scriptPath', NULL);
+
+# Disable JS and CSS printing
 ref::config('stylePath', FALSE);
 ref::config('scriptPath', FALSE);
 
+# Include JS and CSS ad end of page
 hook_register('html_foot', function () {
-	echo theme_css('framework/libraries/ref/php-ref/ref.css');
-	echo theme_js('framework/libraries/ref/php-ref/ref.js');
+	global $_library_ref_css, $_library_ref_js;
+
+	echo theme_css(str_replace('{:dir}', 'framework/libraries/ref/php-ref', $_library_ref_css));
+	echo theme_js(str_replace('{:dir}', 'framework/libraries/ref/php-ref', $_library_ref_js));
 });

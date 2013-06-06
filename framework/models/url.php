@@ -1,5 +1,7 @@
 <?php
 
+
+
 $request_protocol = strtolower(@$_SERVER['HTTPS']) === 'on' ? 'https' : 'http';
 $request_port     = @$_SERVER['SERVER_PORT']
 	? ($request_protocol == 'http' && $_SERVER['SERVER_PORT'] == 80
@@ -12,11 +14,9 @@ $request_server   = config('server.domain', val($_SERVER['HTTP_HOST'], $_SERVER[
 $request_realm    = $request_protocol."://".$request_server.($request_port ? ':'.$request_port : '');
 $request_folder   = $request_realm.dirname($_SERVER['SCRIPT_NAME']);
 $request_script   = basename($_SERVER['SCRIPT_NAME']);
-$request_base     = $request_folder . (config('url.rewrite') ? '' : $request_script .'/');
-$request_path     = ($request_path = ltrim(@$_SERVER['PATH_INFO'], '/')) ? $request_path : 'index';
-$request_segments = explode('/', $request_path);
-$request_url      = $request_base . '/' . $request_path;
 $request_uri      = $_SERVER['REQUEST_URI'];
+$request_path     = trim(config('url.rewrite') === 'pathauto' ? val($_SERVER['PATH_INFO'], 'index') : val($_REQUEST['q'], 'index'), '/');
+$request_segments = explode('/', $request_path);
 
 function url_segment($n, $default = NULL) {
 	global $request_segments;
@@ -24,29 +24,46 @@ function url_segment($n, $default = NULL) {
 }
 
 function url($options) {
-	global $request_base;
 
 	if(!is_array($options))
 		$options = array('path' => $options);
 
 	url_setup($options);
 
+	if (!empty($options['uri'])) {
+		$base = $options['uri'];
+	}
+	else if(config('url.rewrite')) {
+		global $request_folder;
+		$base = $request_folder.$options['path'];
+	}
+	else {
+		global $request_folder;
+		global $request_script;
+
+		if(empty($options['path']))
+			$base = $request_folder;
+		else
+			$base = $request_folder.$request_script.'?q='.$options['path'];
+	}
+
 	$query = '';
 	if(!empty($options['query'])) {
-		$query .= '?';
 		foreach((array) $options['query'] as $_k => $_v) {
-			$query .= urlencode($_k) . '=' . urlencode($_v);
+			$query .= '&';
+			if(is_int($_k))
+				$query .= urlencode($_v);
+			else
+				$query .= urlencode($_k) . '=' . urlencode($_v);
+		}
+		if(!empty($query) && strpos($base, '?') === FALSE) {
+			$query[0] = '?';
 		}
 	}
 
 	$anchor = $options['anchor'] ? '#' . $options['anchor'] : '';
 
-	if (!empty($options['uri'])) {
-		return $options['uri'].$query.$anchor;
-	}
-	else {
-		return $request_base.$options['path'].$query.$anchor;
-	}
+	return $base.$query.$anchor;
 }
 
 function url_setup(array &$options) {

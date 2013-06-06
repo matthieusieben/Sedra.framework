@@ -24,6 +24,10 @@ $config['site.locales'] = array(
 	'en' => 'en_US.UTF-8',
 	'nl' => 'nl_NL.UTF-8',
 );
+$config['robots.dissalowed'] = array(
+	'*',
+	# 'Googlebot',
+);
 
 # User parametes
 $config['user.subscription'] = TRUE;
@@ -32,9 +36,10 @@ $config['user.pwd.min'] = 6;
 
 # Date time parameters
 $config['date.timezone'] = 'Europe/Brussels';
+date_default_timezone_set($config['date.timezone']);
 
 # Enable URL rewriting. see .htaccess
-$config['url.rewrite'] = TRUE;
+$config['url.rewrite'] = 'pathauto'; # 'pathauto', 'query' or FALSE
 
 # Error logging
 $config['log.reporting'] = DEVEL ? E_ALL : E_ALL & ~E_DEPRECATED & ~E_NOTICE;

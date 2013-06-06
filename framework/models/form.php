@@ -47,7 +47,6 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	# Set default field values
 	$field += array(
 		'name' => is_numeric($name) ? "__form_field_{$name}" : $name,
-		'view' => 'form/'.$field['type'],
 		'attributes' => array(),
 		'callback' => '_form_callback_'.$field['type'],
 		'handler' => '_form_handle_'.$field['type'],
@@ -80,7 +79,7 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	# Setup the value of non-form fields
 	if ($field['type'] !== 'form') {
 
-		$field['value'] = !empty($field['value'])
+		$field['value'] = ($field['value'] !== NULL)
 			? $field['value']
 			: (($form['submitted'] && !$field['disabled']) ? @$form['request'][$field['name']] : $field['default']);
 
@@ -105,8 +104,12 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 		$callback($form, $field);
 	}
 
+	$field += array(
+		'view' => 'form/'.$field['type'],
+	);
+
 	# Mark the field as invalid if empty
-	if ($form['submitted'] && $field['required'] && empty($field['value'])) {
+	if ($form['submitted'] && $field['required'] && empty($field['value']) && $field['value'] !== '0') {
 		$field['valid'] = FALSE;
 
 		if(empty($field['error'])) {
@@ -263,21 +266,25 @@ function _form_handle_submit(&$form, &$field) {
 	$field['is_first'] = $is_first;
 	$is_first = FALSE;
 
-	$field['view'] = 'form/submit';
+	$field += array(
+		'view' => 'form/submit',
+	);
 	$field['attributes']['type'] = 'submit';
 
 	if (empty($field['value']))
 		# $field['label'] is plain HTML.
 		$field['attributes']['value'] = decode_plain(strip_tags($field['label']));
 	else
-		$field['attributes']['value'] = $field['value'];
+		$field['attributes']['value'] = strval($field['value']);
 
 	if ($field['disabled'])
 		$field['attributes']['disabled'] = 'disabled';
 }
 
 function _form_handle_button(&$form, &$field) {
-	$field['view'] = 'form/button';
+	$field += array(
+		'view' => 'form/button',
+	);
 	$field['attributes'] += array(
 		'type' => $field['type'],
 	);
@@ -290,8 +297,10 @@ function _form_handle_file(&$form, &$field) {
 	require_once 'file.php';
 
 	# Setup defaults
-	$field['view'] = 'form/file';
-	$field['file_info'] = NULL;
+	$field += array(
+		'view' => 'form/file',
+		'file_info' => NULL,
+	);
 	$field['attributes'] += array(
 		'type' => $field['type'],
 	);
@@ -324,7 +333,9 @@ function _form_handle_file(&$form, &$field) {
 
 function _form_handle_textarea(&$form, &$field) {
 	$field['value'] = trim($field['value']);
-	$field['view'] = 'form/input';
+	$field += array(
+		'view' => 'form/input',
+	);
 	$field['attributes'] += array(
 		'rows' => 3,
 	);
@@ -341,6 +352,7 @@ function _form_handle_email(&$form, &$field) {
 }
 
 function _form_handle_text(&$form, &$field) {
+	$field['value'] = trim($field['value']);
 	$field['attributes']['type'] = 'text';
 	_form_handle_input($form, $field);
 }
@@ -355,17 +367,22 @@ function _form_handle_hidden(&$form, &$field) {
 }
 
 function _form_handle_number(&$form, &$field) {
+	$field['value'] = floatval($field['value']);
+	if(is_numeric(@$field['round']) && is_numeric($field['value']))
+		$field['value'] = round($field['value'], $field['round']);
 	$field['attributes']['type'] = 'text';
+	$field['attributes']['value'] = strval($field['value']);
 	_form_handle_input($form, $field);
 }
 
 function _form_handle_input(&$form, &$field) {
-	$field['value'] = trim($field['value']);
-	$field['view'] = 'form/input';
+	$field += array(
+		'view' => 'form/input',
+	);
 	$field['attributes'] += array(
 		'type' => $field['type'],
+		'value' => $field['value'],
 	);
-	$field['attributes']['value'] = $field['value'];
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
 	}
@@ -450,7 +467,7 @@ function _form_callback_text(&$form, &$field) {
 			return FALSE;
 		}
 	}
-	return TRUE;
+	return $field['required'] ? !empty($field['value']) : TRUE;
 }
 
 function _form_callback_textarea(&$form, &$field) {

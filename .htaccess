@@ -58,6 +58,10 @@ ErrorDocument 404 /index.php/error/404
 	# index.php.
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_URI} !=/favicon.ico
-	RewriteRule (.*) index.php/$1 [L]
+	RewriteRule ^(.*) /index.php/$1 [L]
+
+	# If you set url.rewrite to 'query' in settings.php,
+	# then use the following instead of the previous rule.
+	#RewriteRule ^(.*) /index.php?q=$1 [L]
 
 </IfModule>

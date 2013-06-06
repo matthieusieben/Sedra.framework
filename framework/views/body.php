@@ -1,2 +1,2 @@
 </head>
-<body<?php echo attributes($body['attributes']); ?>>
+<body<?php echo attributes(@$body['attributes']); ?>>

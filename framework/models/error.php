@@ -59,11 +59,14 @@ function __exception_handler($e) {
 
 	log_exception($e);
 
-	# Set error status header
-	set_status_header($e instanceof FrameworkException ? $e->getCode() : 500);
-
 	# Clear output buffers
 	$output_buffer = ob_get_clean_all();
+
+	# Set error status header
+	if(!headers_sent()) {
+		set_status_header($e instanceof FrameworkException ? $e->getCode() : 500);
+		header('Content-Type: text/html; charset=utf-8');
+	}
 
 	try {
 		if(!function_exists('theme'))

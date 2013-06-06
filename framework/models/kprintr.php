@@ -1,12 +1,28 @@
 <?php
 
-require_once FRAMEWORK_ROOT.'libraries/ref/bridge.php';
 
-function kprintr($variable, $return = FALSE) {
-	if($return) {
-		return @rt($variable);
+if(load_library('ref', FALSE)) {
+
+	function kprintr($variable, $return = FALSE) {
+		if($return) {
+			return @rt($variable);
+		}
+		else {
+			return r($variable);
+		}
 	}
-	else {
-		return r($variable);
+
+} else {
+
+	function kprintr($variable, $return = FALSE) {
+		if($return) {
+			ob_start();
+			var_dump($variable);
+			return ob_get_clean();
+		}
+		else {
+			return var_dump($variable);
+		}
 	}
+
 }

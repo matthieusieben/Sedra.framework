@@ -192,19 +192,39 @@ function is_email($email) {
 
 function load_controller($controller) {
 
-	if(file_exists($file = APP_ROOT.'/controllers/' . $controller . '.php'))
+	if(file_exists($file = APP_CONTROLLERS . $controller . '.php'))
 		return include($file);
 
-	if(file_exists($file = FRAMEWORK_ROOT.'/controllers/' . $controller . '.php'))
+	if(file_exists($file = APP_CONTROLLERS . $controller . '/index.php'))
 		return include($file);
 
-	if(file_exists($file = APP_ROOT.'/controllers/' . $controller . '/index.php'))
+	if(file_exists($file = FRAMEWORK_CONTROLLERS . $controller . '.php'))
 		return include($file);
 
-	if(file_exists($file = FRAMEWORK_ROOT.'/controllers/' . $controller . '/index.php'))
+	if(file_exists($file = FRAMEWORK_CONTROLLERS . $controller . '/index.php'))
 		return include($file);
 
 	return show_404(DEVEL ? t('Unable to load the controller "@controller"', array('@controller'=>$controller)) : NULL);
+}
+
+function load_library($library, $required = TRUE) {
+
+	if(file_exists($file = APP_LIBRARIES . $library . '.php'))
+		return include($file);
+
+	if(file_exists($file = APP_LIBRARIES . $library . '/bridge.php'))
+		return include($file);
+
+	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '.php'))
+		return include($file);
+
+	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '/bridge.php'))
+		return include($file);
+
+	if($required)
+		throw new FrameworkException(t('Cannot load library @library', array('@library' => $library)));
+
+	return FALSE;
 }
 
 function show_403($msg = NULL) {
@@ -225,4 +245,10 @@ function show_404($msg = NULL) {
  */
 function val(&$value, $default = NULL) {
 	return isset($value) ? $value : $default;
+}
+
+function super() {
+	$caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+	$path = realpath($caller[0]['file']);
+	return strtr($path, array(APP_ROOT => FRAMEWORK_ROOT));
 }

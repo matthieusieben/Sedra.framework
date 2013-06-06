@@ -9,11 +9,17 @@ defined('SITE_ROOT') or define('SITE_ROOT', dirname($caller[0]['file']).'/');
 
 # Application folder
 defined('APP_ROOT') or define('APP_ROOT', SITE_ROOT.'application/');
+define('APP_CONTROLLERS', APP_ROOT.'controllers/');
+define('APP_LIBRARIES', APP_ROOT.'libraries/');
 define('APP_MODELS', APP_ROOT.'models/');
+define('APP_VIEWS', APP_ROOT.'views/');
 
 # Framework folders
 defined('FRAMEWORK_ROOT') or define('FRAMEWORK_ROOT', __DIR__.'/');
+define('FRAMEWORK_CONTROLLERS', FRAMEWORK_ROOT.'controllers/');
+define('FRAMEWORK_LIBRARIES', FRAMEWORK_ROOT.'libraries/');
 define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
+define('FRAMEWORK_VIEWS', FRAMEWORK_ROOT.'views/');
 
 # Public folders
 defined('ASSETS_DIR') or define('ASSETS_DIR', SITE_ROOT.'assets/');
@@ -60,8 +66,6 @@ require 'hook.php';
 require 'error.php';
 require 'url.php';
 require 'lang.php';
-
-# if(DEVEL)
 require 'devel.php';
 
 # Shutdown function

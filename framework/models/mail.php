@@ -1,6 +1,6 @@
 <?php
 
-require_once FRAMEWORK_ROOT.'libraries/swift/bridge.php';
+load_library('swift');
 
 function mail_send($options) {
 

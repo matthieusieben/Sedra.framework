@@ -1,6 +1,6 @@
 <?php
 
-define('DRUPAL_ROOT', FRAMEWORK_ROOT.'libraries/drupal/');
+define('DRUPAL_ROOT', __DIR__.'/');
 
 set_include_path(get_include_path().PATH_SEPARATOR.DRUPAL_ROOT);
 

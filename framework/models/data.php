@@ -2,6 +2,7 @@
 
 global $request_path, $controller, $language;
 global $home_url, $site_data;
+global $private_pages;
 
 $home_url = config('site.home', 'index');
 $logo_file = config('site.logo');
@@ -34,4 +35,13 @@ $site_data = array(
 			),
 		),
 	),
+);
+
+$private_pages = array(
+	'account',
+	'account/',
+	'error',
+	'error/',
+	'file/',
+	'phpinfo',
 );

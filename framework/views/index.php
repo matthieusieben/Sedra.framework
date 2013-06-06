@@ -1,4 +1,3 @@
-<?php global $request_folder; ?>
 <?php require 'head.php'; ?>
 <?php require 'header.php'; ?>
 
