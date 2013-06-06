@@ -1,5 +1,6 @@
 <?php
 
+require_once 'error.php';
 require_once 'theme.php';
 
 function form_run(&$form) {
@@ -17,6 +18,7 @@ function form_run(&$form) {
 		'type' => 'form',
 		'fields' => array(),
 		'style' => 'horizontal', # horizontal, vertical, inline, search
+		'title' => NULL,
 	);
 
 	$form['request'] = ($form['method'] === 'get') ? $_GET : $_POST;
@@ -38,6 +40,10 @@ function form_run(&$form) {
 }
 
 function _form_run_field(&$form, &$field, $name = NULL) {
+
+	if(!is_array($field))
+		throw new FrameworkException("Wrong form format");
+
 
 	# Not a form field, do no prevent validation (return TRUE)
 	if (empty($field['type'])) {
@@ -382,6 +388,7 @@ function _form_handle_input(&$form, &$field) {
 	$field['attributes'] += array(
 		'type' => $field['type'],
 		'value' => $field['value'],
+		'placeholder' => decode_plain($field['label']),
 	);
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';

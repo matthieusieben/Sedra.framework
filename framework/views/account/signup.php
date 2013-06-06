@@ -6,8 +6,8 @@
 		<div class="span4 offset4">
 			<?php require 'components/message.php' ?>
 
-			<?php $login_form['attributes']['class'][] = 'form-signin'; ?>
-			<?php echo theme($login_form); ?>
+			<?php $signup_form['attributes']['class'][] = 'form-signup'; ?>
+			<?php echo theme($signup_form); ?>
 		</div>
 	</div>
 </div>

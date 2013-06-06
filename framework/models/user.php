@@ -177,7 +177,7 @@ function user_role_required($role = AUTHENTICATED_RID) {
 	if(user_has_role(AUTHENTICATED_RID) && !user_has_role($role)) {
 		show_403();
 	}
-	else if(!user_has_role(AUTHENTICATED_RID) && $request_path !== 'account/login') {
+	else if(!user_has_role(AUTHENTICATED_RID) && $role !== ANONYMOUS_RID) {
 		redirect('account/login', array('redirect' => $request_path));
 	}
 	else {
@@ -301,7 +301,7 @@ function user_login($mail, $pass, $action = 'login') {
 		$user->login = REQUEST_TIME;
 		$user->status = 1;
 
-		message(MESSAGE_SUCCESS, t('You were successfully logged in.'));
+		# message(MESSAGE_SUCCESS, t('You were successfully logged in.'));
 		return TRUE;
 	}
 
@@ -396,7 +396,7 @@ function user_logout() {
 	if($user->uid) {
 		$user = anonymous_user();
 		session_regenerate();
-		message(MESSAGE_SUCCESS, t('You were successfully logged out.'));
+		# message(MESSAGE_SUCCESS, t('You were successfully logged out.'));
 		return TRUE;
 	} else {
 		return FALSE;
