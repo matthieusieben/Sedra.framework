@@ -34,6 +34,21 @@ $site_data = array(
 				), */
 			),
 		),
+		'user' => array(
+			'attributes' => array(
+				'id' => 'user-menu',
+			),
+			'items' => array(
+				array(
+					'title' => t('Account details'),
+					'path' => 'account/index',
+				),
+				array(
+					'title' => t('Change my password'),
+					'path' => 'account/password',
+				),
+			),
+		),
 	),
 );
 

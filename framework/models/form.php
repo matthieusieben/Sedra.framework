@@ -114,21 +114,20 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 		'view' => 'form/'.$field['type'],
 	);
 
-	# Mark the field as invalid if empty
-	if ($form['submitted'] && $field['required'] && empty($field['value']) && $field['value'] !== '0') {
-		$field['valid'] = FALSE;
-
-		if(empty($field['error'])) {
-			$field['error'] = t('This field is required');
-		}
-	}
-
-	# Validate this field
-	if ($form['submitted'] && function_exists($callback = $field['callback'])) {
-		if(!empty($field['value']) || $field['required']) {
+	if ($form['submitted']) {
+		if (function_exists($callback = $field['callback'])) {
+			# Validate this field
 			$valid = $callback($form, $field);
 			if (is_bool($valid)) {
 				$field['valid'] = $valid;
+			}
+		}
+		if ($field['required'] && empty($field['value']) && $field['value'] !== 0) {
+			# Mark the field as invalid if empty
+			$field['valid'] = FALSE;
+
+			if(empty($field['error'])) {
+				$field['error'] = t('This field is required');
 			}
 		}
 	}
@@ -364,6 +363,7 @@ function _form_handle_text(&$form, &$field) {
 }
 
 function _form_handle_password(&$form, &$field) {
+	$field['value'] = strval($field['value']);
 	_form_handle_input($form, $field);
 	$field['attributes']['value'] = NULL;
 }
@@ -424,6 +424,8 @@ function check_email_field(&$form, &$field) {
 }
 
 function check_password_field(&$form, &$field) {
+	require_once 'user.php';
+
 	if (!user_check_password($field['value'])) {
 		$field['error'] = t('This password is too weak.');
 		return FALSE;

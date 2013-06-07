@@ -12,8 +12,8 @@ class FrameworkException extends Exception {
 
 function __error_handler($errno, $errstr, $errfile, $errline) {
 
-	if(!function_exists('log_phperror'))
-		require_once FRAMEWORK_MODELS.'log.php';
+	require_once FRAMEWORK_MODELS.'log.php';
+
 	log_phperror($errno, $errstr, $errfile, $errline);
 
 	switch ($errno) {
@@ -54,8 +54,7 @@ function __error_handler($errno, $errstr, $errfile, $errline) {
 
 function __exception_handler($e) {
 
-	if(!function_exists('log_exception'))
-		require_once FRAMEWORK_MODELS.'log.php';
+	require_once FRAMEWORK_MODELS.'log.php';
 
 	log_exception($e);
 
@@ -69,10 +68,12 @@ function __exception_handler($e) {
 	}
 
 	try {
-		if(!function_exists('theme'))
-			require_once FRAMEWORK_MODELS.'theme.php';
-
-		exit(theme('error/exception', array('exception' => $e, 'output_buffer' => $output_buffer)));
+		if(function_exists('theme'))
+			exit(theme('error/exception', array('exception' => $e, 'output_buffer' => $output_buffer)));
+		else
+			throw $e;
+	} catch(FrameworkException $e) {
+		fatal($e->getMessage(), NULL, $e->getCode(), $e->getFile(), $e->getLine(), $e->getTrace());
 	} catch(Exception $e) {
 		fatal($e->getMessage(), NULL, 500, $e->getFile(), $e->getLine(), $e->getTrace());
 	}

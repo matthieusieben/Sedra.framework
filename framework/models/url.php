@@ -95,7 +95,7 @@ function url_is_active($path) {
 	}
 	else {
 		global $request_path;
-		return strpos($request_path, $path) === 0;
+		return strpos($request_path, $path) === 0 || strpos($request_path.'/index', $path) === 0;
 	}
 }
 

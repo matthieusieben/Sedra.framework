@@ -77,9 +77,19 @@ form > .help-inline {
 	max-height: 2em;
 }
 
-.avatar .avatar-image,
-.avatar .avatar-caption {
-	display: block;
+#user-header {
+	padding-top: 1em;
+}
+
+.avatar {
+	overflow: hidden;
+	clear: both;
+}
+.avatar > div {
+	float: left;
+}
+.avatar > div.avatar-image {
+	margin-right: 10px;
 }
 
 body.path-account-login,
@@ -102,8 +112,13 @@ body.path-account-signup {
 	box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
-
 .form-signin .form-heading,
 .form-signup .form-heading {
 	margin-bottom: 15px;
+}
+
+#content {
+	min-height: 200px;
+	margin: 0 auto 20px;
+	padding: 0;
 }

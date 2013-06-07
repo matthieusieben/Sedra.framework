@@ -68,7 +68,7 @@ $signup_form = array(
 			'fields' => array(
 				array(
 					'type' => 'submit',
-					'label' => t('Sign up'),
+					'label' => t('Create my account'),
 				),
 				array(
 					'view' => 'html',

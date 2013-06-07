@@ -21,6 +21,9 @@ define('FRAMEWORK_LIBRARIES', FRAMEWORK_ROOT.'libraries/');
 define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
 define('FRAMEWORK_VIEWS', FRAMEWORK_ROOT.'views/');
 
+# View include path
+defined('VIEW_PATH') or define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
+
 # Public folder
 defined('PUBLIC_DIR') or define('PUBLIC_DIR', SITE_ROOT.'public/');
 
@@ -82,11 +85,16 @@ global $controller;
 $controller = url_segment(0, 'index');
 
 # Include libraries
-foreach((array) @$libraries as $_ => $_m) {
-	load_library($_, $_m);
+foreach((array) @$libraries as $library => $required) {
+	load_library($library, $required);
 }
 
+unset($library);
+unset($required);
+
 # Include modules
-foreach((array) @$models as $_) {
-	require_once $_;
+foreach((array) @$models as $model) {
+	require_once $model;
 }
+
+unset($model);

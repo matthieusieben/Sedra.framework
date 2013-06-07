@@ -10,8 +10,6 @@ require_once 'data.php';
 require_once 'file.php';
 require_once 'avatar.php';
 
-define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
-
 function attributes($attributes = array(), $filter_empty = FALSE) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
@@ -112,7 +110,7 @@ function theme($__view, array $__data = array()) {
 		extract(theme_data($__data));
 
 		ob_start();
-		include $__file;
+		require $__file;
 		$__html = ob_get_clean();
 	}
 	catch(Exception $e) {
@@ -227,13 +225,12 @@ function theme_file($fid, $thumbnail = TRUE, $as_link = TRUE) {
 	}
 }
 
-function theme_avatar($account, $size = 256, $caption = NULL) {
+function theme_avatar($account, $size = 256) {
 
 	$data = array(
 		'account' => $account,
 		'size' => $size,
 		'mini' => $size <= 32,
-		'caption' => $caption,
 		'avatar_url' => avatar_url($account, (int) $size),
 	);
 

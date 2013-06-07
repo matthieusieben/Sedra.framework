@@ -14,7 +14,7 @@
 		<li<?php echo attributes(array('class'=> @$_item['attributes']['class'])); ?>>
 			<?php if (!empty($_item['badge'])) $_item['title'] .= '&nbsp;' . theme('components/badge', $_item['badge']); ?>
 			<?php echo l($_item); ?>
-			<?php if (!empty($_item['sub'])) echo theme('menu', array('is_sub' => TRUE) + $_item['sub']); ?>
+			<?php if (!empty($_item['sub'])) echo theme('components/menu', array('is_sub' => TRUE) + $_item['sub']); ?>
 		</li>
 	<?php endforeach; ?>
 </ul>
