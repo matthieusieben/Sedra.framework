@@ -19,16 +19,8 @@
 			?>
 			<div class="nav-collapse collapse">
 				<?php echo theme('components/menu', $menus['main']); ?>
-				<ul class="nav pull-right">
-					<?php if(isset($user)): ?>
-						<?php if(user_has_role(AUTHENTICATED_RID)): ?>
-							<li><?php echo l(array('path' => 'account', 'title' => t('Account'))); ?></li>
-							<li><?php echo l(array('path' => 'account/logout', 'title' => t('Logout'))); ?></li>
-						<?php else: ?>
-							<li><?php echo l(array('path' => 'account/login', 'title' => t('Login'))); ?></li>
-						<?php endif; ?>
-					<?php endif; ?>
-				</ul>
+				<?php $menus['secondary']['attributes']['class'][] = 'pull-right'; ?>
+				<?php echo theme('components/menu', $menus['secondary']); ?>
 			</div>
 		</div>
 	</div>

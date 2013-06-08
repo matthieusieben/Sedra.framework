@@ -4,15 +4,24 @@ require_once 'theme.php';
 require_once 'form.php';
 require_once 'user.php';
 
+if(!config('scaffolding.enabled'))
+	show_404();
+
+user_role_required(MODERATOR_RID);
+
 $table_name = url_segment(1);
 $action = url_segment(2);
 $id = url_segment(3);
+$allowed_tables = (array) config('scaffolding.tables');
+
+if($table_name && !isset($allowed_tables[$table_name]))
+	show_404();
 
 $primary = NULL;
 $table_info = array();
 
 try {
-	$table_info_q = db_query("DESCRIBE {{$table_name}}");
+	$table_info_q = db_query("SHOW FULL COLUMNS FROM {{$table_name}}");
 	while($table_field_info = ($table_info_q->fetchAssoc())) {
 		if($table_field_info['Key'] === 'PRI')
 			$primary = $table_field_info['Field'];
@@ -53,8 +62,9 @@ default:
 }
 
 foreach($table_info as $table_field_info) {
-	$field = $table_field_info['Field'];
+	$field_name = $table_field_info['Field'];
 	$field_type = $table_field_info['Type'];
+	$field_comment = $table_field_info['Comment'];
 	$type = NULL;
 
 	if(($p = strpos($field_type, '(')) !== FALSE)
@@ -70,6 +80,7 @@ foreach($table_info as $table_field_info) {
 		$type = 'text';
 		break;
 	case 'tinyint':
+	case 'float':
 	case 'int':
 		$type = 'number';
 		break;
@@ -78,10 +89,11 @@ foreach($table_info as $table_field_info) {
 	if(!isset($type))
 		continue;
 
-	$form['fields'][$field] = array(
-		'label' => check_plain($field),
+	$form['fields'][$field_name] = array(
+		'label' => check_plain($field_name),
 		'type' => $type,
-		'default' => val($values[$field], NULL),
+		'default' => val($values[$field_name], NULL),
+		'help' => check_plain($field_comment),
 		'attributes' => array(
 			'class' => array(
 				'input-xxlarge'
@@ -136,8 +148,8 @@ if(form_run($form) && form_is_valid($form)) {
 
 return theme('scaffolding/edit', array(
 	'title' => $id ?
-		t('@table_name : edit', array('@table_name' => $table_name)) :
-		t('@table_name : add', array('@table_name' => $table_name)) ,
+		t('!table_name : edit', array('!table_name' => $allowed_tables[$table_name])) :
+		t('!table_name : add', array('!table_name' => $allowed_tables[$table_name])) ,
 	'tables_menu' => scaffolding_tables_menu(),
 	'scaffolding_menu' => scaffolding_menu($table_name),
 	'form' => $form,

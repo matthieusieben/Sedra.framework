@@ -1,5 +1,12 @@
 <?php
 
+switch(url_segment(2)) {
+case 'add':
+case 'edit':
+case 'remove':
+	return load_controller('scaffolding/edit');
+}
+
 define('MAX_ROWS_DISPLAY', 50);
 
 function scaffolding_tables_menu() {
@@ -15,11 +22,12 @@ function scaffolding_tables_menu() {
 	);
 	try {
 		$tables_q = db_query('SHOW TABLES');
+		$allowed_tables = (array) config('scaffolding.tables');
 		while($_table_info = ($tables_q->fetchAssoc())) {
 			$_table_name = array_pop($_table_info);
-			if(in_array($_table_name, (array) config('scaffolding.tables')))
+			if(isset($allowed_tables[$_table_name]))
 				$tables_menu['items'][] = array(
-					'title' => $_table_name,
+					'title' => $allowed_tables[$_table_name],
 					'path' => 'scaffolding/'.$_table_name,
 				);
 		}
@@ -30,22 +38,24 @@ function scaffolding_tables_menu() {
 }
 
 function scaffolding_menu($table_name) {
-	return array(
-		'items' => array(
-			array(
-				'title' => t('Table content'),
-				'path' => 'scaffolding/'.$table_name.'/index',
-			),
-			array(
-				'title' => t('Table info'),
-				'path' => 'scaffolding/'.$table_name.'/info',
-			),
-			array(
-				'title' => t('Add content'),
-				'path' => 'scaffolding/'.$table_name.'/add',
-			),
-		),
+
+	$menu['items'][] = array(
+		'title' => t('Table content'),
+		'path' => 'scaffolding/'.$table_name.'/index',
 	);
+
+	if(config('scaffolding.info'))
+	$menu['items'][] = array(
+		'title' => t('Table info'),
+		'path' => 'scaffolding/'.$table_name.'/info',
+	);
+
+	$menu['items'][] = array(
+		'title' => t('Add content'),
+		'path' => 'scaffolding/'.$table_name.'/add',
+	);
+
+	return $menu;
 }
 
 require_once 'theme.php';
@@ -59,16 +69,13 @@ user_role_required(MODERATOR_RID);
 
 $table_name = url_segment(1);
 $action = url_segment(2);
+$allowed_tables = (array) config('scaffolding.tables');
 
-if($table_name && !in_array($table_name, (array) config('scaffolding.tables')))
+if(!$action && $table_name === 'index')
+	$table_name = '';
+
+if($table_name && !isset($allowed_tables[$table_name]))
 	show_404();
-
-switch($action) {
-case 'add':
-case 'edit':
-case 'remove':
-	return load_controller('scaffolding/edit');
-}
 
 $tables_menu = scaffolding_tables_menu();
 $scaffolding_menu = scaffolding_menu($table_name);
@@ -84,14 +91,14 @@ if(!$table_name) {
 $table_info = array();
 $primary = NULL;
 try {
-	$table_info_q = db_query("DESCRIBE {{$table_name}}");
+	$table_info_q = db_query("SHOW FULL COLUMNS FROM {{$table_name}}");
 	while($table_field_info = ($table_info_q->fetchAssoc())) {
 		if($table_field_info['Key'] === 'PRI')
 			$primary = $table_field_info['Field'];
 		$table_info[] = $table_field_info;
 	}
 } catch(Exception $e) {
-	throw new FrameworkException(t('Table @table_name doesn\'t exist.', array('@table_name' => $table_name)), 404);
+	throw new FrameworkException(t('Table !table_name doesn\'t exist.', array('!table_name' => $table_name)), 404);
 }
 
 if(empty($table_info)) {
@@ -99,8 +106,11 @@ if(empty($table_info)) {
 }
 
 if($action === 'info') {
+	if(!config('scaffolding.info'))
+		show_404();
+
 	return theme('scaffolding/table_info', array(
-		'title' => t('@table_name : info', array('@table_name' => $table_name)),
+		'title' => t('!table_name : info', array('!table_name' => $allowed_tables[$table_name])),
 		'table_name' => $table_name,
 		'tables_menu' => $tables_menu,
 		'scaffolding_menu' => $scaffolding_menu,
@@ -184,7 +194,7 @@ while($content_row = ($content_q->fetchAssoc())) {
 }
 
 return theme('scaffolding/table_content', array(
-	'title' => t('@table_name : content', array('@table_name' => $table_name)),
+	'title' => t('!table_name : content', array('!table_name' => $allowed_tables[$table_name])),
 	'table_name' => $table_name,
 	'tables_menu' => $tables_menu,
 	'scaffolding_menu' => $scaffolding_menu,

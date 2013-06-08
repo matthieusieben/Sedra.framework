@@ -95,22 +95,12 @@ function url_is_active($path) {
 	}
 	else {
 		global $request_path;
-
-		$rpath = $request_path;
 		$path = trim($path, '/');
-
-		if(!$rpath) {
+		if(!$request_path) {
 			return $path === '' || $path === 'index';
 		}
 
-		if(substr($path, -6) === '/index')
-			$path = substr($path, 0, -6);
-
-		if(substr($rpath, -6) === '/index')
-			$rpath = substr($rpath, 0, -6);
-
-		return $rpath === $path;
-
+		return strpos($request_path, $path) === 0;
 	}
 }
 

@@ -22,35 +22,52 @@ $site_data = array(
 			),
 		),
 	),
-	'menus' => array(
-		'main' => array(
-			'attributes' => array(
-				'id' => 'main-menu',
-			),
-			'items' => array(
-				/* array(
-					'title' => t('Home'),
-					'path' => $home_url,
-				), */
-			),
+);
+
+$site_data['menus']['main'] = array(
+	'attributes' => array(
+		'id' => 'main-menu',
+	),
+	'items' => array(
+	),
+);
+
+$site_data['menus']['user'] = array(
+	'attributes' => array(
+		'id' => 'user-menu',
+	),
+	'items' => array(
+		array(
+			'title' => t('Account details'),
+			'path' => 'account/index',
 		),
-		'user' => array(
-			'attributes' => array(
-				'id' => 'user-menu',
-			),
-			'items' => array(
-				array(
-					'title' => t('Account details'),
-					'path' => 'account/index',
-				),
-				array(
-					'title' => t('Change my password'),
-					'path' => 'account/password',
-				),
-			),
+		array(
+			'title' => t('Change my password'),
+			'path' => 'account/password',
 		),
 	),
 );
+
+$site_data['menus']['secondary'] = array(
+	'attributes' => array(
+		'id' => 'secondary-menu',
+	),
+	'items' => array(
+	),
+);
+
+global $user;
+if(isset($user)) {
+	if(user_has_role(AUTHENTICATED_RID)) {
+		if(config('scaffolding.enabled'))
+		$site_data['menus']['secondary']['items'][] = array('path' => 'scaffolding/index', 'title' => t('Scaffolding'));
+
+		$site_data['menus']['secondary']['items'][] = array('path' => 'account/index', 'title' => t('Account'));
+		$site_data['menus']['secondary']['items'][] = array('path' => 'account/logout', 'title' => t('Logout'));
+	} else {
+		$site_data['menus']['secondary']['items'][] = array('path' => 'account/login', 'title' => t('Login'));
+	}
+}
 
 $private_pages = array(
 	'account',

@@ -1,26 +1,56 @@
 <?php
 
-$strings['fr']['Home'] = 'Accueil';
-$strings['fr']['Account'] = 'Compte';
-$strings['fr']['Ask'] = 'Poser une question';
-$strings['fr']['Answer'] = 'R&eacute;pondre';
-$strings['fr']['My questions'] = 'Mes questions';
-$strings['fr']['My account'] = 'Mon compte';
-$strings['fr']['Logout'] = 'D&eacute;connexion';
+$strings['fr']['English'] = 'Anglais';
+$strings['fr']['French'] = 'Fran&ccedil;ais';
+$strings['fr']['Dutch'] = 'N&eacute;erlandais';
 
+# Actions
+$strings['fr']['Add'] = 'Ajouter';
+$strings['fr']['Edit'] = 'Modifier';
+$strings['fr']['Submit'] = 'Envoyer';
+$strings['fr']['Cancel'] = 'Annuler';
+$strings['fr']['Update'] = 'Mettre &agrave; jour';
+
+# Pages
+$strings['fr']['Home'] = 'Accueil';
+
+# Account
+$strings['fr']['Account'] = 'Compte';
+$strings['fr']['My account'] = 'Mon compte';
 $strings['fr']['Log in'] = 'Connexion';
+$strings['fr']['Logout'] = 'D&eacute;connexion';
 $strings['fr']['Name'] = 'Nom';
+$strings['fr']['Timezone'] = 'Fuseau horaire';
 $strings['fr']['Email'] = 'Adresse e-mail';
 $strings['fr']['Password'] = 'Mot de passe';
 $strings['fr']['New password'] = 'Nouveau mot de passe';
 $strings['fr']['Current password'] = 'Mot de passe actuel';
 $strings['fr']['Confirm password'] = 'V&eacute;rification';
-$strings['fr']['Update'] = 'Mettre &agrave; jour';
 $strings['fr']['Language'] = 'Langue';
-$strings['fr']['This is your !gravatar.'] = 'Ceci est votre !gravatar.';
+$strings['fr']['Change my password'] = 'Modifier mon mot-de-passe';
+$strings['fr']['Account details'] = 'D&eacute;tails du compte';
+$strings['fr']['@username\'s account'] = 'Compte de @username';
+$strings['fr']['Make sure your account info is up to date and accurate. This is how we get in touch with you! We will never give out your email address or info to anyone.'] = 'Veuillez vous assurer que les informations ci-dessous sont exactes. Celles-ci nous permettent de rester en contact avec vous! Nous ne donnerons jamais vos informations &agrave; personne.';
+$strings['fr']['Change Your Avatar?'] = 'Changer votre avatar?';
+$strings['fr']['If you would like to add or change your avatar for your account, you can upload your own image at !gravatar using the same email address registered with this website.'] = 'Si vous d&eacute;sirez ajouter ou modifier votre avatar, vous pouver envoyer votre propre image sur le site !gravatar en utilisant la m&ecirc;me adresse email que sur ce site.';
+$strings['fr']['Strong Passwords Are Key!'] = 'Utiliser un mot-de-passe r&eacute;sistant!';
+$strings['fr']['You should use a strong password when securing your account. Your password should:<ul><li>Contain capital letters, numbers or symbols</li><li>Be something that you don\'t share with others</li><li>Be something hard to guess by others</li></ul>'] = 'Vous devriez choisir un mot-de-passe fort pour s&eacute;curiser votre compte. Votre mot-de-passe devrait:<ul><li>Contenir des lettres majuscules, des chiffres et des symboles</li><li>Rester secret et n\'&ecirc;tre partag&eacute; avec personne</li><li>&Ecirc;tre difficile &agrave; deviner</li></ul>';
+$strings['fr']['Your account has been updated.'] = 'Votre compte a &eacute;t&eacute; mis &agrave; jour.';
 
-$strings['fr']['English'] = 'Anglais';
-$strings['fr']['French'] = 'Fran&ccedil;ais';
-$strings['fr']['Dutch'] = 'N&eacute;erlandais';
+# Scaffolding
+$strings['fr']['Scaffolding'] = 'Base de donn&eacute;es';
+$strings['fr']['!table_name : content'] = '!table_name : contenu';
+$strings['fr']['!table_name : info'] = '!table_name : structure';
+$strings['fr']['!table_name : edit'] = '!table_name : modifier du contenu';
+$strings['fr']['!table_name : add'] = '!table_name : ajouter du contenu';
+$strings['fr']['Table content'] = 'Contenu de la table';
+$strings['fr']['Table info'] = 'Structure de la table';
+$strings['fr']['Add content'] = 'Ajouter du contenu';
+$strings['fr']['Please select a table.'] = 'Veuillez s&eacute;lectionner une table.';
+$strings['fr']['No content to display.'] = 'Aucun contenu &agrave; afficher.';
+$strings['fr']['This table has no field.'] = 'Cette table ne contient aucun champs.';
+$strings['fr']['This item does not exists.'] = 'Cet element n\'existe pas dans la table.';
+$strings['fr']['This table has no primary key.'] = 'Cette table ne contient pas de clef primaire.';
+$strings['fr']['Start'] = 'D&eacute;but';
+$strings['fr']['Limit'] = 'Limite';
 
-$strings['fr']['Cancel'] = 'Annuler';

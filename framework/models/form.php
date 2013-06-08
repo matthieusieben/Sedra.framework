@@ -442,20 +442,20 @@ function check_password_field(&$form, &$field) {
 }
 
 function _form_callback_number(&$form, &$field) {
-	if (!is_numeric($field['value'])) {
+	if ($field['required'] && !is_numeric($field['value'])) {
 		if (!$field['error'])
 			$field['error'] = t('This value is expected to be numeric.');
 		return FALSE;
 	}
 	if (isset($field['min'])) {
-		if ($field['value'] < $field['min']) {
+		if ($field['value'] && $field['value'] < $field['min']) {
 			if (!$field['error'])
 				$field['error'] = t('This value is too small.');
 			return FALSE;
 		}
 	}
 	if (isset($field['max'])) {
-		if ($field['value'] > $field['max']) {
+		if ($field['value'] && $field['value'] > $field['max']) {
 			if (!$field['error'])
 				$field['error'] = t('This value is too large.');
 			return FALSE;

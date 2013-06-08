@@ -99,6 +99,7 @@ body.path-account-signup {
 
 .form-signin,
 .form-signup {
+	max-width: 290px;
 	padding: 19px 29px 29px;
 	margin: 20px auto;
 	background-color: #fff;
