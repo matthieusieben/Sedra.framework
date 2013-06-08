@@ -6,7 +6,7 @@ require_once 'theme.php';
 
 user_role_required(AUTHENTICATED_RID);
 
-global $home_url, $timezone_list, $user;
+global $user;
 
 function check_current_password_field(&$form, &$field) {
 	global $user;
@@ -18,9 +18,11 @@ function check_current_password_field(&$form, &$field) {
 }
 
 function check_password_bis_field(&$form, &$field) {
-	if ($field['value'] !== $form['fields']['pass']['value']) {
-		$field['error'] = t('Paswords do not match.');
-		return FALSE;
+	if ($field['required'] || $form['fields']['pass']['value']) {
+		if ($field['value'] !== $form['fields']['pass']['value']) {
+			$field['error'] = t('Paswords do not match.');
+			return FALSE;
+		}
 	}
 	return TRUE;
 }
@@ -50,9 +52,18 @@ $edit_form = array(
 		array(
 			'type' => 'actions',
 			'fields' => array(
-				array(
+				'update' => array(
 					'type' => 'submit',
 					'label' => t('Update'),
+				),
+				'delete' => array(
+					'type' => 'submit',
+					'label' => t('Delete my account'),
+					'attributes' => array(
+						'class' => array(
+							'btn-danger',
+						),
+					),
 				),
 			),
 		),
@@ -69,9 +80,19 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 		$user->pass = $values['pass_check'];
 
 	try {
-		$user->save();
-		user_setup_environment();
-		message(MESSAGE_SUCCESS, t('Your account has been updated.'));
+		$delete = empty($values['update']) && !empty($values['delete']);
+		if($delete) {
+			db_delete('users')->condition('uid', $user->uid)->execute();
+			$user = anonymous_user();
+			session_regenerate();
+			message(MESSAGE_SUCCESS, t('Your account has been removed.'));
+			redirect(config('site.home', 'index'));
+		}
+		else {
+			$user->save();
+			user_setup_environment();
+			message(MESSAGE_SUCCESS, t('Your account has been updated.'));
+		}
 	} catch(Exception $e) {
 		message(MESSAGE_ERROR, t('This email address is already in use.'));
 	}

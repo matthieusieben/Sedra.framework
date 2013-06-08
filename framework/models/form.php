@@ -440,10 +440,13 @@ function check_email_field(&$form, &$field) {
 function check_password_field(&$form, &$field) {
 	require_once 'user.php';
 
-	if (!user_check_password($field['value'])) {
-		$field['error'] = t('This password is too weak.');
-		return FALSE;
+	if($field['required'] || $field['value']) {
+		if (!user_check_password($field['value'])) {
+			$field['error'] = t('This password is too weak.');
+			return FALSE;
+		}
 	}
+
 	return TRUE;
 }
 

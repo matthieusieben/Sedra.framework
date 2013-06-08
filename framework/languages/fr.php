@@ -36,7 +36,9 @@ $strings['fr']['If you would like to add or change your avatar for your account,
 $strings['fr']['Strong Passwords Are Key!'] = 'Utiliser un mot-de-passe r&eacute;sistant!';
 $strings['fr']['You should use a strong password when securing your account. Your password should:<ul><li>Contain capital letters, numbers or symbols</li><li>Be something that you don\'t share with others</li><li>Be something hard to guess by others</li></ul>'] = 'Vous devriez choisir un mot-de-passe fort pour s&eacute;curiser votre compte. Votre mot-de-passe devrait:<ul><li>Contenir des lettres majuscules, des chiffres et des symboles</li><li>Rester secret et n\'&ecirc;tre partag&eacute; avec personne</li><li>&Ecirc;tre difficile &agrave; deviner</li></ul>';
 $strings['fr']['Your account has been updated.'] = 'Votre compte a &eacute;t&eacute; mis &agrave; jour.';
+$strings['fr']['Your account has been removed.'] = 'Votre compte a &eacute;t&eacute; supprim&eacute;.';
 $strings['fr']['Your password has been reset. You should set a new one now.'] = 'Votre mot-de-passe a &eacute;t&eacute; r&eacute;initialis&eacute;. Vous devriez remettre un mot de passe d&egrave;s maintenant.';
+$strings['fr']['Your account has been activated.'] = 'Votre compte a &eacute;t&eacute; activ&eacute;.';
 $strings['fr']['This password is not valid.'] = 'Ce mot-de-passe n\'est pas valide.';
 $strings['fr']['This email adress is not valid.'] = 'Cette adresse email n\'est pas valide.';
 $strings['fr']['This email adress is already registered.'] = 'Cette adresse email est d&eacute;j&agrave; utilis&eacute;e.';

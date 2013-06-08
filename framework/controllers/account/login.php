@@ -6,8 +6,6 @@ require_once 'theme.php';
 require_once 'form.php';
 require_once 'message.php';
 
-global $home_url;
-
 user_role_required(ANONYMOUS_RID);
 
 $login_form = array(

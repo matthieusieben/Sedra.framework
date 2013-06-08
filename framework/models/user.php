@@ -308,9 +308,16 @@ function user_login($mail, $pass, $action = 'login') {
 
 		$user->login = REQUEST_TIME;
 		$user->status = 1;
-		if($action === 'reset') {
+
+		switch ($action) {
+		case 'reset':
 			message(MESSAGE_SUCCESS, t('Your password has been reset. You should set a new one now.'));
 			$user->pass = '';
+			break;
+
+		case 'activate':
+			message(MESSAGE_SUCCESS, t('Your account has been activated.'));
+			break;
 		}
 
 		return TRUE;
