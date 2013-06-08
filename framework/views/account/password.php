@@ -6,7 +6,7 @@
 	<div id="account" class="row">
 
 		<div id="edit" class="span8">
-			<h3><?php echo t('Change my password'); ?></h3>
+			<h3><?php echo t('Change my credentials'); ?></h3>
 			<?php if(@$edit_form): ?>
 				<?php echo theme($edit_form); ?>
 			<?php endif; ?>

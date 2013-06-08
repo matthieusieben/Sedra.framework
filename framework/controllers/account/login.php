@@ -38,9 +38,14 @@ $login_form = array(
 				),
 				array(
 					'view' => 'html',
-					'html' => config('user.subscription') ?
-						l(array('title'=>t('Sign up'),'path'=>'account/signup','attributes'=>array('class'=>array('btn')))):
-						NULL
+					'html' => !config('user.subscription') ? NULL :
+						l(array(
+							'title'=>t('Sign up'),
+							'path'=>'account/signup',
+							'attributes'=>array(
+								'class' => array('btn', 'btn-success'),
+							),
+						)),
 				),
 				'reset' => array(
 					'type' => 'submit',

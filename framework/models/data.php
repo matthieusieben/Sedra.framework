@@ -42,7 +42,7 @@ $site_data['menus']['user'] = array(
 			'path' => 'account/index',
 		),
 		array(
-			'title' => t('Change my password'),
+			'title' => t('Change my credentials'),
 			'path' => 'account/password',
 		),
 	),

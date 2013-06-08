@@ -27,7 +27,7 @@ $strings['fr']['New password'] = 'Nouveau mot de passe';
 $strings['fr']['Current password'] = 'Mot de passe actuel';
 $strings['fr']['Confirm password'] = 'V&eacute;rification';
 $strings['fr']['Language'] = 'Langue';
-$strings['fr']['Change my password'] = 'Modifier mon mot-de-passe';
+$strings['fr']['Change my credentials'] = 'Modifier mon identifiant';
 $strings['fr']['Account details'] = 'D&eacute;tails du compte';
 $strings['fr']['@username\'s account'] = 'Compte de @username';
 $strings['fr']['Make sure your account info is up to date and accurate. This is how we get in touch with you! We will never give out your email address or info to anyone.'] = 'Veuillez vous assurer que les informations ci-dessous sont exactes. Celles-ci nous permettent de rester en contact avec vous! Nous ne donnerons jamais vos informations &agrave; personne.';
@@ -43,7 +43,7 @@ $strings['fr']['This email adress is already registered.'] = 'Cette adresse emai
 $strings['fr']['[@name] Account @action'] = '[@name] @action compte utilisateur';
 $strings['fr']['activate'] = 'activation';
 $strings['fr']['reset'] = 'réinitialisation';
-$strings['fr']['Further instructions have been sent to your e-mail address.'] = 'De plus amples informations ont &eacute;t&eacute; envoy&eacute;es &agrave; l\'adresse email indiqu&eacute;e';
+$strings['fr']['Further instructions have been sent to your e-mail address.'] = 'De plus amples informations ont &eacute;t&eacute; envoy&eacute;es &agrave; l\'adresse email indiqu&eacute;e.';
 
 # Scaffolding
 $strings['fr']['Scaffolding'] = 'Base de donn&eacute;es';

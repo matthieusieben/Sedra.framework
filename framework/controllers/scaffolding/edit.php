@@ -4,10 +4,12 @@ require_once 'theme.php';
 require_once 'form.php';
 require_once 'user.php';
 
-if(!config('scaffolding.enabled'))
+$access = config('scaffolding.access', 'MODERATOR_RID');
+
+if(!config('scaffolding.enabled') || !defined($access))
 	show_404();
 
-user_role_required(MODERATOR_RID);
+user_role_required(constant($access));
 
 $table_name = url_segment(1);
 $action = url_segment(2);

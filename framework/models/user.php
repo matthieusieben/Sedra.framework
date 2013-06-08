@@ -256,12 +256,7 @@ function user_login($mail, $pass, $action = 'login') {
 	case 'activate':
 
 		db_delete('users_actions')
-			->condition('salt', $pass)
-			->condition('action', $action)
-			->execute();
-
-		db_delete('users_actions')
-			->condition('ua.time', REQUEST_TIME - 86400, '<')
+			->condition('time', REQUEST_TIME - 86400, '<')
 			->execute();
 
 		$ua = db_select('users_actions', 'ua')
@@ -274,6 +269,11 @@ function user_login($mail, $pass, $action = 'login') {
 
 		if(!$ua)
 			return FALSE;
+
+		db_delete('users_actions')
+			->condition('salt', $pass)
+			->condition('action', $action)
+			->execute();
 
 		$user_data = db_query(
 				'SELECT * FROM {users} u WHERE uid = :uid',
@@ -420,7 +420,7 @@ function &user_find($mail) {
 		return $accounts[$mail];
 	}
 
-	$accounts[$mail] = db_query('SELECT * FROM {users} u WHERE mail = :mail', array(':mail' => $uid))->fetchObject('User');
+	$accounts[$mail] = db_query('SELECT * FROM {users} u WHERE mail = :mail', array(':mail' => $mail))->fetchObject('User');
 
 	if ($accounts[$mail]) {
 		$accounts[$mail]->data = @unserialize($account->data);

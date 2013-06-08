@@ -69,6 +69,9 @@ $signup_form = array(
 				array(
 					'type' => 'submit',
 					'label' => t('Create my account'),
+					'attributes' => array(
+						'class' => array('btn-success'),
+					),
 				),
 				array(
 					'view' => 'html',
