@@ -1,11 +1,11 @@
 <?php if(@$mini): ?>
-	<div class="avatar avatar-mini">
+	<div class="avatar avatar-mini clearfix">
 		<div class="avatar-image">
 			<img src="<?php echo $avatar_url ?>" alt="<?php echo $account->name ?>" width="<?php echo $size ?>" />
 		</div>
 	</div>
 <?php else: ?>
-	<div class="avatar">
+	<div class="avatar clearfix">
 		<div class="avatar-image">
 			<img src="<?php echo $avatar_url ?>" alt="<?php echo $account->name ?>" width="<?php echo $size ?>" />
 		</div>

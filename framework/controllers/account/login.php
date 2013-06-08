@@ -33,6 +33,13 @@ $login_form = array(
 				'login' => array(
 					'type' => 'submit',
 					'label' => t('Log in'),
+					'attributes' => array(
+						'class' => array('btn-success'),
+					),
+				),
+				'reset' => array(
+					'type' => 'submit',
+					'label' => t('Reset'),
 				),
 				array(
 					'view' => 'html',
@@ -40,14 +47,7 @@ $login_form = array(
 						l(array(
 							'title'=>t('Sign up'),
 							'path'=>'account/signup',
-							'attributes'=>array(
-								'class' => array('btn', 'btn-success'),
-							),
 						)),
-				),
-				'reset' => array(
-					'type' => 'submit',
-					'label' => t('Reset'),
 				),
 			),
 		),

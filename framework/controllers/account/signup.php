@@ -75,9 +75,10 @@ $signup_form = array(
 				),
 				array(
 					'view' => 'html',
-					'html' => config('user.subscription') ?
-						l(array('title'=>t('Log in'),'path'=>'account/login','attributes'=>array('class'=>array('btn')))):
-						NULL
+					'html' => l(array(
+						'title'=>t('Log in'),
+						'path'=>'account/login',
+					)),
 				),
 			),
 		),
