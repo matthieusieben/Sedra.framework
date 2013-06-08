@@ -60,9 +60,9 @@ global $user;
 if(isset($user)) {
 	if(user_has_role(AUTHENTICATED_RID)) {
 		if(config('scaffolding.enabled'))
-		$site_data['menus']['secondary']['items'][] = array('path' => 'scaffolding/index', 'title' => t('Scaffolding'));
+		$site_data['menus']['secondary']['items'][] = array('path' => 'scaffolding', 'title' => t('Scaffolding'));
 
-		$site_data['menus']['secondary']['items'][] = array('path' => 'account/index', 'title' => t('Account'));
+		$site_data['menus']['secondary']['items'][] = array('path' => 'account', 'title' => t('Account'));
 		$site_data['menus']['secondary']['items'][] = array('path' => 'account/logout', 'title' => t('Logout'));
 	} else {
 		$site_data['menus']['secondary']['items'][] = array('path' => 'account/login', 'title' => t('Login'));

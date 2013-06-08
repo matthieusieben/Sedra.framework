@@ -344,12 +344,18 @@ function _form_handle_textarea(&$form, &$field) {
 	$field['value'] = trim($field['value']);
 	$field += array(
 		'view' => 'form/input',
+		'wysiwyg' => FALSE,
 	);
 	$field['attributes'] += array(
 		'rows' => 3,
 	);
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
+	}
+	if ($field['wysiwyg']) {
+		load_library('wysiwyg');
+		$field['attributes']['class'][] = 'wysiwyg';
+		$field['attributes']['style'][] = 'height: 150px;';
 	}
 }
 

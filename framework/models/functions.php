@@ -75,7 +75,7 @@ function random_bytes($count) {
 }
 
 function random_salt($length = 32) {
-	return substr(hash('sha256', random_bytes(32)), 0, min(64, max(0, $length)));
+	return substr(hash('sha256', random_bytes(64)), 0, min(64, max(0, $length)));
 }
 
 function set_status_header($code = 200)

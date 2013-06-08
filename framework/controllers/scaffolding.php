@@ -1,12 +1,5 @@
 <?php
 
-switch(url_segment(2)) {
-case 'add':
-case 'edit':
-case 'remove':
-	return load_controller('scaffolding/edit');
-}
-
 define('MAX_ROWS_DISPLAY', 50);
 
 function scaffolding_tables_menu() {
@@ -56,6 +49,13 @@ function scaffolding_menu($table_name) {
 	);
 
 	return $menu;
+}
+
+switch(url_segment(2)) {
+case 'add':
+case 'edit':
+case 'remove':
+	return load_controller('scaffolding/edit');
 }
 
 require_once 'theme.php';
@@ -161,10 +161,10 @@ foreach ($table_info as $field_info) {
 
 $content_q = db_select($table_name, 't')->fields('t')->range($start, $limit)->execute();
 while($content_row = ($content_q->fetchAssoc())) {
-
 	foreach($content_row as $field => $value) {
-		if(count($table_info) > 5 && strlen($value) > 20)
-			$value = check_plain(substr($value, 0, 16)) . '&hellip;';
+		$maxlen = 175 / count($table_info);
+		if(strlen($value) > $maxlen)
+			$value = check_plain(substr($value, 0, $maxlen - 3)) . '&hellip;';
 		else
 			$value = check_plain($value);
 

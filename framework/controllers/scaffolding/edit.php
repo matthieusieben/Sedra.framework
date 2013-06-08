@@ -92,6 +92,7 @@ foreach($table_info as $table_field_info) {
 	$form['fields'][$field_name] = array(
 		'label' => check_plain($field_name),
 		'type' => $type,
+		'wysiwyg' => $type === 'textarea',
 		'default' => val($values[$field_name], NULL),
 		'help' => check_plain($field_comment),
 		'attributes' => array(
@@ -113,7 +114,7 @@ $form['fields'][] = array(
 			'view' => 'html',
 			'html' => l(array(
 				'title' => t('Cancel'),
-				'path' => 'scaffolding/'.$table_name,
+				'path' => 'scaffolding/'.$table_name.'/index',
 				'attributes' => array('class' => array(
 					'btn',
 					'btn-danger',

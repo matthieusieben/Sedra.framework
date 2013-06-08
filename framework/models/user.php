@@ -222,7 +222,7 @@ function user_setup_environment() {
 	global $user, $language, $language_custom;
 	static $locales;
 
-	if (!isset($locales)) $locales = config('site.locales', array('en' => 'en_US'));
+	if (!isset($locales)) $locales = config('site.locales', array('en' => 'en_US', 'fr' => 'fr_FR'));
 
 	if(empty($language_custom) && !empty($_SESSION['language']))
 		$language_custom = $_SESSION['language'];
@@ -255,6 +255,15 @@ function user_login($mail, $pass, $action = 'login') {
 	case 'reset':
 	case 'activate':
 
+		db_delete('users_actions')
+			->condition('salt', $pass)
+			->condition('action', $action)
+			->execute();
+
+		db_delete('users_actions')
+			->condition('ua.time', REQUEST_TIME - 86400, '<')
+			->execute();
+
 		$ua = db_select('users_actions', 'ua')
 			->fields('ua', array('uid'))
 			->condition('ua.salt', $pass)
@@ -263,20 +272,19 @@ function user_login($mail, $pass, $action = 'login') {
 			->execute()
 			->fetch();
 
-		db_delete('users_actions')
-			->condition('salt', $pass)
-			->condition('action', $action)
-			->execute();
+		if(!$ua)
+			return FALSE;
 
-		$user_data = !$ua ? NULL :
-			db_query(
+		$user_data = db_query(
 				'SELECT * FROM {users} u WHERE uid = :uid',
-				array(':uid' => $ua->uid)
-			)
+				array(':uid' => $ua->uid))
 			->fetchObject('User');
 		break;
 
 	case 'login':
+
+		if(empty($pass))
+			return FALSE;
 
 		$user_data = db_query(
 			'SELECT * FROM {users} u WHERE mail = :mail AND pass = :pass AND status',
@@ -301,7 +309,7 @@ function user_login($mail, $pass, $action = 'login') {
 		$user->login = REQUEST_TIME;
 		$user->status = 1;
 		if($action === 'reset') {
-			message(MESSAGE_SUCCESS, t('Your password has been reset. You should set it now.'));
+			message(MESSAGE_SUCCESS, t('Your password has been reset. You should set a new one now.'));
 			$user->pass = '';
 		}
 
@@ -347,48 +355,42 @@ function user_register($data) {
 	$data['pass'] = strlen($data['pass']) ? user_hash_password($data['pass']) : NULL;
 
 	try {
-		$uid = db_insert('users')->fields($data)->execute();
+		db_insert('users')->fields($data)->execute();
 	} catch(PDOException $e) {
 		message(MESSAGE_ERROR, t('This email adress is already registered.'));
 		return FALSE;
 	}
 
-	user_action_request($uid, 'activate');
+	user_action_request($data['mail'], 'activate');
 
 	return TRUE;
 }
 
-function user_action_request($uid, $action) {
+function user_action_request($mail, $action) {
 
-	if($account = user_get($uid)) {
-
+	if($account = user_find($mail)) {
 		require_once 'mail.php';
 		require_once 'theme.php';
 
-		try {
-			db_insert('users_actions')
-				->fields(array(
-					'uid' => $account->uid,
-					'action' => $action,
-					'salt' => $salt = random_salt(32),
-					'time' => REQUEST_TIME,
-				))
-				->execute();
+		db_insert('users_actions')
+			->fields(array(
+				'uid' => $account->uid,
+				'action' => $action,
+				'salt' => $salt = random_salt(32),
+				'time' => REQUEST_TIME,
+			))
+			->execute();
 
-			mail_send(array(
-				'to' => $account->mail,
-				'subject' => t('[@name] Account @action', array(
-					'@name' => config('site.name'),
-					'@action' => t($action))),
-				'text' => theme('account/mail/'.$action, array(
-					'reset_url' => url('account/reset/'.$salt),
-					'activate_url' => url('account/activate/'.$salt),
-					'account' => $account)),
-			));
-
-		} catch (PDOException $e) {
-			if(DEVEL) dvm($e);
-		}
+		mail_send(array(
+			'to' => $account->mail,
+			'subject' => t('[@name] Account @action', array(
+				'@name' => config('site.name'),
+				'@action' => t($action))),
+			'text' => theme('account/mail/'.$action, array(
+				'reset_url' => url('account/reset/'.$salt),
+				'activate_url' => url('account/activate/'.$salt),
+				'account' => $account)),
+		));
 	}
 
 	message(MESSAGE_SUCCESS, t('Further instructions have been sent to your e-mail address.'));
@@ -406,22 +408,23 @@ function user_logout() {
 	}
 }
 
-function &user_get($uid = NULL) {
+function &user_find($mail) {
 	global $user;
 	static $accounts = array();
 
-	if ($uid === NULL || $user->uid == $uid) {
+	if ($user->mail === $mail) {
 		return $user;
 	}
 
-	if(is_numeric($uid))
-		$account = db_query('SELECT * FROM {users} u WHERE uid = :uid', array(':uid' => $uid))->fetchObject('User');
-	else
-		$account = db_query('SELECT * FROM {users} u WHERE mail = :mail', array(':mail' => $uid))->fetchObject('User');
-
-	if ($account) {
-		$account->data = @unserialize($account->data);
+	if(array_key_exists($mail, $accounts)) {
+		return $accounts[$mail];
 	}
 
-	return $account;
+	$accounts[$mail] = db_query('SELECT * FROM {users} u WHERE mail = :mail', array(':mail' => $uid))->fetchObject('User');
+
+	if ($accounts[$mail]) {
+		$accounts[$mail]->data = @unserialize($account->data);
+	}
+
+	return $accounts[$mail];
 }
