@@ -1,4 +1,4 @@
-<?php $attributes = @$attributes; ?>
+<?php $attributes = (array) @$attributes; ?>
 <?php attributes_setup($attributes); ?>
 <?php $attributes['class'][] = 'table'; ?>
 <?php if(!empty($header) || !empty($rows) || !empty($footer)): ?>

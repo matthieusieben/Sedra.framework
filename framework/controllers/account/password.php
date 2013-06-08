@@ -8,18 +8,18 @@ user_role_required(AUTHENTICATED_RID);
 
 global $home_url, $timezone_list, $user;
 
-function check_password_bis_field(&$form, &$field) {
-	if ($field['value'] !== $form['fields']['pass']['value']) {
-		$field['error'] = t('Paswords do not match.');
+function check_current_password_field(&$form, &$field) {
+	global $user;
+	if(user_hash_password($field['value']) !== $user->pass) {
+		$field['error'] = t('Incorrect password.');
 		return FALSE;
 	}
 	return TRUE;
 }
 
-function check_current_password_field(&$form, &$field) {
-	global $user;
-	if(user_hash_password($field['value']) !== $user->pass) {
-		$field['error'] = t('Incorrect password.');
+function check_password_bis_field(&$form, &$field) {
+	if ($field['value'] !== $form['fields']['pass']['value']) {
+		$field['error'] = t('Paswords do not match.');
 		return FALSE;
 	}
 	return TRUE;

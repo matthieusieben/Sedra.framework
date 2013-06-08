@@ -1,6 +1,6 @@
 <?php if($type == 'hidden'): ?>
 
-	<?php $attributes['value'] = $value; ?>
+	<?php $attributes += array('value' => $value); ?>
 	<input <?php echo attributes($attributes); ?>>
 
 <?php elseif($style == 'inline'): ?>

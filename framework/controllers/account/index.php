@@ -9,7 +9,6 @@ user_role_required(AUTHENTICATED_RID);
 
 global $home_url, $timezone_list, $user;
 
-
 $edit_form = array(
 	'fields' => array(
 		'name' => array(

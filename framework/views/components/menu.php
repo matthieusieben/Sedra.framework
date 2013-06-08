@@ -1,3 +1,4 @@
+<?php $attributes = (array) @$attributes; ?>
 <?php if (!@$is_sub) $attributes['class'][] = 'nav'; ?>
 <ul <?php echo attributes($attributes); ?>>
 	<?php foreach ($items as $_item): ?>

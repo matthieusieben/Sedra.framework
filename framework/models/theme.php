@@ -27,7 +27,7 @@ function attributes($attributes = array(), $filter_empty = FALSE) {
 function attributes_setup(array &$attributes) {
 	# Clear empty attributes
 	foreach($attributes as $name => $value) {
-		if(empty($value)) {
+		if($value === NULL || $value === '') {
 			unset($attributes[$name]);
 		}
 	}

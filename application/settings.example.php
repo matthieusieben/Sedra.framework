@@ -29,6 +29,10 @@ $config['robots.dissalowed'] = array(
 	# 'Googlebot',
 );
 
+# Enable scaffolding?
+$config['scaffolding.enabled'] = FALSE;
+$config['scaffolding.tables'] = array();
+
 # User parametes
 $config['user.subscription'] = TRUE;
 $config['user.pwd.secure'] = TRUE;

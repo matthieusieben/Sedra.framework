@@ -44,7 +44,6 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	if(!is_array($field))
 		throw new FrameworkException("Wrong form format");
 
-
 	# Not a form field, do no prevent validation (return TRUE)
 	if (empty($field['type'])) {
 		return TRUE;
@@ -156,11 +155,16 @@ function form_values(&$form) {
 		function _form_values(&$form, $field) {
 			if(!empty($field['fields'])) {
 				foreach ($field['fields'] as $sub_field) {
-					if(!empty($sub_field['type'])) {
+					if (!empty($sub_field['type'])) {
 						# Handle the field content
-						if ($sub_field['name'] && (strpos($sub_field['name'], '__form_') !== 0)) {
-							$form['values'][$sub_field['name']] = $sub_field['value'];
+						if ($sub_field['valid']) {
+							if (strpos($sub_field['name'], '__form_') !== 0) {
+								$form['values'][$sub_field['name']] = $sub_field['value'];
+							}
+						} else {
+							$form['values'][$sub_field['name']] = $sub_field['default'];
 						}
+
 						_form_values($form, $sub_field);
 					}
 				}
@@ -373,11 +377,15 @@ function _form_handle_hidden(&$form, &$field) {
 }
 
 function _form_handle_number(&$form, &$field) {
-	$field['value'] = floatval($field['value']);
-	if(is_numeric(@$field['round']) && is_numeric($field['value']))
-		$field['value'] = round($field['value'], $field['round']);
+	if(!is_null($field['value']) && $field['value'] !== '') {
+		$field['value'] = floatval($field['value']);
+		if(is_numeric(@$field['round']) && is_numeric($field['value']))
+			$field['value'] = round($field['value'], $field['round']);
+		$field['attributes']['value'] = strval($field['value']);
+	} else {
+		$field['value'] = NULL;
+	}
 	$field['attributes']['type'] = 'text';
-	$field['attributes']['value'] = strval($field['value']);
 	_form_handle_input($form, $field);
 }
 

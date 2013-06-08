@@ -29,6 +29,14 @@ $config['robots.dissalowed'] = array(
 	# 'Googlebot',
 );
 
+# Enable scaffolding?
+$config['scaffolding.enabled'] = DEVEL;
+$config['scaffolding.tables'] = array(
+	'gift_lists',
+	'items',
+	'patrons',
+);
+
 # User parametes
 $config['user.subscription'] = TRUE;
 $config['user.pwd.secure'] = TRUE;
@@ -56,9 +64,9 @@ $config['mail.smtp.security'] = 'ssl'; # NULL / ssl / tls
 
 # See Drupal's database api for more details
 $databases['default']['default'] = array (
-	'database' =>	'oobn',
-	'username' =>	'oobn',
-	'password' =>	'oobn',
+	'database' =>	'rc',
+	'username' =>	'rc',
+	'password' =>	'XBEcwBvxmVAEjmpK',
 	'host' =>		'localhost',
 	'port' =>		'',
 	'driver' =>		'mysql',
