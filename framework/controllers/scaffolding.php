@@ -142,7 +142,7 @@ $header = array();
 $rows = array();
 
 if($primary) {
-	$header[] = t('Actions');
+	$header[] = '';
 }
 
 foreach ($table_info as $field_info) {
@@ -154,19 +154,29 @@ while($content_row = ($content_q->fetchAssoc())) {
 
 	foreach($content_row as $field => $value) {
 		if(count($table_info) > 5 && strlen($value) > 20)
-			$value = substr($value, 0, 16). '&hellip;';
-		$content_row[$field] = check_plain($value);
+			$value = check_plain(substr($value, 0, 16)) . '&hellip;';
+		else
+			$value = check_plain($value);
+
+		$content_row[$field] = $value;
 	}
 
 	if($primary) {
 		array_unshift($content_row,
 			l(array(
 				'title' => '<i class="icon-edit"></i>',
-				'path' => 'scaffolding/'.$table_name.'/edit/'.$content_row[$primary]
-			)).
+				'path' => 'scaffolding/'.$table_name.'/edit/'.$content_row[$primary],
+				'attributes' => array(
+					'title' => t('Edit'),
+				),
+			))
+			.'&nbsp;'.
 			l(array(
 				'title' => '<i class="icon-remove"></i>',
-				'path' => 'scaffolding/'.$table_name.'/remove/'.$content_row[$primary]
+				'path' => 'scaffolding/'.$table_name.'/remove/'.$content_row[$primary],
+				'attributes' => array(
+					'title' => t('Remove'),
+				),
 			)));
 	}
 

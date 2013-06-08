@@ -82,6 +82,11 @@ foreach($table_info as $table_field_info) {
 		'label' => check_plain($field),
 		'type' => $type,
 		'default' => val($values[$field], NULL),
+		'attributes' => array(
+			'class' => array(
+				'input-xxlarge'
+			),
+		),
 	);
 }
 
