@@ -12,10 +12,6 @@
 			<?php $scaffolding_menu['attributes']['class'][] = 'nav-pills'; ?>
 			<?php echo theme('components/menu', $scaffolding_menu); ?>
 
-			<?php if (!empty($display_form)): ?>
-				<?php echo theme($display_form); ?>
-			<?php endif ?>
-
 			<?php if (empty($table_content_table['rows'])): ?>
 				<p class="text-warning">
 					<?php echo t('No content to display.'); ?>
@@ -24,6 +20,10 @@
 				<?php $table_content_table['attributes']['class'][] = 'table-striped'; ?>
 				<?php $table_content_table['attributes']['class'][] = 'table-ellipsis'; ?>
 				<?php echo theme('components/table', $table_content_table); ?>
+			<?php endif ?>
+
+			<?php if (!empty($display_form)): ?>
+				<?php echo theme($display_form); ?>
 			<?php endif ?>
 
 		</div>

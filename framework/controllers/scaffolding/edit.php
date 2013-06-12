@@ -1,11 +1,5 @@
 <?php
 
-require_once 'theme.php';
-require_once 'form.php';
-require_once 'user.php';
-
-scaffolding_check_access();
-
 $table_name = url_segment(1);
 $table_info = array();
 $primary = NULL;
