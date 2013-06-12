@@ -93,6 +93,10 @@ function theme($__view, array $__data = array()) {
 		$__view = @$__data['view'];
 	}
 
+	if(!$__view) {
+		return NULL;
+	}
+
 	# Avoid file name conflicts
 	$__current_include_path = get_include_path();
 	set_include_path(VIEW_PATH);
@@ -103,7 +107,17 @@ function theme($__view, array $__data = array()) {
 		$__file = stream_resolve_include_path($__view.'.php');
 		if (!$__file) {
 			set_include_path($__current_include_path);
-			throw new FrameworkException(t("The view <code>@view</code> cannot be loaded.", array('@view' => $__view ? $__view : 'NULL')));
+			switch ($__view) {
+			case 'link':
+				return l($__data);
+			case 'array':
+				$__str = '';
+				foreach(@$__data['items'] as $__item)
+					$__str .= theme($__item);
+				return $__str;
+			default:
+				throw new FrameworkException(t("The view <code>@view</code> cannot be loaded.", array('@view' => $__view ? $__view : 'NULL')));
+			}
 		}
 
 		# Add default data & set them available

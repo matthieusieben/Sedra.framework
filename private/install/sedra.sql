@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `files`;
 DROP TABLE IF EXISTS `sessions`;
 DROP TABLE IF EXISTS `users_actions`;
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `watchdog`;
 
 CREATE TABLE `files` (
   `fid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -53,6 +54,14 @@ CREATE TABLE `users_actions` (
   `time` int(11) NOT NULL,
   UNIQUE KEY `user_action` (`uid`,`action`),
   UNIQUE KEY `unique_salt` (`salt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `watchdog` (
+  `id` varchar(128) DEFAULT NULL,
+  `hostname` varchar(128) NOT NULL DEFAULT '',
+  `count` int(10) unsigned NOT NULL DEFAULT '1',
+  `timestamp` varchar(11) NOT NULL DEFAULT '',
+  KEY `action_source` (`id`,`hostname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`uid`, `rid`, `mail`, `pass`, `name`, `language`, `timezone`, `data`, `created`, `access`, `login`, `status`) VALUES

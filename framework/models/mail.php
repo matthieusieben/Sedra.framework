@@ -1,5 +1,7 @@
 <?php
 
+require_once 'log.php';
+
 load_library('swift');
 
 function mail_send($options) {
@@ -66,7 +68,7 @@ function mail_send($options) {
 		return $mailer->send($message);
 	} catch (Exception $e) {
 		if(DEVEL) throw new FrameworkException($e);
-
+		else log_exception($e);
 		return FALSE;
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 
-global $request_path, $controller, $language;
+global $request_path;
+global $controller, $language;
 global $home_url, $site_data;
 global $private_pages;
 
@@ -12,7 +13,6 @@ $site_data = array(
 	'site_name' => config('site.name', 'My website'),
 	'site_logo' => $logo_url,
 	'site_slogan' => config('site.slogan', NULL),
-	'site_url' => $home_url,
 	'lang' => $language,
 	'body' => array(
 		'attributes' => array(

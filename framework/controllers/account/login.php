@@ -4,6 +4,7 @@ require_once 'user.php';
 require_once 'data.php';
 require_once 'theme.php';
 require_once 'form.php';
+require_once 'watchdog.php';
 require_once 'message.php';
 
 user_role_required(ANONYMOUS_RID);
@@ -16,26 +17,21 @@ $login_form = array(
 			'placeholder' => t('Email'),
 			'type' => 'email',
 			'required' => TRUE,
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
 		'pass' => array(
 			'placeholder' => t('Password'),
 			'type' => 'password',
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
-		array(
+		'watchdog' => array(
+			'type' => 'watchdog',
+			'required' => TRUE,
+		),
+		'actions' => array(
 			'type' => 'fieldset',
 			'fields' => array(
 				'login' => array(
 					'type' => 'submit',
 					'label' => t('Log in'),
-					'attributes' => array(
-						'class' => array('btn-success'),
-					),
 				),
 				'reset' => array(
 					'type' => 'submit',

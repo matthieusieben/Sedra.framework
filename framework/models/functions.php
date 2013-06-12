@@ -190,39 +190,58 @@ function is_email($email) {
 	return filter_var($email, FILTER_VALIDATE_EMAIL) !== FALSE;
 }
 
-function load_controller($controller) {
+function load_controller($__controller) {
 
-	if(file_exists($file = APP_CONTROLLERS . $controller . '.php'))
-		return include($file);
+	if(file_exists($__file = APP_CONTROLLERS . $__controller . '.php'))
+		return require($__file);
 
-	if(file_exists($file = APP_CONTROLLERS . $controller . '/index.php'))
-		return include($file);
+	if(file_exists($__file = APP_CONTROLLERS . $__controller . '/index.php'))
+		return require($__file);
 
-	if(file_exists($file = FRAMEWORK_CONTROLLERS . $controller . '.php'))
-		return include($file);
+	if(file_exists($__file = FRAMEWORK_CONTROLLERS . $__controller . '.php'))
+		return require($__file);
 
-	if(file_exists($file = FRAMEWORK_CONTROLLERS . $controller . '/index.php'))
-		return include($file);
+	if(file_exists($__file = FRAMEWORK_CONTROLLERS . $__controller . '/index.php'))
+		return require($__file);
 
-	return show_404(DEVEL ? t('Unable to load the controller "@controller"', array('@controller'=>$controller)) : NULL);
+	return show_404(DEVEL ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
 }
 
-function load_library($library, $required = TRUE) {
+function load_model($__model) {
+	static $__loaded = array();
 
-	if(file_exists($file = APP_LIBRARIES . $library . '.php'))
-		return require_once($file);
+	if(isset($__loaded[$__model]))
+		return $__loaded[$__model];
 
-	if(file_exists($file = APP_LIBRARIES . $library . '/bridge.php'))
-		return require_once($file);
+	if(file_exists($__file = APP_MODELS . $__model . '.php'))
+		return $__loaded[$__model] = require_once($__file);
 
-	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '.php'))
-		return require_once($file);
+	if(file_exists($__file = FRAMEWORK_MODELS . $__model . '.php'))
+		return $__loaded[$__model] = require_once($__file);
 
-	if(file_exists($file = FRAMEWORK_LIBRARIES . $library . '/bridge.php'))
-		return require_once($file);
+	throw new FrameworkException(t('Cannot load model @model', array('@model' => $__model)));
+}
 
-	if($required)
-		throw new FrameworkException(t('Cannot load library @library', array('@library' => $library)));
+function load_library($__library, $__required = TRUE) {
+	static $__loaded = array();
+
+	if(isset($__loaded[$__library]))
+		return $__loaded[$__library];
+
+	if(file_exists($__file = APP_LIBRARIES . $__library . '.php'))
+		return $__loaded[$__library] = require($__file);
+
+	if(file_exists($__file = APP_LIBRARIES . $__library . '/bridge.php'))
+		return $__loaded[$__library] = require($__file);
+
+	if(file_exists($__file = FRAMEWORK_LIBRARIES . $__library . '.php'))
+		return $__loaded[$__library] = require($__file);
+
+	if(file_exists($__file = FRAMEWORK_LIBRARIES . $__library . '/bridge.php'))
+		return $__loaded[$__library] = require($__file);
+
+	if($__required)
+		throw new FrameworkException(t('Cannot load library @library', array('@library' => $__library)));
 
 	return FALSE;
 }
@@ -232,7 +251,6 @@ function show_403($msg = NULL) {
 }
 
 function show_404($msg = NULL) {
-	global $request_path;
 	throw new FrameworkException($msg ? $msg : t('The requested page does not exist.'), 404);
 }
 

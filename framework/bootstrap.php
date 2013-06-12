@@ -22,7 +22,7 @@ define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
 define('FRAMEWORK_VIEWS', FRAMEWORK_ROOT.'views/');
 
 # View include path
-defined('VIEW_PATH') or define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS.PATH_SEPARATOR.'.');
+defined('VIEW_PATH') or define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS);
 
 # Public folder
 defined('PUBLIC_DIR') or define('PUBLIC_DIR', SITE_ROOT.'public/');

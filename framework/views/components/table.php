@@ -8,7 +8,15 @@
 			<thead>
 				<tr>
 					<?php foreach($header as $_value): ?>
-						<th><?php echo $_value; ?></th>
+						<?php if (is_string($_value)): ?>
+							<th>
+								<?php echo $_value; ?>
+							</th>
+						<?php else: ?>
+							<th>
+								<?php echo theme($_value); ?>
+							</th>
+						<?php endif; ?>
 					<?php endforeach; ?>
 				</tr>
 			</thead>
@@ -19,7 +27,15 @@
 				<?php foreach($rows as $_row): ?>
 					<tr>
 						<?php foreach($_row as $_value): ?>
-							<td><?php echo $_value; ?></td>
+							<?php if (is_string($_value)): ?>
+								<td>
+									<?php echo $_value; ?>
+								</td>
+							<?php else: ?>
+								<td>
+									<?php echo theme($_value); ?>
+								</td>
+							<?php endif; ?>
 						<?php endforeach; ?>
 					</tr>
 				<?php endforeach; ?>

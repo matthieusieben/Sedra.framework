@@ -1,8 +1,9 @@
+<?php global $request_server; ?>
 <?php echo $account->name ?>,
 
-A request to reset the password for your account has been made at <?php echo $site_url ?>.
+A request to reset the password for your account has been made at <?php echo $request_server ?>.
 
-You may now log in to <?php echo $site_url ?> by clicking on this link or copying and pasting it in your browser:
+You may now log in to <?php echo $request_server ?> by clicking on this link or copying and pasting it in your browser:
 
 <?php echo $reset_url ?>
 

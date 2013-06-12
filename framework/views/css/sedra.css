@@ -37,6 +37,17 @@ body {
 	max-height: 2em;
 }
 
+.table-ellipsis {
+	table-layout: fixed;
+}
+.table-ellipsis td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	-ms-text-overflow: ellipsis;
+}
+
 .carousel.carousel-fade .carousel-inner .item {
   opacity: 0;
   -webkit-transition-property: opacity;
@@ -80,7 +91,7 @@ body.path-account-signup {
 
 .form-signin,
 .form-signup {
-	max-width: 290px;
+	max-width: 320px;
 	padding: 19px 29px 29px;
 	margin: 20px auto;
 	background-color: #fff;
@@ -95,6 +106,6 @@ body.path-account-signup {
 
 #content {
 	min-height: 200px;
-	margin: 0 auto 20px;
+	margin: 20px auto;
 	padding: 0;
 }

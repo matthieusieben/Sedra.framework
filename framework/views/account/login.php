@@ -7,6 +7,9 @@
 			<?php require 'components/message.php' ?>
 
 			<?php $login_form['attributes']['class'][] = 'form-signin'; ?>
+			<?php $login_form['fields']['mail']['attributes']['class'][] = 'input-xlarge'; ?>
+			<?php $login_form['fields']['pass']['attributes']['class'][] = 'input-xlarge'; ?>
+			<?php $login_form['fields']['actions']['fields']['login']['attributes']['class'][] = 'btn-success'; ?>
 			<?php echo theme($login_form); ?>
 		</div>
 	</div>

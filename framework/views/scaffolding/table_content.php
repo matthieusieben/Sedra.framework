@@ -21,6 +21,8 @@
 					<?php echo t('No content to display.'); ?>
 				</p>
 			<?php else: ?>
+				<?php $table_content_table['attributes']['class'][] = 'table-striped'; ?>
+				<?php $table_content_table['attributes']['class'][] = 'table-ellipsis'; ?>
 				<?php echo theme('components/table', $table_content_table); ?>
 			<?php endif ?>
 

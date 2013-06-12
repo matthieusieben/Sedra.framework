@@ -10,6 +10,8 @@
 		<div class="span10">
 			<?php $scaffolding_menu['attributes']['class'][] = 'nav-pills'; ?>
 			<?php echo theme('components/menu', $scaffolding_menu); ?>
+
+			<?php $table_info_table['attributes']['class'][] = 'table-striped'; ?>
 			<?php echo theme('components/table', $table_info_table); ?>
 		</div>
 

@@ -1,7 +1,5 @@
 <?php
 
-
-
 $request_protocol = strtolower(@$_SERVER['HTTPS']) === 'on' ? 'https' : 'http';
 $request_port     = @$_SERVER['SERVER_PORT']
 	? ($request_protocol == 'http' && $_SERVER['SERVER_PORT'] == 80
@@ -17,6 +15,7 @@ $request_script   = basename($_SERVER['SCRIPT_NAME']);
 $request_uri      = $_SERVER['REQUEST_URI'];
 $request_path     = trim(config('url.rewrite') === 'pathauto' ? val($_SERVER['PATH_INFO'], 'index') : val($_REQUEST['q'], 'index'), '/');
 $request_segments = explode('/', $request_path);
+$request_base     = $request_folder . ($request_script !== 'index.php' ? $request_script : '');
 
 function url_segment($n, $default = NULL) {
 	global $request_segments;
@@ -30,7 +29,8 @@ function url($options) {
 
 	url_setup($options);
 
-	if (!empty($options['uri'])) {
+	$base = NULL;
+	if (isset($options['uri'])) {
 		$base = $options['uri'];
 	}
 	else if(config('url.rewrite')) {
@@ -61,7 +61,7 @@ function url($options) {
 		}
 	}
 
-	$anchor = $options['anchor'] ? '#' . $options['anchor'] : '';
+	$anchor = isset($options['anchor']) ? '#' . $options['anchor'] : '';
 
 	return $base.$query.$anchor;
 }
@@ -69,7 +69,7 @@ function url($options) {
 function url_setup(array &$options) {
 	global $request_uri;
 
-	if (!isset($options['path']) && empty($options['uri'])) {
+	if (!isset($options['path']) && !isset($options['uri'])) {
 		$options['uri'] = $request_uri;
 	}
 	else if (isset($options['path'])) {
@@ -81,7 +81,7 @@ function url_setup(array &$options) {
 
 	$options += array(
 		'query' => array(),
-		'anchor' => '',
+		'anchor' => NULL,
 		'title' => NULL,
 		'attributes' => array(),
 		'html' => TRUE,
@@ -103,7 +103,7 @@ function url_is_active($path) {
 		if($request_path . '/index' === $path)
 			return TRUE;
 
-		return strpos($request_path, $path) === 0;
+		return strpos($request_path.'/', $path.'/') === 0;
 	}
 }
 

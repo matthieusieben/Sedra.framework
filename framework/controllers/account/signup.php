@@ -5,6 +5,7 @@ require_once 'data.php';
 require_once 'theme.php';
 require_once 'form.php';
 require_once 'timezone.php';
+require_once 'watchdog.php';
 
 global $home_url, $timezone_list, $user;
 
@@ -21,27 +22,18 @@ $signup_form = array(
 			'placeholder' => t('Name'),
 			'type' => 'text',
 			'required' => TRUE,
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
 		'mail' => array(
 			'placeholder' => t('Email'),
 			'type' => 'email',
 			'required' => TRUE,
 			'callback' => 'check_email_field',
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
 		'pass' => array(
 			'placeholder' => t('Password'),
 			'type' => 'password',
 			'required' => TRUE,
-			'callback' => 'check_password_field',
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
+			'callback' => '_form_callback_user_password',
 		),
 		'language' => array(
 			'placeholder' => t('Language'),
@@ -49,9 +41,6 @@ $signup_form = array(
 			'default' => $user->language,
 			'required' => TRUE,
 			'options' => lang_list(),
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
 		'timezone' => array(
 			'placeholder' => t('Timezone'),
@@ -59,26 +48,24 @@ $signup_form = array(
 			'default' => config('date.timezone'),
 			'required' => FALSE,
 			'options' => $timezone_list,
-			'attributes' => array(
-				'class' => array('input-xlarge'),
-			),
 		),
-		array(
+		'watchdog' => array(
+			'type' => 'watchdog',
+			'required' => TRUE,
+		),
+		'actions' => array(
 			'type' => 'fieldset',
 			'fields' => array(
-				array(
+				'signup' => array(
 					'type' => 'submit',
 					'label' => t('Create my account'),
-					'attributes' => array(
-						'class' => array('btn-success'),
-					),
 				),
-				array(
+				'login' => array(
 					'view' => 'html',
-					'html' => l(array(
+					'html' => array(
 						'title'=>t('Log in'),
 						'path'=>'account/login',
-					)),
+					),
 				),
 			),
 		),

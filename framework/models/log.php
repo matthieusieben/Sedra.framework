@@ -13,7 +13,7 @@ function log_exception($e) {
 		$errstr = $e->getMessage();
 		$errfile = str_replace(SITE_ROOT, '', $e->getFile());
 		$errline = $e->getLine();
-		return log_message("PHP Exception in file {$errfile} on line {$errline} : {$errstr}");
+		return log_message("PHP Exception @ {$errfile}:{$errline} : {$errstr}");
 	}
 	return TRUE;
 }

@@ -185,29 +185,29 @@ function user_role_required($role = AUTHENTICATED_RID) {
 	}
 }
 
-function user_check_password($pwd) {
+function user_check_password($pwd, &$error_message = NULL) {
 	$min = (int) config('user.pwd.min', 6);
 
 	if(config('user.pwd.secure', TRUE)) {
 
 		if( !preg_match("#[0-9]+#", $pwd) ) {
-			message(MESSAGE_ERROR, t('Passwords must include at least one number.'));
+			$error_message = t('Passwords must include at least one number.');
 			return FALSE;
 		}
 
 		if( !preg_match("#[a-z]+#", $pwd) ) {
-			message(MESSAGE_ERROR, t('Passwords must include at least one letter.'));
+			$error_message = t('Passwords must include at least one letter.');
 			return FALSE;
 		}
 
 		if( !preg_match("#[A-Z]+#", $pwd) ) {
-			message(MESSAGE_ERROR, t('Passwords must include at least one capital letter.'));
+			$error_message = t('Passwords must include at least one capital letter.');
 			return FALSE;
 		}
 	}
 
 	if( strlen($pwd) < $min ) {
-		message(MESSAGE_ERROR, t('Passwords must be at least @min chars long.', array('@min' => $min)));
+		$error_message = t('Passwords must be at least @min chars long.', array('@min' => $min));
 		return FALSE;
 	}
 
@@ -349,8 +349,9 @@ function user_register($data) {
 		'timezone' => $timezone,
 	);
 
-	if (!user_check_password($data['pass'])) {
-		message(MESSAGE_ERROR, t('This password is not valid.'));
+	$_error_message = '';
+	if (!user_check_password($data['pass'], $_error_message)) {
+		message(MESSAGE_ERROR, $_error_message);
 		return FALSE;
 	}
 
@@ -376,8 +377,11 @@ function user_register($data) {
 function user_action_request($mail, $action) {
 
 	if($account = user_find($mail)) {
+		require_once 'log.php';
 		require_once 'mail.php';
 		require_once 'theme.php';
+
+		log_message('Password reset for adress : '.$mail);
 
 		db_insert('users_actions')
 			->fields(array(
@@ -390,13 +394,17 @@ function user_action_request($mail, $action) {
 
 		mail_send(array(
 			'to' => $account->mail,
-			'subject' => t('[@name] Account @action', array(
-				'@name' => config('site.name'),
-				'@action' => t($action))),
+			'subject' => decode_plain(
+				t('[@name] Account @action', array(
+					'@name' => config('site.name'),
+					'@action' => t($action),
+				))
+			),
 			'text' => theme('account/mail/'.$action, array(
 				'reset_url' => url('account/reset/'.$salt),
 				'activate_url' => url('account/activate/'.$salt),
-				'account' => $account)),
+				'account' => $account
+			)),
 		));
 	}
 

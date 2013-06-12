@@ -1,5 +1,9 @@
 <?php
 
+require_once 'theme.php';
+require_once 'form.php';
+require_once 'user.php';
+
 define('MAX_ROWS_DISPLAY', 50);
 
 function scaffolding_tables_menu() {
@@ -18,9 +22,9 @@ function scaffolding_tables_menu() {
 		$allowed_tables = (array) config('scaffolding.tables');
 		while($_table_info = ($tables_q->fetchAssoc())) {
 			$_table_name = array_pop($_table_info);
-			if(isset($allowed_tables[$_table_name]))
+			if(user_has_role(ADMINISTRATOR_RID) || isset($allowed_tables[$_table_name]))
 				$tables_menu['items'][] = array(
-					'title' => $allowed_tables[$_table_name],
+					'title' => val($allowed_tables[$_table_name], $_table_name),
 					'path' => 'scaffolding/'.$_table_name,
 				);
 		}
@@ -51,6 +55,23 @@ function scaffolding_menu($table_name) {
 	return $menu;
 }
 
+function scaffolding_check_access() {
+	if(!config('scaffolding.enabled'))
+		show_404();
+
+	if(!user_has_role(ADMINISTRATOR_RID)) {
+		$access = config('scaffolding.access', 'MODERATOR_RID');
+		defined($access) or show_404();
+		user_role_required(constant($access));
+
+		$table_name = url_segment(1);
+		if($table_name) {
+			$allowed_tables = (array) config('scaffolding.tables');
+		 	isset($allowed_tables[$table_name]) or show_404();
+		 }
+	}
+}
+
 switch(url_segment(2)) {
 case 'add':
 case 'edit':
@@ -58,27 +79,15 @@ case 'remove':
 	return load_controller('scaffolding/edit');
 }
 
-require_once 'theme.php';
-require_once 'form.php';
-require_once 'user.php';
-
-$access = config('scaffolding.access', 'MODERATOR_RID');
-
-if(!config('scaffolding.enabled') || !defined($access))
-	show_404();
-
-user_role_required(constant($access));
-
 $table_name = url_segment(1);
 $action = url_segment(2);
 $allowed_tables = (array) config('scaffolding.tables');
+$table_display_name = !empty($allowed_tables[$table_name]) ? $allowed_tables[$table_name] : $table_name;
 
 if(!$action && $table_name === 'index')
 	$table_name = '';
 
-if($table_name && !isset($allowed_tables[$table_name]))
-	show_404();
-
+scaffolding_check_access();
 $tables_menu = scaffolding_tables_menu();
 $scaffolding_menu = scaffolding_menu($table_name);
 
@@ -112,7 +121,7 @@ if($action === 'info') {
 		show_404();
 
 	return theme('scaffolding/table_info', array(
-		'title' => t('!table_name : info', array('!table_name' => $allowed_tables[$table_name])),
+		'title' => t('!table_name : info', array('!table_name' => $table_display_name)),
 		'table_name' => $table_name,
 		'tables_menu' => $tables_menu,
 		'scaffolding_menu' => $scaffolding_menu,
@@ -164,39 +173,39 @@ foreach ($table_info as $field_info) {
 $content_q = db_select($table_name, 't')->fields('t')->range($start, $limit)->execute();
 while($content_row = ($content_q->fetchAssoc())) {
 	foreach($content_row as $field => $value) {
-		$maxlen = 175 / count($table_info);
-		if(strlen($value) > $maxlen)
-			$value = check_plain(substr($value, 0, $maxlen - 3)) . '&hellip;';
-		else
-			$value = check_plain($value);
-
-		$content_row[$field] = $value;
+		$content_row[$field] = check_plain($value);
 	}
 
 	if($primary) {
 		array_unshift($content_row,
-			l(array(
-				'title' => '<i class="icon-edit"></i>',
-				'path' => 'scaffolding/'.$table_name.'/edit/'.$content_row[$primary],
-				'attributes' => array(
-					'title' => t('Edit'),
+			array(
+				'view' => 'array',
+				'items' => array(
+					array(
+						'title' => '<i class="icon-edit"></i>',
+						'path' => 'scaffolding/'.$table_name.'/edit/'.$content_row[$primary],
+						'attributes' => array(
+							'title' => t('Edit'),
+						),
+						'view' => 'link',
+					),
+					array(
+						'title' => '<i class="icon-remove"></i>',
+						'path' => 'scaffolding/'.$table_name.'/remove/'.$content_row[$primary],
+						'attributes' => array(
+							'title' => t('Remove'),
+						),
+						'view' => 'components/link_modal',
+					)
 				),
-			))
-			.'&nbsp;'.
-			l(array(
-				'title' => '<i class="icon-remove"></i>',
-				'path' => 'scaffolding/'.$table_name.'/remove/'.$content_row[$primary],
-				'attributes' => array(
-					'title' => t('Remove'),
-				),
-			)));
+			));
 	}
 
 	$rows[] = $content_row;
 }
 
 return theme('scaffolding/table_content', array(
-	'title' => t('!table_name : content', array('!table_name' => $allowed_tables[$table_name])),
+	'title' => t('!table_name : content', array('!table_name' => $table_display_name)),
 	'table_name' => $table_name,
 	'tables_menu' => $tables_menu,
 	'scaffolding_menu' => $scaffolding_menu,

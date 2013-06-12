@@ -7,9 +7,13 @@ $strings['fr']['Dutch'] = 'N&eacute;erlandais';
 # Actions
 $strings['fr']['Add'] = 'Ajouter';
 $strings['fr']['Edit'] = 'Modifier';
+$strings['fr']['Remove'] = 'Supprimer';
+$strings['fr']['Delete'] = 'Supprimer';
 $strings['fr']['Submit'] = 'Envoyer';
 $strings['fr']['Cancel'] = 'Annuler';
 $strings['fr']['Update'] = 'Mettre &agrave; jour';
+$strings['fr']['Close'] = 'Fermer';
+$strings['fr']['Confirm'] = 'Confirmer';
 
 # Pages
 $strings['fr']['Home'] = 'Accueil';
@@ -68,3 +72,7 @@ $strings['fr']['This table has no primary key.'] = 'Cette table ne contient pas 
 $strings['fr']['Start'] = 'D&eacute;but';
 $strings['fr']['Limit'] = 'Limite';
 
+# Themes
+
+$strings['fr']['Are you sure?'] = '&Ecirc;tes-vous certain?';
+$strings['fr']['This cannot be undone.'] = 'Cette action ne peut pas &ecirc;tre annul&eacute;e.';

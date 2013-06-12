@@ -4,23 +4,16 @@ require_once 'theme.php';
 require_once 'form.php';
 require_once 'user.php';
 
-$access = config('scaffolding.access', 'MODERATOR_RID');
-
-if(!config('scaffolding.enabled') || !defined($access))
-	show_404();
-
-user_role_required(constant($access));
+scaffolding_check_access();
 
 $table_name = url_segment(1);
+$table_info = array();
+$primary = NULL;
+
 $action = url_segment(2);
 $id = url_segment(3);
 $allowed_tables = (array) config('scaffolding.tables');
-
-if($table_name && !isset($allowed_tables[$table_name]))
-	show_404();
-
-$primary = NULL;
-$table_info = array();
+$table_display_name = !empty($allowed_tables[$table_name]) ? $allowed_tables[$table_name] : $table_name;
 
 try {
 	$table_info_q = db_query("SHOW FULL COLUMNS FROM {{$table_name}}");
@@ -95,6 +88,7 @@ foreach($table_info as $table_field_info) {
 		'label' => check_plain($field_name),
 		'type' => $type,
 		'wysiwyg' => $type === 'textarea',
+		'allowable_tags' => NULL, # No restriction
 		'default' => val($values[$field_name], NULL),
 		'help' => check_plain($field_comment),
 		'attributes' => array(
@@ -113,14 +107,12 @@ $form['fields'][] = array(
 			'label' => $id ? t('Edit') : t('Add'),
 		),
 		array(
-			'view' => 'html',
-			'html' => l(array(
-				'title' => t('Cancel'),
-				'path' => 'scaffolding/'.$table_name.'/index',
-				'attributes' => array('class' => array(
-					'btn',
-					'btn-danger',
-				)),
+			'title' => t('Cancel'),
+			'path' => 'scaffolding/'.$table_name.'/index',
+			'view' => 'link',
+			'attributes' => array('class' => array(
+				'btn',
+				'btn-danger',
 			)),
 		),
 	),

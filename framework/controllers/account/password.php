@@ -37,7 +37,7 @@ $edit_form = array(
 		'pass' => array(
 			'label' => t('New password'),
 			'type' => 'password',
-			'callback' => 'check_password_field',
+			'callback' => '_form_callback_user_password',
 		),
 		'pass_check' => array(
 			'label' => t('Confirm password'),

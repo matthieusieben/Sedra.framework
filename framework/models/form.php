@@ -36,6 +36,8 @@ function form_run(&$form) {
 
 	_form_run_field($form, $form);
 
+	hook_invoke('form_run', $form);
+
 	return $form['submitted'];
 }
 
@@ -114,20 +116,29 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	);
 
 	if ($form['submitted']) {
+		$was_validated = FALSE;
+
+		# Field specific action to validate
 		if (function_exists($callback = $field['callback'])) {
 			# Validate this field
 			$valid = $callback($form, $field);
 			if (is_bool($valid)) {
 				$field['valid'] = $valid;
+				$was_validated = TRUE;
 			}
 		}
-		if ($field['required'] && empty($field['value']) && $field['value'] !== 0) {
-			# Mark the field as invalid if empty
-			$field['valid'] = FALSE;
 
-			if(empty($field['error'])) {
-				$field['error'] = t('This field is required');
+		# Provide default validation
+		if ($field['required'] && !$was_validated) {
+			if (!$field['valid'] && !is_numeric($field['value'])) {
+				# Mark the field as invalid if empty
+				$field['valid'] = FALSE;
 			}
+		}
+
+		# Provide defualt error message
+		if(!$field['valid'] && empty($field['error'])) {
+			$field['error'] = t('This field is required');
 		}
 	}
 
@@ -218,13 +229,14 @@ function form_reset(&$form) {
 }
 
 function _form_handle_checkbox(&$form, &$field) {
+
+	if ($field['multiple'])
+		$field['attributes']['type'] = 'checkbox';
+	else
+		$field['attributes']['type'] = 'radio';
+
 	if ($field['disabled'])
 		$field['attributes']['disabled'] = 'disabled';
-
-	if (!$field['multiple'])
-		$field['type'] = 'radio';
-
-	$field['attributes']['type'] = $field['type'];
 
 	_form_handle_multiple_field($form, $field);
 }
@@ -321,7 +333,7 @@ function _form_handle_file(&$form, &$field) {
 		$field['mime'] = array('text', 'image', 'application/pdf');
 	}
 	if (!$field['callback']) {
-		$field['callback'] = 'check_file_field';
+		$field['callback'] = '_form_callback_file';
 	}
 
 	# Only process file if a name is defined
@@ -345,10 +357,21 @@ function _form_handle_textarea(&$form, &$field) {
 	$field += array(
 		'view' => 'form/input',
 		'wysiwyg' => FALSE,
+		'html' => FALSE,
+		'allowable_tags' => '<br><span><p><div><i><b><ul><ol><li><dl><dt><dd>',
 	);
 	$field['attributes'] += array(
 		'rows' => 3,
 	);
+	if ($field['wysiwyg']) {
+		$field['html'] = TRUE;
+	}
+	if ($field['html'] && !$field['wysiwyg']) {
+		$field['value'] = nl2br($field['value']);
+	}
+	if ($field['html'] && $field['allowable_tags']) {
+		$field['value'] = strip_tags($field['value'], $field['allowable_tags']);
+	}
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
 	}
@@ -361,7 +384,7 @@ function _form_handle_textarea(&$form, &$field) {
 
 function _form_handle_email(&$form, &$field) {
 	if (!$field['callback']) {
-		$field['callback'] = 'check_email_field';
+		$field['callback'] = '_form_callback_email';
 	}
 	_form_handle_text($form, $field);
 }
@@ -412,8 +435,8 @@ function _form_handle_input(&$form, &$field) {
 	}
 }
 
-function check_file_field(&$form, &$field) {
-	require_once 'file.php';
+function _form_callback_file(&$form, &$field) {
+	load_model('file');
 
 	if ($field['file_info']) {
 		foreach ((array) @$field['mime'] as $mime) {
@@ -429,7 +452,7 @@ function check_file_field(&$form, &$field) {
 	return TRUE;
 }
 
-function check_email_field(&$form, &$field) {
+function _form_callback_email(&$form, &$field) {
 	if (!is_email($field['value'])) {
 		$field['error'] = t('This is not a valid email address.');
 		return FALSE;
@@ -437,12 +460,11 @@ function check_email_field(&$form, &$field) {
 	return TRUE;
 }
 
-function check_password_field(&$form, &$field) {
-	require_once 'user.php';
+function _form_callback_user_password(&$form, &$field) {
+	load_model('user');
 
 	if($field['required'] || $field['value']) {
-		if (!user_check_password($field['value'])) {
-			$field['error'] = t('This password is too weak.');
+		if (!user_check_password($field['value'], $field['error'])) {
 			return FALSE;
 		}
 	}
