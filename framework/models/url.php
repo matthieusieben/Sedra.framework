@@ -8,12 +8,12 @@ $request_port     = @$_SERVER['SERVER_PORT']
 			? '' # Standart HTTPS port
 			: $_SERVER['SERVER_PORT'])) # Custom port
 	: ''; # Default port
-$request_server   = config('server.domain', val($_SERVER['HTTP_HOST'], $_SERVER['SERVER_NAME']));
+$request_server   = $_SERVER['SERVER_NAME'];
 $request_realm    = $request_protocol."://".$request_server.($request_port ? ':'.$request_port : '');
 $request_folder   = $request_realm.dirname($_SERVER['SCRIPT_NAME']);
 $request_script   = basename($_SERVER['SCRIPT_NAME']);
 $request_uri      = $_SERVER['REQUEST_URI'];
-$request_path     = trim(config('url.rewrite') === 'pathauto' ? val($_SERVER['PATH_INFO'], 'index') : val($_REQUEST['q'], 'index'), '/');
+$request_path     = trim(!empty($_SERVER['PATH_INFO']) ? val($_SERVER['PATH_INFO'], 'index') : val($_REQUEST['q'], 'index'), '/');
 $request_segments = explode('/', $request_path);
 $request_base     = $request_folder . ($request_script !== 'index.php' ? $request_script : '');
 

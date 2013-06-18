@@ -1,3 +1,3 @@
 <?php
 
-load_library('drupal');
+load_library('drupal', TRUE);

@@ -12,7 +12,7 @@ AddDefaultCharset utf-8
 AddCharset utf-8 .atom .css .js .json .rss .xml
 
 # Protect production files
-RedirectMatch 404 ^/(framework|application).*\.(php|sql)$
+RedirectMatch 404 ^/(framework|application).*(\.php)$
 RedirectMatch 404 (\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$
 RedirectMatch 404 (^|/)\.
 

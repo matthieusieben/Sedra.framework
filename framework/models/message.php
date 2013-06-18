@@ -4,9 +4,9 @@ define('MESSAGE_SUCCESS', 'alert-success');
 define('MESSAGE_WARNING', 'alert-block');
 define('MESSAGE_ERROR',   'alert-error');
 
-require_once 'session.php';
-
 function message($type = NULL, $message = NULL) {
+	require_once 'session.php';
+
 	global $messages;
 
 	if(!isset($messages)) {

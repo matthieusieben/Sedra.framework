@@ -12,4 +12,9 @@ if(config('site.ga')) {
 </script>
 EOS;
 	});
+
+	return TRUE;
+}
+else {
+	return FALSE;
 }

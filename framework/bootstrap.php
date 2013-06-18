@@ -34,7 +34,7 @@ defined('PRIVATE_DIR') or define('PRIVATE_DIR', SITE_ROOT.'private/');
 define('SEDRA_VERSION', '1.0');
 
 # Add INCLUDES_DIR to the path
-set_include_path('.'.PATH_SEPARATOR.APP_MODELS.PATH_SEPARATOR.FRAMEWORK_MODELS);
+set_include_path(APP_MODELS.PATH_SEPARATOR.FRAMEWORK_MODELS);
 
 # Unset globals
 if (ini_get('register_globals')) {
@@ -55,46 +55,32 @@ if (ini_get('register_globals')) {
 	}
 }
 
-# Load settings
-global $config;
-global $databases;
-global $models;
-global $libraries;
-
-require APP_ROOT.'settings.php';
-
 # Load core files
 require 'functions.php';
 require 'hook.php';
 require 'error.php';
 require 'url.php';
 require 'lang.php';
-require 'devel.php';
 
-# Shutdown function
-register_shutdown_function('hook_invoke', 'shutdown');
-
-# Setup error handling
-error_reporting(config('log.reporting', E_ALL));
-set_error_handler('__error_handler');
-set_exception_handler('__exception_handler');
-
-# Global variables
-global $controller;
-
-$controller = url_segment(0, 'index');
-
-# Include libraries
-foreach((array) @$libraries as $library => $required) {
-	load_library($library, $required);
+# Load settings
+if(!@include APP_ROOT.'settings.php') {
+	load_model('theme');
+	fatal('Could not load settings file.');
 }
 
+# Include libraries
+global $libraries;
+foreach((array) @$libraries as $library => $required)
+	load_library($library, $required);
 unset($library);
 unset($required);
 
 # Include modules
-foreach((array) @$models as $model) {
-	require_once $model;
-}
-
+global $models;
+foreach((array) @$models as $model)
+	if($model) load_model($model);
 unset($model);
+
+# Main controller
+global $controller;
+$controller = url_segment(0, 'index');

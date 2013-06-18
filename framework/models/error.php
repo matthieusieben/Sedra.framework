@@ -1,5 +1,10 @@
 <?php
 
+require_once 'log.php';
+
+set_error_handler('__error_handler');
+set_exception_handler('__exception_handler');
+
 class FrameworkException extends Exception {
 	public function __construct($message, $code = 500) {
 
@@ -12,8 +17,7 @@ class FrameworkException extends Exception {
 
 function __error_handler($errno, $errstr, $errfile, $errline) {
 
-	require_once FRAMEWORK_MODELS.'log.php';
-
+	load_model('log');
 	log_phperror($errno, $errstr, $errfile, $errline);
 
 	switch ($errno) {
@@ -30,7 +34,7 @@ function __error_handler($errno, $errstr, $errfile, $errline) {
 	case E_WARNING:
 	case E_USER_WARNING:
 	case E_RECOVERABLE_ERROR:
-		if(DEVEL) {
+		if(config('devel')) {
 			$error = array(
 				'errno' => $errno,
 				'errstr' => $errstr,
@@ -54,8 +58,7 @@ function __error_handler($errno, $errstr, $errfile, $errline) {
 
 function __exception_handler($e) {
 
-	require_once FRAMEWORK_MODELS.'log.php';
-
+	load_model('log');
 	log_exception($e);
 
 	# Clear output buffers
@@ -124,7 +127,7 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
 				<h1><?php echo $heading; ?></h1>
 				<p><?php echo $message; ?></p>
 
-				<?php if (DEVEL): ?>
+				<?php if (config('devel')): ?>
 
 					<?php if($file || $line): ?>
 						<dl>

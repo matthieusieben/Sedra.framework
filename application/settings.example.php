@@ -1,29 +1,29 @@
 <?php
 
-# Is this website under development (TRUE) or production (FALSE) ?
-define('DEVEL', FALSE);
+global $config;
+global $databases;
+global $models;
+global $libraries;
 
-# Server domain name. Use the version without www (see .htaccess) or NULL for auto
-$config['server.domain'] = 'example.com';
+# Is this website under development (TRUE) or production (FALSE) ?
+$config['devel'] = FALSE;
 
 # Website parameters
 $config['site.home'] = 'index';
 $config['site.name'] = 'My great website';
 $config['site.slogan'] = 'My Sedra based website';
-$config['site.logo'] = ''; // file path relative to the root dir or absolute url
+$config['site.logo'] = NULL; // file path relative to the root dir or absolute url
 $config['site.email'] = 'admin@example.com';
 $config['site.ga'] = NULL; // UA-XXXXX-X
 $config['site.language'] = 'en';
 $config['site.languages'] = array(
 	'fr' => 'French',
 	'en' => 'English',
-	'nl' => 'Dutch',
 );
 
 $config['site.locales'] = array(
 	'fr' => 'fr_FR.UTF-8',
 	'en' => 'en_US.UTF-8',
-	'nl' => 'nl_NL.UTF-8',
 );
 
 # Date time parameters
@@ -59,9 +59,9 @@ $models = array();
 
 # Libraries to load by default ('name' => mandatory[TRUE/FALSE])
 $libraries = array(
-	'html5' => TRUE,
-	'bootstrap' => TRUE,
-	'analytics' => TRUE,
+	'html5' => FALSE,
+	'bootstrap' => FALSE,
+	'analytics' => FALSE,
 );
 
 # reCaptcha
@@ -90,8 +90,9 @@ $config['mail.smtp.password'] = NULL;
 $config['mail.smtp.security'] = 'ssl'; # NULL / ssl / tls
 
 # Error logging
-$config['log.reporting'] = DEVEL ? E_ALL : E_ALL & ~E_DEPRECATED & ~E_NOTICE;
+$config['log.reporting'] = $config['devel'] ? E_ALL : E_ALL & ~(E_DEPRECATED | E_NOTICE);
 $config['log.destination'] = PRIVATE_DIR . 'logs/'.date('Y-m-d').'.log';
+error_reporting(config('log.reporting', E_ALL));
 
 # User session parameters
 $config['session.write_interval'] = 180;

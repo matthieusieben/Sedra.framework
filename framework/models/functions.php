@@ -204,7 +204,7 @@ function load_controller($__controller) {
 	if(file_exists($__file = FRAMEWORK_CONTROLLERS . $__controller . '/index.php'))
 		return require($__file);
 
-	return show_404(DEVEL ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
+	return show_404(config('devel') ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
 }
 
 function load_model($__model) {

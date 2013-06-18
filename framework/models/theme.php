@@ -3,13 +3,6 @@
 require_once 'message.php';
 require_once 'data.php';
 
-# The following file should be loaded from their respective function but
-# due to the modification of the include path by theme(), the wrong files
-# could be included upon calling these 'require' directives.
-
-require_once 'file.php';
-require_once 'avatar.php';
-
 function attributes($attributes = array(), $filter_empty = FALSE) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
@@ -227,6 +220,7 @@ function theme_date($timestamp) {
 }
 
 function theme_file($fid, $thumbnail = TRUE, $as_link = TRUE) {
+	load_model('file');
 
 	if ($file_info = file_info($fid)) {
 		return theme('file', array(
@@ -240,6 +234,7 @@ function theme_file($fid, $thumbnail = TRUE, $as_link = TRUE) {
 }
 
 function theme_avatar($account, $size = 256) {
+	load_model('avatar');
 
 	$data = array(
 		'account' => $account,

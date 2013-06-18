@@ -4,7 +4,7 @@
 
 <h1><?php echo t('Error @code', array('@code' => $_code)); ?></h1>
 
-<?php if (DEVEL || $_code < 500): ?>
+<?php if (config('devel') || $_code < 500): ?>
 
 	<p><?php echo $exception->getMessage(); ?></p>
 
@@ -14,7 +14,7 @@
 
 <?php endif; ?>
 
-<?php if(DEVEL): ?>
+<?php if(config('devel')): ?>
 
 	<dl>
 		<dt><?php echo t('File') ?></dt>

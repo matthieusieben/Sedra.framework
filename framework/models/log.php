@@ -19,15 +19,15 @@ function log_exception($e) {
 }
 
 function log_message($message) {
-	if(DEVEL) {
-		require_once 'message.php';
+	if(config('devel')) {
+		load_model('message');
 		message(MESSAGE_ERROR, $message);
 	}
 
-	$message = ip_address() .' | '. date('c') .' | '. $message ."\n";
+	$message = ip_address() .' | '. @date('c') .' | '. $message ."\n";
 	$log_file = config('log.destination');
 
-	if(!error_log($message, 3, $log_file)) {
+	if(!$log_file || !error_log($message, 3, $log_file)) {
 		return error_log($message);
 	}
 

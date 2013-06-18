@@ -1,5 +1,10 @@
 <?php
 
+# Shutdown function
+register_shutdown_function('hook_invoke', 'shutdown');
+
+# Hooks array
+global $hooks;
 $hooks = array();
 
 function hook_register($hook, $callback) {
