@@ -10,7 +10,7 @@
 			<h2 id="site-slogan"><?php echo $site_slogan; ?></h2>
 		<?php endif; ?>
 
-		<p><?php echo t('This is Sedra\'s default index page. Start making your own by making an <code>index.php</code> view file in the <code>app/views</code> folder.'); ?></p>
+		<p><?php echo t('This is Sedra\'s default index page. Start making your own by making an <code>index.php</code> view file in the <code>application/views</code> folder.'); ?></p>
 	</div>
 
 	<?php require 'container_footer.php'; ?>

@@ -9,7 +9,7 @@ user_role_required(ANONYMOUS_RID);
 
 $login_form = array(
 	'style' => 'vertical',
-	'title' => t('Log in'),
+	'title' => config('site.name', 'Sedra Framework'),
 	'fields' => array(
 		'mail' => array(
 			'placeholder' => t('Email'),

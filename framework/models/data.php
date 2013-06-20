@@ -74,7 +74,11 @@ if(user_has_role(AUTHENTICATED_RID)) {
 		),
 	);
 } else {
-	$site_data['menus']['nav-secondary']['items'][] = array('title' => t('Login'), 'path' => 'account/login');
+	$site_data['menus']['nav-secondary']['items'][] = array(
+		'title' => t('Login'),
+		'path' => 'account/login',
+		'icon' => '<i class="icon-user icon-white"></i>',
+	);
 }
 
 $private_pages = array(
