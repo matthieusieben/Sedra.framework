@@ -1,5 +1,11 @@
 <?php
 
+global $language_default;
+global $language_custom;
+global $languages;
+global $language;
+global $strings;
+
 $language_default = config('site.language', 'en');
 $language_custom = @$_GET['language'];
 $languages = config('site.languages', array('en' => 'English'));

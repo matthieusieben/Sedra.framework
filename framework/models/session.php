@@ -3,8 +3,6 @@
 require_once 'user.php';
 require_once 'database.php';
 
-global $user;
-
 session_set_save_handler(
 	'_session_open',
 	'_session_close',
@@ -15,6 +13,8 @@ session_set_save_handler(
 );
 
 session_start();
+
+global $user;
 
 if(!isset($user)) {
 	throw new FrameworkException(t('No user data'), 500, E_ERROR);

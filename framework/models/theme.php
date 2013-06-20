@@ -3,16 +3,20 @@
 require_once 'message.php';
 require_once 'data.php';
 
-function attributes($attributes = array(), $filter_empty = FALSE) {
+function attributes($attributes = array()) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
 
 	foreach ($attributes as $attribute => &$data) {
-		if($filter_empty && empty($data))
+		if($data === FALSE)
 			continue;
 
-		$data = implode(' ', (array) $data);
-		$data = $attribute . '="' . check_plain($data) . '"';
+		if(!$data) {
+			$data = check_plain($attribute);
+		} else {
+			$data = implode(' ', (array) $data);
+			$data = check_plain($attribute) . '="' . check_plain($data) . '"';
+		}
 	}
 	return ' ' . implode(' ', $attributes);
 }
@@ -20,7 +24,7 @@ function attributes($attributes = array(), $filter_empty = FALSE) {
 function attributes_setup(array &$attributes) {
 	# Clear empty attributes
 	foreach($attributes as $name => $value) {
-		if($value === NULL || $value === '') {
+		if($value === FALSE) {
 			unset($attributes[$name]);
 		}
 	}

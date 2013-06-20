@@ -1,5 +1,7 @@
 <?php
 
+# TODO : REMOVE SCAFFOLDING
+
 require_once 'database.php';
 require_once 'theme.php';
 require_once 'form.php';
@@ -21,7 +23,7 @@ function scaffolding_tables_menu() {
 		$allowed_tables = (array) config('scaffolding.tables');
 		while($_table_info = ($tables_q->fetchAssoc())) {
 			$_table_name = array_pop($_table_info);
-			if(isset($allowed_tables[$_table_name]))
+			if(isset($allowed_tables[$_table_name]) || isset($allowed_tables['*']))
 				$tables_menu['items'][] = array(
 					'title' => val($allowed_tables[$_table_name], $_table_name),
 					'path' => 'scaffolding/'.$_table_name,
@@ -65,7 +67,9 @@ user_role_required(constant($access));
 $table_name = url_segment(1);
 if($table_name) {
 	$allowed_tables = (array) config('scaffolding.tables');
-	isset($allowed_tables[$table_name]) or show_404();
+	isset($allowed_tables[$table_name])
+		or isset($allowed_tables['*'])
+		or show_404();
 }
 
 switch(url_segment(2)) {

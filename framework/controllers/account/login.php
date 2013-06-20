@@ -21,6 +21,7 @@ $login_form = array(
 		'pass' => array(
 			'placeholder' => t('Password'),
 			'type' => 'password',
+			'required' => TRUE,
 		),
 		'watchdog' => array(
 			'type' => 'watchdog',

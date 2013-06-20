@@ -27,7 +27,7 @@ $edit_form = array(
 		'timezone' => array(
 			'label' => t('Timezone'),
 			'type' => 'select',
-			'required' => FALSE,
+			'required' => TRUE,
 			'options' => $timezone_list,
 			'default' => $user->timezone,
 		),

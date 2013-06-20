@@ -60,13 +60,14 @@ require 'functions.php';
 require 'hook.php';
 require 'error.php';
 require 'url.php';
-require 'lang.php';
 
 # Load settings
 if(!@include APP_ROOT.'settings.php') {
 	load_model('theme');
 	fatal('Could not load settings file.');
 }
+
+require 'lang.php';
 
 # Include libraries
 global $libraries;

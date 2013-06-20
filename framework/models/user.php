@@ -5,10 +5,8 @@ define('ADMINISTRATOR_RID', 1);
 define('MODERATOR_RID', 2);
 define('AUTHENTICATED_RID', 3);
 
-require_once 'session.php';
-require_once 'message.php';
-
-global $user;
+load_model('session');
+load_model('message');
 
 class User {
 
@@ -40,6 +38,7 @@ class User {
 		'mail' => TRUE,
 		'language' => TRUE,
 		'timezone' => TRUE,
+		'created' => TRUE,
 		'access' => TRUE,
 		'login' => TRUE,
 		'status' => TRUE,
@@ -334,19 +333,22 @@ function user_register($data) {
 
 	$data = array(
 		'created' => REQUEST_TIME,
-		'status' => 0,
-		'rid' => AUTHENTICATED_RID,
 	) + array_intersect_key($data, array(
+		'uid' => NULL,
+		'rid' => NULL,
 		'name' => NULL,
 		'mail' => NULL,
 		'pass' => NULL,
 		'language' => NULL,
 		'timezone' => NULL,
+		'status' => NULL,
 	)) + array(
+		'rid' => AUTHENTICATED_RID,
 		'mail' => NULL,
 		'pass' => NULL,
 		'language' => $language,
 		'timezone' => $timezone,
+		'status' => 0,
 	);
 
 	$_error_message = '';

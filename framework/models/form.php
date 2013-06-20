@@ -324,6 +324,7 @@ function _form_handle_file(&$form, &$field) {
 	);
 	$field['attributes'] += array(
 		'type' => $field['type'],
+		'required' => $field['required'] ? '' : NULL,
 	);
 	$form['attributes']['enctype'] = 'multipart/form-data';
 	if ($field['disabled']) {
@@ -362,6 +363,7 @@ function _form_handle_textarea(&$form, &$field) {
 	);
 	$field['attributes'] += array(
 		'rows' => 3,
+		'required' => $field['required'] ? '' : NULL,
 	);
 	if ($field['wysiwyg']) {
 		$field['html'] = TRUE;
@@ -426,6 +428,7 @@ function _form_handle_input(&$form, &$field) {
 		'type' => $field['type'],
 		'value' => $field['value'],
 		'placeholder' => decode_plain($field['label']),
+		'required' => $field['required'] ? '' : NULL,
 	);
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
