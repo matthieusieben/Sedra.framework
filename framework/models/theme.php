@@ -1,8 +1,5 @@
 <?php
 
-require_once 'message.php';
-require_once 'data.php';
-
 function attributes($attributes = array()) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
@@ -68,7 +65,9 @@ function l(array $options) {
 }
 
 function theme_data(array $data) {
-	global $site_data, $user;
+	load_model('data');
+
+	global $site_data;
 
 	$data += (array) $site_data;
 

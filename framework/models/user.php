@@ -152,7 +152,9 @@ class AnonymousUser extends User {
 		}
 	}
 
-	public function save() {}
+	public function save() {
+		return TRUE;
+	}
 }
 
 function anonymous_user() {
@@ -243,12 +245,13 @@ function user_setup_environment() {
 }
 
 function user_login($mail, $pass, $action = 'login') {
-	global $user;
 
 	if(user_has_role(AUTHENTICATED_RID)) {
 		message(MESSAGE_ERROR, t('You are already logged in.'));
 		return FALSE;
 	}
+
+	$user_data = NULL;
 
 	switch ($action) {
 	case 'reset':
@@ -300,6 +303,7 @@ function user_login($mail, $pass, $action = 'login') {
 	}
 
 	if ($user_data) {
+		global $user;
 		$user = $user_data;
 		$user->data = @unserialize($user->data);
 

@@ -1,13 +1,13 @@
 <?php
 
-require_once 'user.php';
-require_once 'form.php';
-require_once 'theme.php';
-require_once 'timezone.php';
+load_model('user');
+load_model('form');
+load_model('theme');
+load_model('timezone');
 
 user_role_required(AUTHENTICATED_RID);
 
-global $home_url, $timezone_list, $user;
+global $timezone_list, $user;
 
 $edit_form = array(
 	'fields' => array(

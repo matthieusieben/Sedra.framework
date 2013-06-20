@@ -41,7 +41,7 @@ function _session_read($sid) {
 		return '';
 	}
 
-	$user = db_query("SELECT u.*, s.* FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid", array(':sid' => $sid))->fetchObject('User');
+	$user = db_query("SELECT s.*, u.* FROM {sessions} s LEFT JOIN {users} u ON u.uid = s.uid WHERE s.sid = :sid", array(':sid' => $sid))->fetchObject('User');
 
 	// We found the client's session record and they are an authenticated,
 	// active user.
@@ -101,7 +101,7 @@ function _session_write($sid, $value) {
 					'sid' => $sid
 				))
 				->fields(array(
-					'uid' => $user->uid,
+					'uid' => $user->uid ? $user->uid : NULL,
 					'hostname' => ip_address(),
 					'session' => $value,
 					'timestamp' => REQUEST_TIME,
@@ -111,8 +111,9 @@ function _session_write($sid, $value) {
 
 		return TRUE;
 	}
-	catch (Exception $exception) {
-		// TODO : print an error message
+	catch (Exception $e) {
+		load_model('log');
+		log_exception($e);
 		return FALSE;
 	}
 }
@@ -159,6 +160,6 @@ function session_regenerate() {
 
 function session_destroy_uid($uid) {
 	db_delete('sessions')
-		->condition('uid', $uid)
+		->condition('uid', $uid ? $uid : NULL)
 		->execute();
 }

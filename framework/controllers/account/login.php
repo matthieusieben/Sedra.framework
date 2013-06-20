@@ -1,11 +1,9 @@
 <?php
 
-require_once 'user.php';
-require_once 'data.php';
-require_once 'theme.php';
-require_once 'form.php';
-require_once 'watchdog.php';
-require_once 'message.php';
+load_model('user');
+load_model('theme');
+load_model('form');
+load_model('watchdog');
 
 user_role_required(ANONYMOUS_RID);
 
@@ -61,12 +59,12 @@ if(form_run($login_form) && form_is_valid($login_form)) {
 	if($reset) {
 		# Reset
 		user_action_request($mail, 'reset');
-		redirect(isset($_GET['redirect']) ? $_GET['redirect'] : config('site.home', 'index'));
+		redirect(config('site.home', 'index'));
 	}
 	else {
 		# Login
 		if(user_login($mail, $pass)) {
-			redirect(isset($_GET['redirect']) ? $_GET['redirect'] : config('site.home', 'index'));
+			redirect(config('site.home', 'index'));
 		} else {
 			$login_form['valid'] = FALSE;
 			$login_form['error'] = t('Wrong email or password.');

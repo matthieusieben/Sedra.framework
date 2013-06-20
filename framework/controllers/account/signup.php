@@ -7,7 +7,7 @@ require_once 'form.php';
 require_once 'timezone.php';
 require_once 'watchdog.php';
 
-global $home_url, $timezone_list, $user;
+global $timezone_list, $user;
 
 user_role_required(ANONYMOUS_RID);
 

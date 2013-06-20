@@ -1,17 +1,12 @@
 <?php
 
-global $request_path;
-global $controller, $language;
-global $home_url, $site_data;
+global $site_data;
 global $private_pages;
 
-$home_url = config('site.home', 'index');
-$logo_file = config('site.logo');
-$logo_url = ($logo_url = file_url($logo_file)) ? $logo_url : $logo_file;
-
+global $request_path, $controller, $language;
 $site_data = array(
 	'site_name' => config('site.name', 'Sedra Framework'),
-	'site_logo' => $logo_url,
+	'site_logo' => ($logo_url = file_url(config('site.logo'))) ? $logo_url : config('site.logo'),
 	'site_slogan' => config('site.slogan', NULL),
 	'lang' => $language,
 	'body' => array(
@@ -24,9 +19,9 @@ $site_data = array(
 	),
 );
 
-$site_data['menus']['main'] = array(
+$site_data['menus']['nav-main'] = array(
 	'attributes' => array(
-		'id' => 'main-menu',
+		'id' => 'nav-main',
 	),
 	'items' => array(
 	),
@@ -48,25 +43,38 @@ $site_data['menus']['user'] = array(
 	),
 );
 
-$site_data['menus']['secondary'] = array(
+$site_data['menus']['nav-secondary'] = array(
 	'attributes' => array(
-		'id' => 'secondary-menu',
+		'id' => 'nav-secondary',
 	),
 	'items' => array(
 	),
 );
 
-global $user;
-if(isset($user)) {
-	if(user_has_role(AUTHENTICATED_RID)) {
-		if(config('scaffolding.enabled'))
-		$site_data['menus']['secondary']['items'][] = array('path' => 'scaffolding', 'title' => t('Scaffolding'));
+load_model('user');
+if(user_has_role(AUTHENTICATED_RID)) {
+	if(config('scaffolding.enabled'))
+	$site_data['menus']['nav-secondary']['items'][] = array('path' => 'scaffolding', 'title' => t('Scaffolding'));
 
-		$site_data['menus']['secondary']['items'][] = array('path' => 'account', 'title' => t('Account'));
-		$site_data['menus']['secondary']['items'][] = array('path' => 'account/logout', 'title' => t('Logout'));
-	} else {
-		$site_data['menus']['secondary']['items'][] = array('path' => 'account/login', 'title' => t('Login'));
-	}
+	$site_data['menus']['nav-secondary']['items'][] = array(
+		'path' => 'account',
+		'title' => t('Account'),
+		'icon' => '<i class="icon-user icon-white"></i>',
+		'sub' => array(
+			'items' => array(
+				array(
+					'title' => t('My account'),
+					'path' => 'account/index',
+				),
+				array(
+					'title' => t('Logout'),
+					'path' => 'account/logout',
+				),
+			),
+		),
+	);
+} else {
+	$site_data['menus']['nav-secondary']['items'][] = array('title' => t('Login'), 'path' => 'account/login');
 }
 
 $private_pages = array(

@@ -1,5 +1,4 @@
-<?php global $home_url, $user; ?>
-<div class="navbar navbar-static-top">
+<div class="navbar navbar-inverse navbar-static-top">
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -18,9 +17,9 @@
 				));
 			?>
 			<div class="nav-collapse collapse">
-				<?php echo theme('components/menu', $menus['main']); ?>
-				<?php $menus['secondary']['attributes']['class'][] = 'pull-right'; ?>
-				<?php echo theme('components/menu', $menus['secondary']); ?>
+				<?php echo theme('components/menu', $menus['nav-main']); ?>
+				<?php $menus['nav-secondary']['attributes']['class'][] = 'pull-right'; ?>
+				<?php echo theme('components/menu', $menus['nav-secondary']); ?>
 			</div>
 		</div>
 	</div>

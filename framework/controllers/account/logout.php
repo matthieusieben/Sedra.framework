@@ -1,6 +1,6 @@
 <?php
 
-require_once 'user.php';
+load_model('user');
 
 user_logout();
 

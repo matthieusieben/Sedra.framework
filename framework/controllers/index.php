@@ -1,5 +1,5 @@
 <?php
 
-require_once 'theme.php';
+load_model('theme');
 
 return theme('index');

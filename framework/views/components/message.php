@@ -1,3 +1,4 @@
+<?php load_model('message'); ?>
 <?php if(count($_m = message())): ?>
 	<?php foreach($_m as $_type => $_messages): ?>
 		<?php foreach($_messages as $_i => $_message): ?>
