@@ -86,6 +86,7 @@ function url_setup(array &$options) {
 		'attributes' => array(),
 		'html' => TRUE,
 		'active' => isset($options['path']) && url_is_active($options['path']),
+		'view' => 'link',
 	);
 }
 

@@ -53,13 +53,16 @@ $site_data['menus']['nav-secondary'] = array(
 
 load_model('user');
 if(user_has_role(AUTHENTICATED_RID)) {
-	if(config('scaffolding.enabled'))
-	$site_data['menus']['nav-secondary']['items'][] = array('path' => 'scaffolding', 'title' => t('Scaffolding'));
+	$site_data['menus']['nav-secondary']['items'][] = array(
+		'title' => t('Site content'),
+		'path' => 'scaffolding',
+		'icon' => '<i class="icon-file"></i>',
+	);
 
 	$site_data['menus']['nav-secondary']['items'][] = array(
-		'path' => 'account',
 		'title' => t('Account'),
-		'icon' => '<i class="icon-user icon-white"></i>',
+		'path' => 'account',
+		'icon' => '<i class="icon-user"></i>',
 		'sub' => array(
 			'items' => array(
 				array(

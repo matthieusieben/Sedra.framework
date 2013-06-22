@@ -1,58 +1,30 @@
 <?php
 
-define('MAX_ROWS_DISPLAY', 50);
+defined('MAX_ROWS_DISPLAY') or define('MAX_ROWS_DISPLAY', 50);
 
-$table_name = url_segment(1);
-$action = url_segment(2);
-$allowed_tables = (array) config('scaffolding.tables');
-$table_display_name = !empty($allowed_tables[$table_name]) ? $allowed_tables[$table_name] : $table_name;
+load_model('form');
+load_model('scaffolding');
+load_model('schema');
+load_model('theme');
+load_model('user');
 
-if(!$action && $table_name === 'index')
-	$table_name = '';
+global $content_table;
+global $schema;
 
-$tables_menu = scaffolding_tables_menu();
-$scaffolding_menu = scaffolding_menu($table_name);
+if(empty($content_table)) {
+	$tables_menu = scaffolding_get_tables_menu();
 
-if(!$table_name) {
-	return theme('scaffolding/index', array(
-		'title' => t('Scaffolding'),
-		'table_name' => $table_name,
-		'tables_menu' => $tables_menu,
-	));
-}
-
-$table_info = array();
-$primary = NULL;
-try {
-	$table_info_q = db_query("SHOW FULL COLUMNS FROM {{$table_name}}");
-	while($table_field_info = ($table_info_q->fetchAssoc())) {
-		if($table_field_info['Key'] === 'PRI')
-			$primary = $table_field_info['Field'];
-		$table_info[] = $table_field_info;
-	}
-} catch(Exception $e) {
-	throw new FrameworkException(t('Table !table_name doesn\'t exist.', array('!table_name' => $table_name)), 404);
-}
-
-if(empty($table_info)) {
-	throw new FrameworkException(t('This table has no field.'), 404);
-}
-
-if($action === 'info') {
-	if(!config('scaffolding.info'))
+	if(empty($tables_menu['items']))
 		show_404();
 
-	return theme('scaffolding/table_info', array(
-		'title' => t('!table_name : info', array('!table_name' => $table_display_name)),
-		'table_name' => $table_name,
+	return theme('scaffolding/list', array(
+		'title' => t('Site content'),
 		'tables_menu' => $tables_menu,
-		'scaffolding_menu' => $scaffolding_menu,
-		'table_info_table' => array(
-			'header' => array_keys($table_info[0]),
-			'rows' => $table_info,
-		),
 	));
 }
+
+if(!scaffolding_check_action($content_table, 'list'))
+	show_403();
 
 $display_form = array(
 	'method' => 'get',
@@ -81,6 +53,8 @@ $display_form_values = form_values($display_form);
 $start = $display_form_values['start'];
 $limit = $display_form_values['limit'];
 
+$primary = (array) @$schema[$content_table]['primary key'];
+
 $header = array();
 $rows = array();
 
@@ -88,53 +62,78 @@ if($primary) {
 	$header[] = '';
 }
 
-foreach ($table_info as $field_info) {
-	$header[] = $field_info['Field'];
+if($content_table === 'files') {
+	$header[] = t('File');
+	$header[] = t('File url');
+} else {
+	foreach ($schema[$content_table]['fields'] as $field_name => $field_info) {
+		$header[] = t(val($field_info['display name'], check_plain($field_name)));
+	}
 }
 
-$content_q = db_select($table_name, 't')->fields('t')->range($start, $limit)->execute();
+
+
+
+$content_q = scaffolding_list($content_table, $start, $limit);
 while($content_row = ($content_q->fetchAssoc())) {
 	foreach($content_row as $field => $value) {
 		$content_row[$field] = check_plain($value);
 	}
 
+	$actions;
 	if($primary) {
-		array_unshift($content_row,
-			array(
-				'view' => 'array',
-				'items' => array(
-					array(
-						'title' => '<i class="icon-edit"></i>',
-						'path' => 'scaffolding/'.$table_name.'/edit/'.$content_row[$primary],
-						'attributes' => array(
-							'title' => t('Edit'),
-						),
-						'view' => 'link',
+		$id = implode(',', array_intersect_key($content_row, array_flip($primary)));
+		$actions = array(
+			'view' => 'array',
+			'items' => array(
+				array(
+					'title' => '<i class="icon-edit"></i>',
+					'path' => 'scaffolding/'.$content_table.'/edit/'.$id,
+					'attributes' => array(
+						'title' => t('Edit'),
 					),
-					array(
-						'title' => '<i class="icon-remove"></i>',
-						'path' => 'scaffolding/'.$table_name.'/remove/'.$content_row[$primary],
-						'attributes' => array(
-							'title' => t('Remove'),
-						),
-						'view' => 'components/link_modal',
-					)
+					'view' => 'link',
 				),
-			)
+				array(
+					'title' => '<i class="icon-remove"></i>',
+					'path' => 'scaffolding/'.$content_table.'/remove/'.$id,
+					'attributes' => array(
+						'title' => t('Remove'),
+					),
+					'view' => 'components/link_modal',
+				)
+			),
 		);
 	}
 
-	$rows[] = $content_row;
+	if($content_table === 'files') {
+		load_model('file');
+		$file_info = file_info(array('fid' => $content_row['fid']));
+		$rows[] = array(
+			$actions,
+			theme_file($file_info),
+			array(
+				'view' => 'link',
+				'title' => url($file_info['url']),
+				'path' => $file_info['url']['path'],
+			),
+		);
+	}
+	else {
+		if(isset($actions)) array_unshift($content_row, $actions);
+		$rows[] = $content_row;
+	}
 }
 
-return theme('scaffolding/table_content', array(
-	'title' => t('!table_name : content', array('!table_name' => $table_display_name)),
-	'table_name' => $table_name,
-	'tables_menu' => $tables_menu,
-	'scaffolding_menu' => $scaffolding_menu,
-	'display_form' => ($start != 0 || count($rows) > MAX_ROWS_DISPLAY) ? $display_form : NULL,
+return theme('scaffolding/list', array(
+	'title' => t('!table_name : content', array('!table_name' => t(val($schema[$content_table]['display name'], $content_table)))),
+	'table_name' => $content_table,
+	'table_description' => t(@$schema[$content_table]['description']),
 	'table_content_table' => array(
 		'header' => $header,
 		'rows' => $rows,
 	),
+	'table_menu' => scaffolding_get_table_menu($content_table),
+	'tables_menu' => scaffolding_get_tables_menu(),
+	'display_form' => ($start != 0 || count($rows) >= MAX_ROWS_DISPLAY) ? $display_form : NULL,
 ));

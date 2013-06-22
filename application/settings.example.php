@@ -72,14 +72,6 @@ $config['recaptcha.private'] = NULL;
 $config['watchdog.timeout'] = 3600;
 $config['watchdog.attempts'] = 3;
 
-# Enable scaffolding?
-$config['scaffolding.enabled'] = FALSE;
-$config['scaffolding.info'] = FALSE;
-$config['scaffolding.access'] = 'MODERATOR_RID';
-$config['scaffolding.tables'] = array(
-	# 'users' => 'Users',
-);
-
 # Mail settings
 $config['mail.method'] = 'mail'; # mail / sendmail / smtp
 $config['mail.sendmail'] = '/usr/sbin/sendmail -bs';

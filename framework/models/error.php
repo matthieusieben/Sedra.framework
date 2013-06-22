@@ -35,19 +35,14 @@ function __error_handler($errno, $errstr, $errfile, $errline) {
 	case E_USER_WARNING:
 	case E_RECOVERABLE_ERROR:
 		if(config('devel')) {
+			load_model('devel');
 			$error = array(
 				'errno' => $errno,
 				'errstr' => $errstr,
 				'errfile' => $errfile,
 				'errline' => $errline
 			);
-			if(function_exists('dvm')) {
-				dvm($error);
-			} else if(function_exists('kprintr')) {
-				kprintr($error);
-			} else {
-				var_dump($error);
-			}
+			dvm($error);
 		}
 		break;
 	case E_NOTICE:

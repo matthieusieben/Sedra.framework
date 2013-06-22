@@ -99,7 +99,6 @@ function theme($__view, array $__data = array()) {
 
 	try {
 		# Resolve the file
-		$__view = strtolower($__view);
 		$__file = stream_resolve_include_path($__view.'.php');
 		if (!$__file) {
 			set_include_path($__current_include_path);
@@ -222,11 +221,14 @@ function theme_date($timestamp) {
 	return '<span>'.$text.'</span>';
 }
 
-function theme_file($fid, $thumbnail = TRUE, $as_link = TRUE) {
+function theme_file($file_info, $thumbnail = TRUE, $as_link = TRUE) {
 	load_model('file');
 
-	if ($file_info = file_info($fid)) {
-		return theme('file', array(
+	if(!is_array($file_info))
+		$file_info = file_info(array('fid' => $file_info));
+
+	if ($file_info) {
+		return theme('components/file', array(
 			'file_info' => $file_info,
 			'thumbnail' => $thumbnail,
 			'thumbnail_link' => $as_link,

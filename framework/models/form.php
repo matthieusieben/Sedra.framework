@@ -1,7 +1,7 @@
 <?php
 
-require_once 'error.php';
-require_once 'theme.php';
+load_model('error');
+load_model('theme');
 
 function form_run(&$form) {
 	global $request_uri;
@@ -244,6 +244,8 @@ function _form_handle_checkbox(&$form, &$field) {
 function _form_handle_select(&$form, &$field) {
 	if ($field['disabled'])
 		$field['attributes']['disabled'] = 'disabled';
+	else if ($field['required'])
+		$field['attributes']['required'] = '';
 
 	if ($field['multiple'])
 		$field['attributes']['multiple'] = 'multiple';
@@ -251,6 +253,7 @@ function _form_handle_select(&$form, &$field) {
 		# Add default empty value if not required
 		if (!$field['required'] || is_null($field['default']))
 			$field['options'] += array(NULL => '-');
+
 
 	_form_handle_multiple_field($form, $field);
 }
@@ -315,7 +318,7 @@ function _form_handle_button(&$form, &$field) {
 }
 
 function _form_handle_file(&$form, &$field) {
-	require_once 'file.php';
+	load_model('file');
 
 	# Setup defaults
 	$field += array(
@@ -339,16 +342,15 @@ function _form_handle_file(&$form, &$field) {
 
 	# Only process file if a name is defined
 	if ($form['submitted'] && $field['name'] && !$field['disabled']) {
-		if ($field['file_info'] = file_upload($field['name'])) {
+		if ($field['file_info'] = file_upload($field['name'], $field['value'])) {
 			# A new file was uploaded
-			if ($file_info = file_info($field['value'])) {
-				# Delete previous file
-				file_delete($file_info['fid']);
-			}
 			$field['value'] = $field['file_info']['fid'];
-		} elseif ($field['file_info'] = file_info($field['value'])) {
+		} elseif ($field['file_info'] = file_info(array('fid' => $field['value']))) {
 			# The file was already submitted and is still in the database.
 			$field['value'] = $field['file_info']['fid'];
+		} else {
+			$field['value'] = NULL;
+			$field['file_info'] = NULL;
 		}
 	}
 }
@@ -363,8 +365,10 @@ function _form_handle_textarea(&$form, &$field) {
 	);
 	$field['attributes'] += array(
 		'rows' => 3,
-		'required' => $field['required'] ? '' : NULL,
 	);
+	if ($field['required']) {
+		$field['attributes']['required'] = '';
+	}
 	if ($field['wysiwyg']) {
 		$field['html'] = TRUE;
 	}
@@ -428,8 +432,10 @@ function _form_handle_input(&$form, &$field) {
 		'type' => $field['type'],
 		'value' => $field['value'],
 		'placeholder' => decode_plain($field['label']),
-		'required' => $field['required'] ? '' : NULL,
 	);
+	if ($field['required']) {
+		$field['attributes']['required'] = '';
+	}
 	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
 	}

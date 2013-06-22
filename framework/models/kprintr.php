@@ -5,7 +5,9 @@ if(load_library('ref', FALSE)) {
 
 	function kprintr($variable, $return = FALSE) {
 		if($return) {
-			return @rt($variable);
+			ob_start();
+			r($variable);
+			return ob_get_clean();
 		}
 		else {
 			return r($variable);

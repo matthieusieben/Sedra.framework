@@ -4,10 +4,14 @@ require_once 'database.php';
 
 file_garbage_collector();
 
-function file_upload($field_name) {
+function file_was_sent($field_name) {
+	return !empty($_FILES[$field_name]) && file_exists($_FILES[$field_name]['tmp_name']);
+}
+
+function file_upload($field_name, $old_fid = NULL) {
 	global $user;
 
-	if (!empty($_FILES[$field_name]) && file_exists($_FILES[$field_name]['tmp_name'])) {
+	if (file_was_sent($field_name)) {
 		$_FILE = $_FILES[$field_name];
 
 		$fp = fopen($_FILE['tmp_name'], 'r');
@@ -24,11 +28,16 @@ function file_upload($field_name) {
 			'tmp' => 1,
 		);
 
+		# Try to update the file $old_fid if it exists.
+		if($old_fid && file_update($old_fid, $info))
+			return file_info(array('fid' => $old_fid));
+
+		# Otherwise create a new file
 		do {
 			try {
 				$info['hash'] = random_salt();
 				$fid = db_insert('files')->fields($info)->execute();
-				return file_info($fid);
+				return file_info(array('fid' => $fid));
 			} catch(PDOException $e) {
 				if (strpos($e->getMessage(), '1062') !== FALSE) {
 					# Hash already in use
@@ -45,11 +54,14 @@ function file_upload($field_name) {
 }
 
 function file_info($fid, $field = NULL) {
-	$query = db_select('files', 'f')
-		->fields('f')
-		->condition(strlen($fid) === 32 ? 'hash' : 'fid', $fid);
 
-	$info = $query->execute()->fetchAssoc();
+	list($key, $value) = each($fid);
+
+	$info = db_select('files', 'f')
+		->fields('f')
+		->condition($key, $value)
+		->execute()
+		->fetchAssoc();
 
 	if ($info) {
 		$info['url'] = array(
@@ -59,12 +71,12 @@ function file_info($fid, $field = NULL) {
 		url_setup($info['url']);
 	}
 
-	return is_null($field) ? $info : $info[$field];
+	return is_null($field) ? $info : @$info[$field];
 }
 
 function file_can_be_editted($fid) {
 	global $user;
-	return user_has_role(MODERATOR_RID) || ((int) file_info($fid, 'uid') === (int) $user->uid);
+	return user_has_role(MODERATOR_RID) || ((int) file_info(array('fid' => $fid), 'uid') === (int) $user->uid);
 }
 
 function file_delete($fid) {
@@ -73,20 +85,22 @@ function file_delete($fid) {
 	}
 }
 
-function file_save($fid) {
-	# Nothing to save
-	if (!$fid) return TRUE;
+function file_update($fid, array $info) {
+	# Nothing to update
+	if (!$fid) return FALSE;
 
 	if (file_can_be_editted($fid)) {
 		$r = db_update('files')
-			->fields(array(
-				'tmp' => 0,
-			))
+			->fields($info)
 			->condition('fid', $fid)
 			->execute();
 		return $r === 1;
 	}
 	return FALSE;
+}
+
+function file_save($fid) {
+	return file_update($fid, array('tmp' => 0));
 }
 
 function file_garbage_collector() {

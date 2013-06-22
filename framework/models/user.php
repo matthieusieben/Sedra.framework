@@ -1,9 +1,9 @@
 <?php
 
 define('ANONYMOUS_RID', 0);
-define('ADMINISTRATOR_RID', 1);
-define('MODERATOR_RID', 2);
-define('AUTHENTICATED_RID', 3);
+define('ADMINISTRATOR_RID', 10);
+define('MODERATOR_RID', 20);
+define('AUTHENTICATED_RID', 30);
 
 load_model('session');
 load_model('message');
@@ -164,21 +164,23 @@ function anonymous_user() {
 function user_has_role($role) {
 	global $user;
 
-	if($user->uid == 0 || $user->rid == ANONYMOUS_RID) {
-		return $role == ANONYMOUS_RID;
+	if($user->uid <= 0 || $user->rid <= ANONYMOUS_RID) {
+		return $role <= ANONYMOUS_RID;
 	}
 	else {
-		return $user->rid <= $role;
+		return $role <= 0 || $user->rid <= $role;
 	}
 }
 
 function user_role_required($role = AUTHENTICATED_RID) {
-	global $request_path;
-
-	if(user_has_role(AUTHENTICATED_RID) && !user_has_role($role)) {
+	if(user_has_role(ADMINISTRATOR_RID)) {
+		# Admins have all the rights.
+	}
+	else if(user_has_role(AUTHENTICATED_RID) && !user_has_role($role)) {
 		show_403();
 	}
 	else if(!user_has_role(AUTHENTICATED_RID) && $role !== ANONYMOUS_RID) {
+		global $request_path;
 		redirect('account/login', array('redirect' => $request_path));
 	}
 	else {
