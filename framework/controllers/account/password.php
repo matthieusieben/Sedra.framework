@@ -1,8 +1,8 @@
 <?php
 
-require_once 'user.php';
-require_once 'form.php';
-require_once 'theme.php';
+load_model('user');
+load_model('form');
+load_model('theme');
 
 user_role_required(AUTHENTICATED_RID);
 

@@ -5,7 +5,8 @@ load_model('theme');
 load_model('form');
 load_model('watchdog');
 
-user_role_required(ANONYMOUS_RID);
+if(user_has_role(AUTHENTICATED_RID))
+	return redirect(config('site.home', 'account'));
 
 $login_form = array(
 	'style' => 'vertical',

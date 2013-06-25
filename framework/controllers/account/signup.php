@@ -1,18 +1,20 @@
 <?php
 
-require_once 'user.php';
-require_once 'data.php';
-require_once 'theme.php';
-require_once 'form.php';
-require_once 'timezone.php';
-require_once 'watchdog.php';
+load_model('user');
+load_model('data');
+load_model('theme');
+load_model('form');
+load_model('timezone');
+load_model('watchdog');
 
-global $timezone_list, $user;
-
-user_role_required(ANONYMOUS_RID);
+if(user_has_role(AUTHENTICATED_RID))
+	return redirect(config('site.home', 'account'));
 
 if(!config('user.subscription'))
 	show_403();
+
+global $timezone_list;
+global $user;
 
 $signup_form = array(
 	'style' => 'vertical',

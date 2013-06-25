@@ -1,6 +1,6 @@
 <?php
 
-require_once 'data.php';
+load_model('data');
 global $private_pages;
 
 set_status_header(200);

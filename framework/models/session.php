@@ -1,7 +1,7 @@
 <?php
 
-require_once 'user.php';
-require_once 'database.php';
+load_model('user');
+load_model('database');
 
 session_set_save_handler(
 	'_session_open',

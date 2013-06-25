@@ -19,30 +19,36 @@ function scaffolding_get_id($table, $id) {
 	return $id;
 }
 
-function scaffolding_get_item($table, $id) {
+function scaffolding_get_items($table, $cond) {
 	global $schema;
 
 	if(empty($schema[$table]))
 		return NULL;
 
+	$query = db_select($table, 't')->fields('t');
+
+	if(!empty($cond))
+		foreach($cond as $_col => $_value)
+			$query->condition($_col, $_value);
+
+	$result = $query->execute();
+
+	$items = array();
+	while($item = $result->fetchAssoc()) {
+		$items[] = $item;
+	}
+
+	return $items;
+}
+
+function scaffolding_get_item($table, $id) {
 	$cond = scaffolding_get_id($table, $id);
+
 	if(empty($cond))
 		return NULL;
 
-	$query = db_select($table, 't')
-		->fields('t');
-
-	foreach($cond as $_col => $_value)
-		$query->condition($_col, $_value);
-
-	$item = $query
-		->execute()
-		->fetchAssoc();
-
-	if(!$item)
-		return NULL;
-
-	return $item;
+	$items = scaffolding_get_items($table, $cond);
+	return array_pop($items);
 }
 
 function scaffolding_add_item($table, $values) {
@@ -51,9 +57,13 @@ function scaffolding_add_item($table, $values) {
 	if(empty($schema[$table]['fields']))
 		return FALSE;
 
-	return db_insert($table)
+	$r = db_insert($table)
 		->fields(array_intersect_key($values, $schema[$table]['fields']))
 		->execute();
+
+	_scaffolding_file_field_save($table, $values);
+
+	return $r;
 }
 
 function scaffolding_set_item($table, $id, $values) {
@@ -72,7 +82,11 @@ function scaffolding_set_item($table, $id, $values) {
 	foreach($cond as $_col => $_value)
 		$query->condition($_col, $_value);
 
-	return $query->execute();
+	$r = $query->execute();
+
+	_scaffolding_file_field_save($table, $values);
+
+	return $r;
 }
 
 function scaffolding_delete_id($table, $id) {
@@ -101,13 +115,13 @@ function scaffolding_check_action($table, $action) {
 
 	global $schema;
 
-	if(isset($schema[$table]['roles'][$action]))
-		return user_has_role($schema[$table]['roles'][$action]);
+	if(!isset($schema[$table]['roles'][$action]))
+		return FALSE;
 
-	return user_has_role(ADMINISTRATOR_RID);
+	return user_has_role($schema[$table]['roles'][$action]);
 }
 
-function scaffolding_get_form($table, $action, $id, $values = NULL) {
+function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
 	global $schema;
 
 	if(isset($schema[$table]['custom form'])) {
@@ -123,26 +137,36 @@ function scaffolding_get_form($table, $action, $id, $values = NULL) {
 			switch(@$field_info['type']) {
 			case 'text':
 			case 'blob':
-				$type = 'textarea';
+				$form_field = array(
+					'type' => 'textarea',
+				);
 				break;
 			case 'varchar':
-				$type = 'text';
+				$form_field = array(
+					'type' => 'text',
+				);
 				break;
 			case 'tinyint':
 			case 'float':
 			case 'int':
-				$type = 'number';
+				$form_field = array(
+					'type' => 'number',
+				);
 				break;
+			case 'datetime':
+				$form_field = array(
+					'type' => 'datetime',
+					'format' => 'yyyy-MM-dd hh:mm:ss',
+				);
+				break;
+			default:
+				continue 2;
 			}
 
-			if(empty($type))
-				continue;
-
-			$form['fields'][$field_name] = array(
+			$form['fields'][$field_name] = $form_field + array(
 				'label' => val($field_info['display name'], $field_name),
-				'type' => $type,
-				'required' => @$field_info['not null'],
-				'wysiwyg' => $type === 'textarea',
+				'required' => (bool) @$field_info['not null'],
+				'wysiwyg' => @$form_field['type'] === 'textarea',
 				'allowable_tags' => NULL, # No restriction
 				'default' => @$field_info['default'],
 				'help' => t(@$field_info['description']),
@@ -150,23 +174,28 @@ function scaffolding_get_form($table, $action, $id, $values = NULL) {
 		}
 
 		foreach((array) @$schema[$table]['foreign keys'] as $fk) {
-
 			reset($fk['columns']);
-			while(list($field_name, $foreign_field) = each($fk['columns'])) {
+			if($fk['table'] === 'files') {
+				list($field_name, $foreign_field) = each($fk['columns']);
+				$form['fields'][$field_name]['type'] = 'file';
+			}
+			else {
+				while(list($field_name, $foreign_field) = each($fk['columns'])) {
 
-				$form['fields'][$field_name]['type'] = 'select';
-				$form['fields'][$field_name]['options'] = array();
+					$form['fields'][$field_name]['type'] = 'select';
+					$form['fields'][$field_name]['options'] = array();
 
-				$fis = scaffolding_list($fk['table']);
-				while($fi = ($fis->fetchAssoc())) {
-					$foreign_id = $fi[$foreign_field];
-					$foreign_name = (!empty($fi['name'])
-						? $fi['name']
-						: (!empty($fi['title'])
-							? $fi['title']
-							: $foreign_id));
+					$fis = scaffolding_list($fk['table']);
+					while($fi = ($fis->fetchAssoc())) {
+						$foreign_id = $fi[$foreign_field];
+						$foreign_name = (!empty($fi['name'])
+							? $fi['name']
+							: (!empty($fi['title'])
+								? $fi['title']
+								: $foreign_id));
 
-					$form['fields'][$field_name]['options'][$foreign_id] = $foreign_name;
+						$form['fields'][$field_name]['options'][$foreign_id] = $foreign_name;
+					}
 				}
 			}
 		}
@@ -269,4 +298,19 @@ function scaffolding_get_tables_menu() {
 	}
 
 	return $tables_menu;
+}
+
+function _scaffolding_file_field_save($table, $values) {
+	global $schema;
+	foreach ((array) @$schema[$table]['foreign keys'] as $fk) {
+		if($fk['table'] === 'files') {
+			load_model('file');
+			reset($fk['columns']);
+			while(list($field_name, $foreign_field) = each($fk['columns'])) {
+				if($foreign_field === 'fid') {
+					file_save($values[$field_name]);
+				}
+			}
+		}
+	}
 }

@@ -1,7 +1,6 @@
 <?php
 
-require_once 'log.php';
-
+load_model('log');
 load_library('swift');
 
 function mail_send($options) {

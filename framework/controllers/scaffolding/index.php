@@ -58,7 +58,10 @@ $primary = (array) @$schema[$content_table]['primary key'];
 $header = array();
 $rows = array();
 
-if($primary) {
+$can_edit = scaffolding_check_action($content_table, 'edit');
+$can_remove = scaffolding_check_action($content_table, 'remove');
+
+if($primary && ($can_edit || $can_remove)) {
 	$header[] = '';
 }
 
@@ -71,46 +74,16 @@ if($content_table === 'files') {
 	}
 }
 
-
-
-
 $content_q = scaffolding_list($content_table, $start, $limit);
 while($content_row = ($content_q->fetchAssoc())) {
 	foreach($content_row as $field => $value) {
 		$content_row[$field] = check_plain($value);
 	}
 
-	$actions;
-	if($primary) {
-		$id = implode(',', array_intersect_key($content_row, array_flip($primary)));
-		$actions = array(
-			'view' => 'array',
-			'items' => array(
-				array(
-					'title' => '<i class="icon-edit"></i>',
-					'path' => 'scaffolding/'.$content_table.'/edit/'.$id,
-					'attributes' => array(
-						'title' => t('Edit'),
-					),
-					'view' => 'link',
-				),
-				array(
-					'title' => '<i class="icon-remove"></i>',
-					'path' => 'scaffolding/'.$content_table.'/remove/'.$id,
-					'attributes' => array(
-						'title' => t('Remove'),
-					),
-					'view' => 'components/link_modal',
-				)
-			),
-		);
-	}
-
 	if($content_table === 'files') {
 		load_model('file');
 		$file_info = file_info(array('fid' => $content_row['fid']));
-		$rows[] = array(
-			$actions,
+		$row = array(
 			theme_file($file_info),
 			array(
 				'view' => 'link',
@@ -120,9 +93,39 @@ while($content_row = ($content_q->fetchAssoc())) {
 		);
 	}
 	else {
-		if(isset($actions)) array_unshift($content_row, $actions);
-		$rows[] = $content_row;
+		$row = $content_row;
 	}
+
+	if($primary && ($can_edit || $can_remove)) {
+		$id = implode(',', array_intersect_key($content_row, array_flip($primary)));
+		$actions = array(
+			'view' => 'array',
+			'items' => array());
+
+		if($can_edit)
+			$actions['items'][] = array(
+				'title' => '<i class="icon-edit"></i>',
+				'path' => 'scaffolding/'.$content_table.'/edit/'.$id,
+				'attributes' => array(
+					'title' => t('Edit'),
+				),
+				'view' => 'link',
+			);
+
+		if($can_remove)
+			$actions['items'][] = array(
+				'title' => '<i class="icon-remove"></i>',
+				'path' => 'scaffolding/'.$content_table.'/remove/'.$id,
+				'attributes' => array(
+					'title' => t('Remove'),
+				),
+				'view' => 'components/link_modal',
+			);
+
+		array_unshift($row, $actions);
+	}
+
+	$rows[] = $row;
 }
 
 return theme('scaffolding/list', array(

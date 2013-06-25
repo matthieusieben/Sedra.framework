@@ -43,7 +43,7 @@ case 'edit':
 	break;
 }
 
-$form = scaffolding_get_form($content_table, $content_action, $content_id, $values);
+$form = scaffolding_get_edit_form($content_table, $content_action, $content_id, $values);
 
 scaffolding_handle_form($content_table, $content_action, $content_id, $form);
 

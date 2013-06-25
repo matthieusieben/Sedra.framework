@@ -42,13 +42,6 @@ $schema['users'] = array(
 	'unique keys' => array(
 		'user_mail' => array('mail'),
 	),
-	'roles' => array(
-		'view' => 1,
-		'list' => 1,
-		'add' => 1,
-		'edit' => 1,
-		'remove' => 1,
-	),
 );
 
 $schema['users_actions'] = array(
@@ -68,14 +61,8 @@ $schema['users_actions'] = array(
 		'action_account' => array(
 			'table' => 'users',
 			'columns' => array('uid' => 'uid'),
+			'cascade' => TRUE,
 		),
-	),
-	'roles' => array(
-		'view' => 1,
-		'list' => 1,
-		'add' => 1,
-		'edit' => 1,
-		'remove' => 1,
 	),
 );
 
@@ -98,14 +85,8 @@ $schema['sessions'] = array(
 		'session_account' => array(
 			'table' => 'users',
 			'columns' => array('uid' => 'uid'),
+			'cascade' => TRUE,
 		),
-	),
-	'roles' => array(
-		'view' => 1,
-		'list' => 1,
-		'add' => 1,
-		'edit' => 1,
-		'remove' => 1,
 	),
 );
 
@@ -134,6 +115,7 @@ $schema['files'] = array(
 		'file_owner' => array(
 			'table' => 'users',
 			'columns' => array('uid' => 'uid'),
+			'cascade' => TRUE,
 		),
 	),
 	'roles' => array(
@@ -174,13 +156,6 @@ $schema['watchdog'] = array(
 	'unique keys' => array(
 		'action' => array('hostname', 'id'),
 	),
-	'roles' => array(
-		'view' => 1,
-		'list' => 1,
-		'add' => 1,
-		'edit' => 1,
-		'remove' => 1,
-	),
 );
 
 # Schema installation functions
@@ -208,6 +183,7 @@ function sedra_schema_install($schema) {
 
 			$table_name = $schema['name'];
 			$foreign_table = $constraint['table'];
+			$action = @$constraint['cascade'] ? 'CASCADE' : 'SET NULL';
 			$local_fields = '';
 			$foreign_fields = '';
 
@@ -220,7 +196,7 @@ function sedra_schema_install($schema) {
 				db_query("
 					ALTER TABLE {{$table_name}}
 					ADD CONSTRAINT {{$constraint_name}}
-					FOREIGN KEY ( $local_fields ) REFERENCES {{$foreign_table}} ( $foreign_fields ) ON UPDATE CASCADE ON DELETE CASCADE
+					FOREIGN KEY ( {$local_fields} ) REFERENCES {{$foreign_table}} ( {$foreign_fields} ) ON UPDATE {$action} ON DELETE {$action}
 				");
 			}
 		}

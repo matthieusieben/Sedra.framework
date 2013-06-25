@@ -1,7 +1,5 @@
 <?php
 
-require_once 'log.php';
-
 set_error_handler('__error_handler');
 set_exception_handler('__exception_handler');
 
@@ -58,6 +56,12 @@ function __exception_handler($e) {
 
 	# Clear output buffers
 	$output_buffer = ob_get_clean_all();
+
+	if($e instanceof FrameworkException && $e->getCode() === 403) {
+		load_model('user');
+		# The following function allows to redirrect to login page if not logged in.
+		user_role_required(AUTHENTICATED_RID);
+	}
 
 	# Set error status header
 	if(!headers_sent()) {

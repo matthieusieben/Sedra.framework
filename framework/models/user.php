@@ -172,7 +172,7 @@ function user_has_role($role) {
 	}
 }
 
-function user_role_required($role = AUTHENTICATED_RID) {
+function user_role_required($role) {
 	if(user_has_role(ADMINISTRATOR_RID)) {
 		# Admins have all the rights.
 	}
@@ -385,9 +385,9 @@ function user_register($data) {
 function user_action_request($mail, $action) {
 
 	if($account = user_find($mail)) {
-		require_once 'log.php';
-		require_once 'mail.php';
-		require_once 'theme.php';
+		load_model('log');
+		load_model('mail');
+		load_model('theme');
 
 		log_message('Password reset for adress : '.$mail);
 

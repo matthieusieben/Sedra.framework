@@ -1,7 +1,5 @@
 <?php
 
-require_once 'database.php';
-
 file_garbage_collector();
 
 function file_was_sent($field_name) {
@@ -33,6 +31,7 @@ function file_upload($field_name, $old_fid = NULL) {
 			return file_info(array('fid' => $old_fid));
 
 		# Otherwise create a new file
+		load_model('database');
 		do {
 			try {
 				$info['hash'] = random_salt();
@@ -54,6 +53,7 @@ function file_upload($field_name, $old_fid = NULL) {
 }
 
 function file_info($fid, $field = NULL) {
+	load_model('database');
 
 	list($key, $value) = each($fid);
 
@@ -76,11 +76,19 @@ function file_info($fid, $field = NULL) {
 
 function file_can_be_editted($fid) {
 	global $user;
-	return user_has_role(MODERATOR_RID) || ((int) file_info(array('fid' => $fid), 'uid') === (int) $user->uid);
+
+	$info = file_info(array('fid' => $fid));
+	if(!$info) return FALSE;
+
+	if (user_has_role(MODERATOR_RID))
+		return TRUE;
+
+	return (int) $info['uid'] === (int) $user->uid;
 }
 
 function file_delete($fid) {
 	if (file_can_be_editted($fid)) {
+		load_model('database');
 		db_delete('files')->condition('fid', $fid)->execute();
 	}
 }
@@ -90,6 +98,7 @@ function file_update($fid, array $info) {
 	if (!$fid) return FALSE;
 
 	if (file_can_be_editted($fid)) {
+		load_model('database');
 		$r = db_update('files')
 			->fields($info)
 			->condition('fid', $fid)
@@ -104,6 +113,7 @@ function file_save($fid) {
 }
 
 function file_garbage_collector() {
+	load_model('database');
 	# Delete files posted more than one day ago but not saved.
 	db_delete('files')
 		->condition('tmp', 1)

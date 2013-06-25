@@ -21,7 +21,12 @@
 			<?php endif ?>
 
 			<?php foreach ($form['fields'] as &$field): ?>
-				<?php $field['attributes']['class'][] = 'input-xxlarge'; ?>
+				<?php switch(@$field['type']): default: continue; ?>
+				<?php case 'textarea': ?>
+				<?php case 'text': ?>
+					<?php $field['attributes']['class'][] = 'input-xxlarge'; ?>
+					<?php break; ?>
+				<?php endswitch; ?>
 			<?php endforeach ?>
 			<?php echo theme($form); ?>
 

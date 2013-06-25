@@ -5,7 +5,7 @@ define('MESSAGE_WARNING', 'alert-block');
 define('MESSAGE_ERROR',   'alert-error');
 
 function message($type = NULL, $message = NULL) {
-	require_once 'session.php';
+	load_model('session');
 
 	global $messages;
 

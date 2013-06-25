@@ -8,5 +8,5 @@ hook_register('html_head', function () {
 });
 
 hook_register('html_foot', function () {
-	echo theme_js( 'libraries/bootstrap/js/bootstrap.min.js');
+	echo theme_js('libraries/bootstrap/js/bootstrap.min.js');
 });

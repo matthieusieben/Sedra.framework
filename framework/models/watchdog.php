@@ -1,8 +1,8 @@
 <?php
 
-require_once 'database.php';
-
 function watchdog_notify($id = NULL, $timeout = NULL) {
+	load_model('database');
+
 	if(!$timeout)
 		$timeout = config('watchdog.timeout', 3600);
 
@@ -32,6 +32,8 @@ function watchdog_suspect($id = NULL, $attempts = NULL) {
 }
 
 function watchdog_getcount($id = NULL) {
+	load_model('database');
+
 	$r = db_select('watchdog', 'w')
 		->fields('w', array('count'))
 		->condition('id', $id)
@@ -44,6 +46,8 @@ function watchdog_getcount($id = NULL) {
 }
 
 function watchdog_release($id = NULL) {
+	load_model('database');
+
 	db_delete('watchdog')
 		->condition('id', $id)
 		->condition('hostname', ip_address())
@@ -51,8 +55,6 @@ function watchdog_release($id = NULL) {
 }
 
 function _form_handle_watchdog(&$form, &$field) {
-	load_model('captcha');
-
 	$field += array(
 		'timeout' => NULL,
 		'attempts' => NULL,
@@ -69,6 +71,7 @@ function _form_handle_watchdog(&$form, &$field) {
 
 	if(watchdog_suspect($form['id'], $field['attempts'])) {
 		$field['_watchdog'] = TRUE;
+		load_model('captcha');
 		return _form_handle_captcha($form, $field);
 	}
 

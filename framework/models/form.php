@@ -86,9 +86,10 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	# Setup the value of non-form fields
 	if ($field['type'] !== 'form') {
 
-		$field['value'] = ($field['value'] !== NULL)
-			? $field['value']
-			: (($form['submitted'] && !$field['disabled']) ? @$form['request'][$field['name']] : $field['default']);
+		if($form['submitted'] && !$field['disabled'])
+			$field['value'] = @$form['request'][$field['name']];
+		else if (empty($field['value']))
+			$field['value'] = $field['default'];
 
 		if ($field['multiple']) {
 			$field['value'] = (array) $field['value'];
@@ -251,7 +252,7 @@ function _form_handle_select(&$form, &$field) {
 		$field['attributes']['multiple'] = 'multiple';
 	else
 		# Add default empty value if not required
-		if (!$field['required'] || is_null($field['default']))
+		if (!$field['required'] || (is_null($field['default']) && is_null($field['value'])))
 			$field['options'] += array(NULL => '-');
 
 
@@ -320,29 +321,30 @@ function _form_handle_button(&$form, &$field) {
 function _form_handle_file(&$form, &$field) {
 	load_model('file');
 
+	$form['attributes']['enctype'] = 'multipart/form-data';
+
 	# Setup defaults
 	$field += array(
 		'view' => 'form/file',
 		'file_info' => NULL,
 	);
-	$field['attributes'] += array(
-		'type' => $field['type'],
-		'required' => $field['required'] ? '' : NULL,
-	);
-	$form['attributes']['enctype'] = 'multipart/form-data';
-	if ($field['disabled']) {
-		$field['attributes']['disabled'] = 'disabled';
-	}
 	if (empty($field['mime'])) {
 		$field['mime'] = array('text', 'image', 'application/pdf');
 	}
 	if (!$field['callback']) {
 		$field['callback'] = '_form_callback_file';
 	}
+	$rm_name = '__field_' . $field['name'] . '_remove';
+	if ($field['value'] && !$field['required']) {
+		$field['rm_name'] = $rm_name;
+	}
 
 	# Only process file if a name is defined
 	if ($form['submitted'] && $field['name'] && !$field['disabled']) {
-		if ($field['file_info'] = file_upload($field['name'], $field['value'])) {
+		if (!empty($form['request'][$rm_name])) {
+			file_delete($field['value']);
+			$field['value'] = NULL;
+		} elseif ($field['file_info'] = file_upload($field['name'], $field['value'])) {
 			# A new file was uploaded
 			$field['value'] = $field['file_info']['fid'];
 		} elseif ($field['file_info'] = file_info(array('fid' => $field['value']))) {
@@ -353,6 +355,8 @@ function _form_handle_file(&$form, &$field) {
 			$field['file_info'] = NULL;
 		}
 	}
+
+	_form_handle_input($form, $field);
 }
 
 function _form_handle_textarea(&$form, &$field) {
@@ -361,7 +365,7 @@ function _form_handle_textarea(&$form, &$field) {
 		'view' => 'form/input',
 		'wysiwyg' => FALSE,
 		'html' => FALSE,
-		'allowable_tags' => '<br><span><p><div><i><b><ul><ol><li><dl><dt><dd>',
+		'allowable_tags' => '<br><span><p><div><i><b><u><em><ul><ol><li><dl><dt><dd>',
 	);
 	$field['attributes'] += array(
 		'rows' => 3,
@@ -421,6 +425,20 @@ function _form_handle_number(&$form, &$field) {
 		$field['value'] = NULL;
 	}
 	$field['attributes']['type'] = 'text';
+	_form_handle_input($form, $field);
+}
+
+function _form_handle_datetime(&$form, &$field) {
+	load_library('datetime', FALSE);
+
+	$field += array(
+		'view' => 'form/datetime',
+		'format' => 'yyyy-MM-dd hh:mm:ss',
+	);
+	$field['attributes'] += array(
+		'data-format' => $field['format'],
+		'type' => 'datetime',
+	);
 	_form_handle_input($form, $field);
 }
 
@@ -529,4 +547,84 @@ function _form_callback_text(&$form, &$field) {
 
 function _form_callback_textarea(&$form, &$field) {
 	return _form_callback_text($form, $field);
+}
+
+function _form_callback_datetime(&$form, &$field) {
+
+	$regexp = '/^'.strtr($field['format'], array(
+		'yy' => '(?P<year2k>[0-9]{1,2})',
+		'yyyy' => '(?P<year>[0-9]{4})',
+		'MM' => '(?P<month>[0-9]{1,2})',
+		'dd' => '(?P<day>[0-9]{1,2})',
+		'hh' => '(?P<hour>[0-9]{1,2})',
+		'mm' => '(?P<min>[0-9]{1,2})',
+		'ss' => '(?P<sec>[0-9]{1,2})',
+		'/' => '\/',
+	)).'$/';
+
+	if(!preg_match($regexp, trim($field['value']), $matches)) {
+		$field['error'] = t('Please use the following date format <code>@format</code>.', array('@format' => $field['format']));
+		return FALSE;
+	}
+
+	if(isset($matches['year2k']))
+		$matches['year'] = 2000 + $matches['year2k'];
+
+	if(isset($matches['month']) && isset($matches['day']) && isset($matches['year'])) {
+		if(!checkdate($matches['month'], $matches['day'], $matches['year'])) {
+			$field['error'] = t('This is not a valid date.');
+			return FALSE;
+		}
+	} else {
+		if(isset($matches['year']) && $matches['year'] > 9999 || $matches['year'] < -9999) {
+			$field['error'] = t('The year is not valid.');
+			return FALSE;
+		}
+		if(isset($matches['month']) && $matches['month'] > 12 || $matches['month'] < 0) {
+			$field['error'] = t('The month is not valid.');
+			return FALSE;
+		}
+		if(isset($matches['day']) && $matches['day'] > 31 || $matches['day'] < 0) {
+			$field['error'] = t('The day is not valid.');
+			return FALSE;
+		}
+	}
+
+	if(isset($matches['hour']) && $matches['hour'] > 23 || $matches['hour'] < 0) {
+		$field['error'] = t('The hour is not valid.');
+		return FALSE;
+	}
+	if(isset($matches['min']) && $matches['min'] > 59 || $matches['min'] < 0) {
+		$field['error'] = t('The minutes are not valid.');
+		return FALSE;
+	}
+	if(isset($matches['sec']) && $matches['sec'] > 59 || $matches['sec'] < 0) {
+		$field['error'] = t('The seconds are not valid.');
+		return FALSE;
+	}
+
+	# Normalize
+	$field['value'] = strtr($field['format'], array(
+		'yy' => (int) @$matches['year'] % 2000,
+		'yyyy' => @$matches['year'],
+		'MM' => @$matches['month'],
+		'dd' => @$matches['day'],
+		'hh' => @$matches['hour'],
+		'mm' => @$matches['min'],
+		'ss' => @$matches['sec'],
+	));
+
+	$val = strtotime($field['value']);
+
+	if (!empty($field['min']) && strtotime($field['min']) > $val) {
+		$field['error'] = t('This value is too small.');
+		return FALSE;
+	}
+
+	if (!empty($field['max']) && strtotime($field['max']) < $val) {
+		$field['error'] = t('This value is too large.');
+		return FALSE;
+	}
+
+	return TRUE;
 }
