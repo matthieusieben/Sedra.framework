@@ -197,40 +197,49 @@ $schema['files'] = array(
 		'fid' => array(
 			'type' => 'serial',
 			'not null' => TRUE,
-			'unsigned' => TRUE),
+			'unsigned' => TRUE,
+		),
 		'uid' => array(
 			'type' => 'int',
 			'not null' => TRUE,
-			'unsigned' => TRUE),
+			'unsigned' => TRUE,
+		),
 		'hash' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
-			'length' => 32),
+			'length' => 32,
+		),
 		'posted' => array(
 			'type' => 'int',
 			'not null' => TRUE,
-			'unsigned' => TRUE),
+			'unsigned' => TRUE,
+		),
 		'name' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
-			'length' => 256),
+			'length' => 256,
+		),
 		'type' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
-			'length' => 16),
+			'length' => 64,
+		),
 		'size' => array(
 			'type' => 'int',
 			'not null' => TRUE,
-			'size' => 'big'),
+			'size' => 'big',
+		),
 		'content' => array(
 			'type' => 'blob',
 			'not null' => TRUE,
-			'size' => 'big'),
+			'size' => 'big',
+		),
 		'tmp' => array(
 			'type' => 'int',
 			'not null' => TRUE,
 			'size' => 'tiny',
-			'default' => 1),
+			'default' => 1,
+		),
 	),
 	'primary key' => array('fid'),
 	'unique keys' => array(
@@ -260,6 +269,7 @@ $schema['files'] = array(
 				'label' => 'File',
 				'type' => 'file',
 				'required' => TRUE,
+				'mime' => array('*'),
 			),
 		),
 	),
@@ -302,36 +312,32 @@ $schema['watchdog'] = array(
 $schema['menus'] = array(
 	'display name' => t('Menus'),
 	'fields' => array(
-		'mid' => array(
+		'menu' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
 			'length' => 128,
-			'display name' => t('Machine name'),
-		),
-		'name' => array(
-			'type' => 'varchar',
-			'not null' => TRUE,
-			'length' => 128,
-			'display name' => t('Menu name'),
+			'display name' => t('System name'),
 		),
 	),
-	'primary key' => array('mid'),
+	'primary key' => array('menu'),
 	'roles' => array(
-		'view' => MODERATOR_RID,
-		'list' => MODERATOR_RID,
-		'add' => MODERATOR_RID,
-		'edit' => MODERATOR_RID,
-		'remove' => MODERATOR_RID,
+		'view' => ADMINISTRATOR_RID,
+		'list' => ADMINISTRATOR_RID,
+		'add' => ADMINISTRATOR_RID,
+		'edit' => ADMINISTRATOR_RID,
+		'remove' => ADMINISTRATOR_RID,
 	),
 );
 
 $schema['menu_items'] = array(
 	'display name' => t('Menu items'),
 	'fields' => array(
-		'miid' => array(
+		'mid' => array(
 			'type' => 'serial',
 			'not null' => TRUE,
-			'unsigned' => TRUE),
+			'unsigned' => TRUE,
+			'hidden' => TRUE,
+		),
 		'menu' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
@@ -342,13 +348,13 @@ $schema['menu_items'] = array(
 			'type' => 'int',
 			'not null' => FALSE,
 			'unsigned' => TRUE,
-			'display name' => t('Parent menu item'),
+			'display name' => t('Parent item'),
 		),
-		'name' => array(
+		'title' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
 			'length' => 128,
-			'display name' => t('Menu item name'),
+			'display name' => t('Item title'),
 		),
 		'role' => array(
 			'type' => 'enum',
@@ -366,7 +372,7 @@ $schema['menu_items'] = array(
 		),
 		'path' => array(
 			'type' => 'varchar',
-			'not null' => TRUE,
+			'not null' => FALSE,
 			'length' => 512,
 			'display name' => t('Path'),
 		),
@@ -375,18 +381,19 @@ $schema['menu_items'] = array(
 			'not null' => FALSE,
 			'unsigned' => TRUE,
 			'default' => 0,
+			'display name' => t('Position'),
 		),
 	),
-	'primary key' => array('miid'),
+	'primary key' => array('mid'),
 	'foreign keys' => array(
 		'menu' => array(
 			'table' => 'menus',
-			'columns' => array('menu' => 'mid'),
+			'columns' => array('menu' => 'menu'),
 			'cascade' => TRUE,
 		),
 		'parent_item' => array(
 			'table' => 'menu_items',
-			'columns' => array('parent' => 'miid'),
+			'columns' => array('parent' => 'mid'),
 			'cascade' => FALSE,
 		),
 	),
@@ -397,7 +404,18 @@ $schema['menu_items'] = array(
 		'edit' => MODERATOR_RID,
 		'remove' => MODERATOR_RID,
 	),
+	'order' => array(
+		'menu' => 'ASC',
+		'parent' => 'ASC',
+		'weight' => 'ASC',
+	),
 );
+
+# Add user defined schemas
+
+foreach((array) scandir(APP_MODELS.'schemas') as $file)
+	if($file[0] !== '.')
+		require_once APP_MODELS.'schemas/'.$file;
 
 # Schema installation functions
 

@@ -2,6 +2,7 @@
 
 load_model('user');
 load_model('form');
+load_model('menu');
 load_model('theme');
 
 user_role_required(AUTHENTICATED_RID);
@@ -98,7 +99,17 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 	}
 }
 
-return theme('account/password', array(
+breadcrumb_add(array(
+	'path' => 'account/index',
+	'title' => t('My account'),
+));
+
+breadcrumb_add(array(
+	'path' => 'account/credentials',
+	'title' => t('Credentials'),
+));
+
+return theme('account/credentials', array(
 	'title' => t('@username\'s account', array('@username' => $user->name)),
 	'account' => $user,
 	'edit_form' => $edit_form,

@@ -6,9 +6,11 @@ load_model('user');
 load_model('form');
 load_model('scaffolding');
 load_model('schema');
+load_model('menu');
 load_model('theme');
 
 global $content_table;
+global $content_table_title;
 global $schema;
 
 if(!scaffolding_check_action($content_table, 'list'))
@@ -58,11 +60,10 @@ $primary = (array) @$schema[$content_table]['primary key'];
 $header = array();
 $rows = array();
 
-$can_view = scaffolding_check_action($content_table, 'view');
 $can_edit = scaffolding_check_action($content_table, 'edit');
 $can_remove = scaffolding_check_action($content_table, 'remove');
 
-if($primary && ($can_view || $can_edit || $can_remove)) {
+if($primary && ($can_edit || $can_remove)) {
 	$header[] = '';
 }
 
@@ -71,15 +72,14 @@ if($content_table === 'files') {
 	$header[] = t('File url');
 } else {
 	foreach ($schema[$content_table]['fields'] as $field_name => $field_info) {
-		$header[] = t(val($field_info['display name'], check_plain($field_name)));
+		if(!@$field_info['hidden'])
+			$header[] = t(val($field_info['display name'], check_plain($field_name)));
 	}
 }
 
 $content_q = scaffolding_list($content_table, $start, $limit);
 while($content_row = ($content_q->fetchAssoc())) {
-	foreach($content_row as $field => $value) {
-		$content_row[$field] = check_plain($value);
-	}
+	$row = array();
 
 	if($content_table === 'files') {
 		load_model('file');
@@ -94,24 +94,16 @@ while($content_row = ($content_q->fetchAssoc())) {
 		);
 	}
 	else {
-		$row = $content_row;
+		foreach($content_row as $field => $value)
+			if(!@$schema[$content_table]['fields'][$field]['hidden'])
+				$row[$field] = check_plain($value);
 	}
 
-	if($primary && ($can_view || $can_edit || $can_remove)) {
+	if($primary && ($can_edit || $can_remove)) {
 		$id = implode(',', array_intersect_key($content_row, array_flip($primary)));
 		$actions = array(
 			'view' => 'array',
 			'items' => array());
-
-		if($can_view)
-			$actions['items'][] = array(
-				'title' => '<i class="icon-search"></i>',
-				'path' => 'scaffolding/'.$content_table.'/item/'.$id,
-				'attributes' => array(
-					'title' => t('View'),
-				),
-				'view' => 'link',
-			);
 
 		if($can_edit)
 			$actions['items'][] = array(
@@ -140,7 +132,7 @@ while($content_row = ($content_q->fetchAssoc())) {
 }
 
 return theme('scaffolding/list', array(
-	'title' => t('!table_name : content', array('!table_name' => t(val($schema[$content_table]['display name'], $content_table)))),
+	'title' => $content_table_title,
 	'table_name' => $content_table,
 	'table_description' => t(@$schema[$content_table]['description']),
 	'table_content_table' => array(

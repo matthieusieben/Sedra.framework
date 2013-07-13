@@ -34,8 +34,12 @@ function l(array $options) {
 	url_setup($options);
 	attributes_setup($options['attributes']);
 
-	if(!empty($options['active'])) {
+	if(@$options['active']) {
 		$options['attributes']['class'][] = 'active';
+	}
+
+	if(@$options['disabled']) {
+		$options['attributes']['class'][] = 'disabled';
 	}
 
 	switch(@$options['target']) {
@@ -62,7 +66,12 @@ function l(array $options) {
 
 	$options['attributes']['href'] = url($options);
 
-	return '<a' . attributes($options['attributes']) . '>' . ($options['html'] ? $options['title'] : check_plain($options['title'])) . '</a>';
+	$content = $options['html'] ? $options['title'] : check_plain($options['title']);
+
+	if(@$options['disabled'])
+		return $content;
+	else
+		return '<a' . attributes($options['attributes']) . '>' . $content . '</a>';
 }
 
 function theme_data(array $__data) {

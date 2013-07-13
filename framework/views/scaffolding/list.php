@@ -11,29 +11,38 @@
 	</div>
 
 	<div class="span10">
-		<?php if (!empty($table_menu['items'])): ?>
-			<?php $table_menu['attributes']['class'][] = 'nav-pills'; ?>
-			<?php echo theme('components/menu', $table_menu); ?>
-		<?php endif ?>
 
-		<?php if (@$table_description): ?>
+		<?php if (empty($table_name)): ?>
 			<p class="description">
-				<?php echo $table_description; ?>
-			</p>
-		<?php endif ?>
-
-		<?php if (empty($table_content_table['rows'])): ?>
-			<p class="text-warning">
-				<?php echo t('No content to display.'); ?>
+				<?php echo t('Select a content table on the left.') ?>
 			</p>
 		<?php else: ?>
-			<?php $table_content_table['attributes']['class'][] = 'table-striped'; ?>
-			<?php $table_content_table['attributes']['class'][] = 'table-ellipsis'; ?>
-			<?php echo theme('components/table', $table_content_table); ?>
-		<?php endif ?>
 
-		<?php if (!empty($display_form)): ?>
-			<?php echo theme($display_form); ?>
+			<?php if (!empty($table_menu['items'])): ?>
+				<?php $table_menu['attributes']['class'][] = 'nav-pills'; ?>
+				<?php echo theme('components/menu', $table_menu); ?>
+			<?php endif ?>
+
+			<?php if (@$table_description): ?>
+				<p class="description">
+					<?php echo $table_description; ?>
+				</p>
+			<?php endif ?>
+
+			<?php if (empty($table_content_table['rows'])): ?>
+				<p class="text-warning">
+					<?php echo t('No content to display.'); ?>
+				</p>
+			<?php else: ?>
+				<?php $table_content_table['attributes']['class'][] = 'table-striped'; ?>
+				<?php $table_content_table['attributes']['class'][] = 'table-ellipsis'; ?>
+				<?php echo theme('components/table', $table_content_table); ?>
+			<?php endif ?>
+
+			<?php if (!empty($display_form)): ?>
+				<?php echo theme($display_form); ?>
+			<?php endif ?>
+
 		<?php endif ?>
 	</div>
 

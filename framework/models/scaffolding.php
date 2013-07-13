@@ -31,6 +31,9 @@ function scaffolding_get_items($table, $cond) {
 		foreach($cond as $_col => $_value)
 			$query->condition($_col, $_value);
 
+	foreach ((array) @$schema[$table]['order'] as $field => $order)
+		$query->orderBy($field, $order);
+
 	$result = $query->execute();
 
 	$items = array();
@@ -104,9 +107,12 @@ function scaffolding_delete_id($table, $id) {
 }
 
 function scaffolding_list($table, $start = NULL, $limit = NULL) {
+	global $schema;
 	$query = db_select($table, 't')->fields('t');
 	if(is_numeric($limit))
 		$query->range((int) $start, (int) $limit);
+	foreach ((array) @$schema[$table]['order'] as $field => $order)
+		$query->orderBy($field, $order);
 	return $query->execute();
 }
 
@@ -118,21 +124,14 @@ function scaffolding_check_action($table, $action) {
 	if($table) {
 		if(isset($schema[$table]['roles'][$action]))
 			if(user_has_role($schema[$table]['roles'][$action]))
-				if($action === 'view') {
-					if(isset($schema[$table]['view']))
-						return TRUE;
-				} else
-					return TRUE;
+				return TRUE;
 		return FALSE;
 	} else {
+		# Checl for any table
 		foreach ($schema as &$table_info)
 			if(isset($table_info['roles'][$action]))
 				if(user_has_role($table_info['roles'][$action]))
-					if($action === 'view') {
-						if(isset($table_info['view']))
-							return TRUE;
-					} else
-						return TRUE;
+					return TRUE;
 		return FALSE;
 	}
 }

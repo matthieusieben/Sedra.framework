@@ -35,7 +35,7 @@ $strings['fr']['New password'] = 'Nouveau mot de passe';
 $strings['fr']['Current password'] = 'Mot de passe actuel';
 $strings['fr']['Confirm password'] = 'V&eacute;rification';
 $strings['fr']['Language'] = 'Langue';
-$strings['fr']['Change my credentials'] = 'Modifier mon identifiant';
+$strings['fr']['Edit your credentials'] = 'Modifier vos identifiants';
 $strings['fr']['Account details'] = 'D&eacute;tails du compte';
 $strings['fr']['@username\'s account'] = 'Compte de @username';
 $strings['fr']['Make sure your account info is up to date and accurate. This is how we get in touch with you! We will never give out your email address or info to anyone.'] = 'Veuillez vous assurer que les informations ci-dessous sont exactes. Celles-ci nous permettent de rester en contact avec vous! Nous ne donnerons jamais vos informations &agrave; personne.';
@@ -53,12 +53,11 @@ $strings['fr']['This email adress is already registered.'] = 'Cette adresse emai
 $strings['fr']['[@name] Account @action'] = '[@name] @action compte utilisateur';
 $strings['fr']['activate'] = 'activation';
 $strings['fr']['reset'] = 'réinitialisation';
+$strings['fr']['Credentials'] = 'Identifiants';
 $strings['fr']['Further instructions have been sent to your e-mail address.'] = 'De plus amples informations ont &eacute;t&eacute; envoy&eacute;es &agrave; l\'adresse email indiqu&eacute;e.';
 
 # Tables content
 $strings['fr']['Site content'] = 'Contenu';
-$strings['fr']['!table_name : content'] = '!table_name : contenu';
-$strings['fr']['!table_name : info'] = '!table_name : structure';
 $strings['fr']['!table_name : edit'] = '!table_name : modifier du contenu';
 $strings['fr']['!table_name : add'] = '!table_name : ajouter du contenu';
 $strings['fr']['Table content'] = 'Contenu de la table';

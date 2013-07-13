@@ -5,14 +5,13 @@ load_model('menu');
 # uses
 global $language;
 global $breadcrumb;
-global $menus;
 # provides
 global $data;
 
 $data = array(
 	'lang' => $language,
+	'menus' => menu_get(),
 	'breadcrumb' => &$breadcrumb,
-	'menus' => &$menus,
 	'site_name' => config('site.name', 'Sedra Framework'),
 );
 

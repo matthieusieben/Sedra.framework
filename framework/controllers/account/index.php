@@ -2,6 +2,7 @@
 
 load_model('user');
 load_model('form');
+load_model('menu');
 load_model('theme');
 load_model('timezone');
 load_model('message');
@@ -59,6 +60,11 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 		message(MESSAGE_ERROR, t('An error occured. Please try again.'));
 	}
 }
+
+breadcrumb_add(array(
+	'path' => 'account/index',
+	'title' => t('My account'),
+));
 
 return theme('account/index', array(
 	'title' => t('@username\'s account', array('@username' => $user->name)),

@@ -87,7 +87,7 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	if ($field['type'] !== 'form') {
 
 		if($form['submitted'] && !$field['disabled'])
-			$field['value'] = $form['request'][$field['name']];
+			$field['value'] = @$form['request'][$field['name']];
 		else if ($field['value'] === NULL)
 			$field['value'] = $field['default'];
 
@@ -424,6 +424,7 @@ function _form_handle_password(&$form, &$field) {
 
 function _form_handle_hidden(&$form, &$field) {
 	_form_handle_input($form, $field);
+	unset($field['attributes']['placeholder']);
 }
 
 function _form_handle_number(&$form, &$field) {
@@ -478,9 +479,10 @@ function _form_callback_file(&$form, &$field) {
 
 	if ($field['file_info']) {
 		foreach ((array) @$field['mime'] as $mime) {
-			if (strpos($field['file_info']['type'], $mime) === 0) {
+			if($mime === '*')
 				return TRUE;
-			}
+			if (strpos($field['file_info']['type'], $mime) === 0)
+				return TRUE;
 		}
 		if (!$field['error'])
 			$field['error'] = t('You are not allowed to upload this kind of file.');

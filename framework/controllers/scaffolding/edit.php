@@ -4,11 +4,12 @@ load_model('user');
 load_model('form');
 load_model('scaffolding');
 load_model('schema');
+load_model('menu');
 load_model('theme');
 
+global $content_id;
 global $content_table;
 global $content_action;
-global $content_id;
 global $schema;
 
 if(!scaffolding_check_action($content_table, $content_action))
@@ -46,6 +47,13 @@ case 'edit':
 $form = scaffolding_get_edit_form($content_table, $content_action, $content_id, $values);
 
 scaffolding_handle_form($content_table, $content_action, $content_id, $form);
+
+breadcrumb_add(array(
+	'path' => 'scaffolding/'.$content_table.'/'.($content_id ? 'edit/'.$content_id : 'add'),
+	'title' => $content_id
+		? t('Edit content')
+		: t('Add content'),
+));
 
 return theme('scaffolding/edit', array(
 	'title' => $content_id

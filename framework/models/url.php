@@ -90,6 +90,24 @@ function url_setup(array &$options) {
 	);
 }
 
+function url_is_current($path) {
+	global $request_path;
+
+	if(!$request_path)
+		return $path === '' || $path === 'index';
+
+	if($request_path . '/index' === $path)
+		return TRUE;
+
+	if($request_path === $path . '/index')
+		return TRUE;
+
+	if($request_path === $path)
+		return TRUE;
+
+	return FALSE;
+}
+
 function url_is_active($path) {
 	$path = trim($path, '/');
 	if(empty($path)) {
@@ -98,10 +116,7 @@ function url_is_active($path) {
 	else {
 		global $request_path;
 
-		if(!$request_path)
-			return $path === '' || $path === 'index';
-
-		if($request_path . '/index' === $path)
+		if(url_is_current($path))
 			return TRUE;
 
 		return strpos($request_path.'/', $path.'/') === 0;
