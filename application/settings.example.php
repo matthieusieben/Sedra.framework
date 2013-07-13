@@ -11,8 +11,6 @@ $config['devel'] = FALSE;
 # Website parameters
 $config['site.home'] = 'index';
 $config['site.name'] = 'My great website';
-$config['site.slogan'] = 'My Sedra based website';
-$config['site.logo'] = NULL; // file path relative to the root dir or absolute url
 $config['site.email'] = 'admin@example.com';
 $config['site.ga'] = NULL; // UA-XXXXX-X
 $config['site.language'] = 'en';
@@ -38,11 +36,6 @@ $config['user.pwd.min'] = 6;
 # Enable URL rewriting. see .htaccess
 $config['url.rewrite'] = 'pathauto'; # 'pathauto', 'query' or FALSE
 
-$config['robots.dissalowed'] = array(
-	'*',
-	# 'Googlebot',
-);
-
 # See Drupal's database api for more details
 $databases['default']['default'] = array (
 	'database' =>	'database',
@@ -55,11 +48,20 @@ $databases['default']['default'] = array (
 );
 
 # Model files to include by default
-$models = array();
+$models = array_merge(array(
+	# Common
+	'user',
+), $config['devel'] ? array(
+	# Devel only
+	'kprintr',
+	'devel',
+) : array(
+	# Production only
+));
 
 # Libraries to load by default ('name' => mandatory[TRUE/FALSE])
 $libraries = array(
-	'html5' => FALSE,
+	'html5shim' => FALSE,
 	'bootstrap' => FALSE,
 	'analytics' => FALSE,
 );

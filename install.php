@@ -4,19 +4,20 @@ $create_setup = FALSE;
 
 try {
 	require_once 'framework/bootstrap.php';
-} catch (Exception $e) {
+} catch (FrameworkException $e) {
 	$create_setup = TRUE;
 }
 
-load_model('schema');
 load_model('theme');
+load_model('schema');
 load_model('kprintr');
 
 if($create_setup) {
 	# TODO
 	fatal('Settings file creation not implemented. Please create `settings.php` in the application directory.');
 } else {
-	$first_install = !db_table_exists('users');
+
+	$first_install = !db_table_exists('users') || !db_table_exists('sessions');
 
 	if(!$first_install) {
 		load_model('user');
@@ -40,13 +41,12 @@ if($create_setup) {
 		$mail = 'admin@example.com';
 		$pass = 'admin';
 
-		load_model('user');
-		user_register(array(
-			'uid' => 1,
-			'rid' => 1,
+		load_model('scaffolding');
+		scaffolding_add_item('users', array(
+			'rid' => ADMINISTRATOR_RID,
 			'name' => $name,
 			'mail' => $mail,
-			'pass' => $pass,
+			'pass' => password_hash($pass),
 			'language' => config('site.language'),
 			'timezone' => config('date.timezone'),
 			'created' => REQUEST_TIME,
@@ -54,11 +54,5 @@ if($create_setup) {
 			'login' => REQUEST_TIME,
 			'status' => 1,
 		));
-		user_login($mail, $pass);
-
-		load_model('message');
-		message(MESSAGE_SUCCESS, t('The database was successfully created.'));
-
-		redirect('index');
 	}
 }
