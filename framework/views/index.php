@@ -1,18 +1,12 @@
-<?php require 'head.php'; ?>
-<?php require 'header.php'; ?>
+<?php require 'head.php' ?>
+<?php require 'body.php' ?>
+<?php require 'header.php' ?>
 
-	<?php require 'container_header.php'; ?>
+<?php if(isset($__data['view'])): ?>
+	<?php echo theme($__data) ?>
+<?php elseif(isset($__data['content'])): ?>
+	<?php echo $__data['content'] ?>
+<?php endif ?>
 
-	<div class="hero-unit">
-		<h1 id="site-title"><?php echo $site_name; ?></h1>
-
-		<?php if($site_slogan): ?>
-			<h2 id="site-slogan"><?php echo $site_slogan; ?></h2>
-		<?php endif; ?>
-
-		<p><?php echo t('This is Sedra\'s default index page. Start making your own by making an <code>index.php</code> view file in the <code>application/views</code> folder.'); ?></p>
-	</div>
-
-	<?php require 'container_footer.php'; ?>
-
-<?php require 'footer.php'; ?>
+<?php require 'footer.php' ?>
+<?php require 'foot.php' ?>

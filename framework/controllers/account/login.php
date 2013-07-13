@@ -6,7 +6,7 @@ load_model('form');
 load_model('watchdog');
 
 if(user_has_role(AUTHENTICATED_RID))
-	return redirect(config('site.home', 'account'));
+	return redirect(config('account'));
 
 $login_form = array(
 	'style' => 'vertical',

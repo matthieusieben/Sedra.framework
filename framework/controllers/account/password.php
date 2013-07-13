@@ -10,7 +10,7 @@ global $user;
 
 function check_current_password_field(&$form, &$field) {
 	global $user;
-	if(user_hash_password($field['value']) !== $user->pass) {
+	if(password_hash($field['value']) !== $user->pass) {
 		$field['error'] = t('Incorrect password.');
 		return FALSE;
 	}
@@ -83,7 +83,7 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 		$delete = empty($values['update']) && !empty($values['delete']);
 		if($delete) {
 			db_delete('users')->condition('uid', $user->uid)->execute();
-			$user = anonymous_user();
+			$user = new AnonymousUser;
 			session_regenerate();
 			message(MESSAGE_SUCCESS, t('Your account has been removed.'));
 			redirect(config('site.home', 'index'));

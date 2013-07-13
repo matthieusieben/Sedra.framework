@@ -5,7 +5,10 @@ global $_library_ref_css, $_library_ref_js;
 require_once __DIR__.'/php-ref/ref.php';
 
 ref::config('shortcutFunc', array('r', 'rt', 'kprintr', 'dvm', 'devel'));
-ref::config('expandDepth', 0);
+ref::config('maxDepth', 0);
+ref::config('showMethods', TRUE);
+ref::config('showPrivateMembers', TRUE);
+ref::config('showResourceInfo', TRUE);
 
 # Get default css and js files
 $_library_ref_css = ref::config('stylePath', NULL);

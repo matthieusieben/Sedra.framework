@@ -16,6 +16,10 @@ function &reg($k, $v=null) {
 	return $registry[$k];
 }
 
+function password_hash($pass) {
+	return sha1($pass);
+}
+
 function ip_address() {
 	static $ip_address = NULL;
 	if (!isset($ip_address)) {
@@ -151,28 +155,29 @@ function set_status_header($code = 200)
 	}
 }
 
-function redirect($path = 'index', $query = NULL, $http_response_code = 302) {
-	set_status_header($http_response_code);
+function redirect($path = 'index', array $query = array()) {
+	load_model('theme');
+
+	if(!is_array($path)) {
+		$path = array('path' => $path);
+	}
+
+	if(!empty($path['query']))
+		$path['query'] += $query;
+	else
+		$path['query'] = $query;
 
 	if(isset($_GET['redirect'])) {
-		$path = $_GET['redirect'];
+		$path['path'] = $_GET['redirect'];
 	}
 
-	if(is_array($path)) {
-		$options = $path + array('query' => $query);
-	} else {
-		$options = array('path' => $path, 'query' => $query);
-	}
-
-	$url = url($options);
+	$url = url($path);
 
 	hook_invoke('shutdown');
 
-	header('Location: '. $url, TRUE, $http_response_code);
+	header('Location: '. $url, TRUE, 302);
 
-	echo @theme('redirect', array('url' => $url));
-
-	exit();
+	exit(theme('redirect', array('url' => $url)));
 }
 
 function ob_get_clean_all() {

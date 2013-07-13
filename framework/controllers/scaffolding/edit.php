@@ -1,10 +1,10 @@
 <?php
 
+load_model('user');
 load_model('form');
 load_model('scaffolding');
 load_model('schema');
 load_model('theme');
-load_model('user');
 
 global $content_table;
 global $content_action;
@@ -12,7 +12,7 @@ global $content_id;
 global $schema;
 
 if(!scaffolding_check_action($content_table, $content_action))
-	show_403();
+	user_login_or_403();
 
 if(empty($schema[$content_table]))
 	throw new FrameworkException(t('This table is not defined.'), 404);

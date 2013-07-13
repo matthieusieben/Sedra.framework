@@ -2,14 +2,17 @@
 
 defined('MAX_ROWS_DISPLAY') or define('MAX_ROWS_DISPLAY', 50);
 
+load_model('user');
 load_model('form');
 load_model('scaffolding');
 load_model('schema');
 load_model('theme');
-load_model('user');
 
 global $content_table;
 global $schema;
+
+if(!scaffolding_check_action($content_table, 'list'))
+	user_login_or_403();
 
 if(empty($content_table)) {
 	$tables_menu = scaffolding_get_tables_menu();
@@ -22,9 +25,6 @@ if(empty($content_table)) {
 		'tables_menu' => $tables_menu,
 	));
 }
-
-if(!scaffolding_check_action($content_table, 'list'))
-	show_403();
 
 $display_form = array(
 	'method' => 'get',
@@ -58,10 +58,11 @@ $primary = (array) @$schema[$content_table]['primary key'];
 $header = array();
 $rows = array();
 
+$can_view = scaffolding_check_action($content_table, 'view');
 $can_edit = scaffolding_check_action($content_table, 'edit');
 $can_remove = scaffolding_check_action($content_table, 'remove');
 
-if($primary && ($can_edit || $can_remove)) {
+if($primary && ($can_view || $can_edit || $can_remove)) {
 	$header[] = '';
 }
 
@@ -96,15 +97,25 @@ while($content_row = ($content_q->fetchAssoc())) {
 		$row = $content_row;
 	}
 
-	if($primary && ($can_edit || $can_remove)) {
+	if($primary && ($can_view || $can_edit || $can_remove)) {
 		$id = implode(',', array_intersect_key($content_row, array_flip($primary)));
 		$actions = array(
 			'view' => 'array',
 			'items' => array());
 
+		if($can_view)
+			$actions['items'][] = array(
+				'title' => '<i class="icon-search"></i>',
+				'path' => 'scaffolding/'.$content_table.'/item/'.$id,
+				'attributes' => array(
+					'title' => t('View'),
+				),
+				'view' => 'link',
+			);
+
 		if($can_edit)
 			$actions['items'][] = array(
-				'title' => '<i class="icon-edit"></i>',
+				'title' => '<i class="icon-pencil"></i>',
 				'path' => 'scaffolding/'.$content_table.'/edit/'.$id,
 				'attributes' => array(
 					'title' => t('Edit'),

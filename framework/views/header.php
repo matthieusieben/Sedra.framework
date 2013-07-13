@@ -1,5 +1,21 @@
-<?php require 'body.php' ?>
+<?php echo theme('components/navbar', $menus + array(
+	'fixed' => FALSE,
+	'top' => TRUE,
+	'title' => l(array(
+		'title' => $site_name,
+		'path' => 'index',
+		'attributes' => array(
+			'title' => $site_name,
+			'class' => array('brand'),
+	))),
+)); ?>
 
-	<?php require 'components/navbar.php' ?>
+<div id="container" class="container">
 
-	<div id="page-content-wrapper">
+	<?php echo theme('components/breadcrumb', $breadcrumb); ?>
+
+	<?php if (@$title): ?>
+		<h2 id="title"><?php echo $title ?></h2>
+	<?php endif ?>
+
+	<?php require 'components/message.php' ?>

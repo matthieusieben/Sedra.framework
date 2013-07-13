@@ -4,6 +4,7 @@ load_model('user');
 load_model('form');
 load_model('theme');
 load_model('timezone');
+load_model('message');
 
 user_role_required(AUTHENTICATED_RID);
 
@@ -22,7 +23,7 @@ $edit_form = array(
 			'type' => 'select',
 			'default' => $user->language,
 			'required' => TRUE,
-			'options' => lang_list(),
+			'options' => language_list(),
 		),
 		'timezone' => array(
 			'label' => t('Timezone'),

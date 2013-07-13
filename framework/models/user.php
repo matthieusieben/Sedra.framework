@@ -1,12 +1,6 @@
 <?php
 
-define('ANONYMOUS_RID', 0);
-define('ADMINISTRATOR_RID', 10);
-define('MODERATOR_RID', 20);
-define('AUTHENTICATED_RID', 30);
-
 load_model('session');
-load_model('message');
 
 class User {
 
@@ -36,6 +30,7 @@ class User {
 		'name' => TRUE,
 		'pass' => TRUE,
 		'mail' => TRUE,
+		'data' => TRUE,
 		'language' => TRUE,
 		'timezone' => TRUE,
 		'created' => TRUE,
@@ -62,27 +57,25 @@ class User {
 	public function __set($field, $value) {
 
 		if (empty(User::$editable_fields[$field]))
-			return FALSE;
+			return NULL;
 
 		switch ($field) {
 		case 'pass':
-			$value = user_hash_password($value);
+			$value = password_hash($value);
 			session_regenerate();
 			break;
 		case 'rid':
 			if($this->uid && user_has_role(MODERATOR_RID) && ANONYMOUS_RID < $value && $value <= AUTHENTICATED_RID) {
 				# OK
 			} else {
-				return FALSE;
+				return NULL;
 			}
 		}
 
-		if($this->{$field} !== $value) {
-			$this->{$field} = $value;
+		if($this->{$field} !== $value)
 			$this->updated = TRUE;
-		}
 
-		return TRUE;
+		return $this->{$field} = $value;
 	}
 
 	public function data($key, $default = NULL) {
@@ -124,6 +117,7 @@ class User {
 				->condition('uid', $this->uid)
 				->execute();
 		}
+		return TRUE;
 	}
 }
 
@@ -151,40 +145,37 @@ class AnonymousUser extends User {
 			$_SESSION['user_data'][$key] = $value;
 		}
 	}
-
-	public function save() {
-		return TRUE;
-	}
-}
-
-function anonymous_user() {
-	return new AnonymousUser;
 }
 
 function user_has_role($role) {
 	global $user;
 
-	if($user->uid <= 0 || $user->rid <= ANONYMOUS_RID) {
-		return $role <= ANONYMOUS_RID;
+	if($role < 0) {
+		return TRUE;
+	}
+	else if($role == ANONYMOUS_RID) {
+		return $user->uid == 0;
 	}
 	else {
-		return $role <= 0 || $user->rid <= $role;
+		return $user->rid >= $role;
 	}
 }
 
 function user_role_required($role) {
-	if(user_has_role(ADMINISTRATOR_RID)) {
-		# Admins have all the rights.
+	if(!user_has_role($role)) {
+		user_login_or_403();
 	}
-	else if(user_has_role(AUTHENTICATED_RID) && !user_has_role($role)) {
-		show_403();
-	}
-	else if(!user_has_role(AUTHENTICATED_RID) && $role !== ANONYMOUS_RID) {
+}
+
+function user_login_or_403() {
+	global $user;
+	if(!$user->uid) {
+		# Login to access content
 		global $request_path;
 		redirect('account/login', array('redirect' => $request_path));
-	}
-	else {
-		# Good to go !
+	} else {
+		# User is not anonymous and has insufficient rights
+		show_403();
 	}
 }
 
@@ -217,24 +208,20 @@ function user_check_password($pwd, &$error_message = NULL) {
 	return TRUE;
 }
 
-function user_hash_password($pass) {
-	return sha1($pass);
-}
-
 function user_setup_environment() {
-	global $user, $language, $language_custom;
+	global $user, $language, $language_custom, $language_default;
 	static $locales;
 
 	if (!isset($locales)) $locales = config('site.locales', array('en' => 'en_US', 'fr' => 'fr_FR'));
 
-	if(empty($language_custom) && !empty($_SESSION['language']))
+	if(empty($language_custom) && isset($_SESSION['language']))
 		$language_custom = $_SESSION['language'];
-	else if($language_custom != $language)
-		$_SESSION['language'] = $language_custom;
+	else if($language_default != $language)
+		$_SESSION['language'] = $language;
 	else
 		unset($_SESSION['language']);
 
-	lang_set($user->language);
+	language_set($user->language);
 
 	@date_default_timezone_set($user->timezone);
 
@@ -249,6 +236,7 @@ function user_setup_environment() {
 function user_login($mail, $pass, $action = 'login') {
 
 	if(user_has_role(AUTHENTICATED_RID)) {
+		load_model('message');
 		message(MESSAGE_ERROR, t('You are already logged in.'));
 		return FALSE;
 	}
@@ -294,7 +282,7 @@ function user_login($mail, $pass, $action = 'login') {
 			'SELECT * FROM {users} u WHERE mail = :mail AND pass = :pass AND status',
 			array(
 				':mail' => $mail,
-				':pass' => user_hash_password($pass)
+				':pass' => password_hash($pass)
 			))
 			->fetchObject('User');
 
@@ -316,11 +304,13 @@ function user_login($mail, $pass, $action = 'login') {
 
 		switch ($action) {
 		case 'reset':
+			load_model('message');
 			message(MESSAGE_SUCCESS, t('Your password has been reset. You should set a new one now.'));
 			$user->pass = '';
 			break;
 
 		case 'activate':
+			load_model('message');
 			message(MESSAGE_SUCCESS, t('Your account has been activated.'));
 			break;
 		}
@@ -333,9 +323,6 @@ function user_login($mail, $pass, $action = 'login') {
 
 function user_register($data) {
 	global $user;
-
-	$language = $user->language ? $user->language : config('site.language', 'en');
-	$timezone = $user->timezone ? $user->timezone :  config('date.timezone', date_default_timezone_get());
 
 	$data = array(
 		'created' => REQUEST_TIME,
@@ -352,27 +339,30 @@ function user_register($data) {
 		'rid' => AUTHENTICATED_RID,
 		'mail' => NULL,
 		'pass' => NULL,
-		'language' => $language,
-		'timezone' => $timezone,
+		'language' => @$user->language ? $user->language : config('site.language', 'en'),
+		'timezone' => @$user->timezone ? $user->timezone :  config('date.timezone', @date_default_timezone_get()),
 		'status' => 0,
 	);
 
 	$_error_message = '';
 	if (!user_check_password($data['pass'], $_error_message)) {
+		load_model('message');
 		message(MESSAGE_ERROR, $_error_message);
 		return FALSE;
 	}
 
 	if (!is_email($data['mail'])) {
+		load_model('message');
 		message(MESSAGE_ERROR, t('This email adress is not valid.'));
 		return FALSE;
 	}
 
-	$data['pass'] = strlen($data['pass']) ? user_hash_password($data['pass']) : NULL;
+	$data['pass'] = strlen($data['pass']) ? password_hash($data['pass']) : NULL;
 
 	try {
 		db_insert('users')->fields($data)->execute();
 	} catch(PDOException $e) {
+		load_model('message');
 		message(MESSAGE_ERROR, t('This email adress is already registered.'));
 		return FALSE;
 	}
@@ -384,12 +374,14 @@ function user_register($data) {
 
 function user_action_request($mail, $action) {
 
-	if($account = user_find($mail)) {
-		load_model('log');
+	if($account = user_find(array('mail' => $mail))) {
 		load_model('mail');
 		load_model('theme');
 
-		log_message('Password reset for adress : '.$mail);
+		if($action == 'reset') {
+			load_model('log');
+			log_message('Password reset for "'.$mail.'"');
+		}
 
 		db_insert('users_actions')
 			->fields(array(
@@ -411,43 +403,36 @@ function user_action_request($mail, $action) {
 			'text' => theme('account/mail/'.$action, array(
 				'reset_url' => url('account/reset/'.$salt),
 				'activate_url' => url('account/activate/'.$salt),
-				'account' => $account
+				'account' => $account,
 			)),
 		));
 	}
 
-	message(MESSAGE_SUCCESS, t('Further instructions have been sent to your e-mail address.'));
+	load_model('message');
+	message(MESSAGE_SUCCESS, t('Further instructions have been sent to the e-mail address provided.'));
 }
 
 function user_logout() {
 	global $user;
 	if($user->uid) {
-		$user = anonymous_user();
+		$user = new AnonymousUser;
 		session_regenerate();
-		# message(MESSAGE_SUCCESS, t('You were successfully logged out.'));
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-function &user_find($mail) {
-	global $user;
-	static $accounts = array();
+function &user_find($cond) {
 
-	if ($user->mail === $mail) {
-		return $user;
+	$query = db_select('users', 'u')->fields('u');
+	foreach ($cond as $key => $value)
+		$query->condition($key, $value);
+	$account = $query->execute()->fetchObject('User');
+
+	if ($account) {
+		$account->data = (array) @unserialize($account->data);
 	}
 
-	if(array_key_exists($mail, $accounts)) {
-		return $accounts[$mail];
-	}
-
-	$accounts[$mail] = db_query('SELECT * FROM {users} u WHERE mail = :mail', array(':mail' => $mail))->fetchObject('User');
-
-	if ($accounts[$mail]) {
-		$accounts[$mail]->data = @unserialize($account->data);
-	}
-
-	return $accounts[$mail];
+	return $account;
 }

@@ -7,6 +7,7 @@ function file_was_sent($field_name) {
 }
 
 function file_upload($field_name, $old_fid = NULL) {
+	load_model('user');
 	global $user;
 
 	if (file_was_sent($field_name)) {
@@ -75,6 +76,7 @@ function file_info($fid, $field = NULL) {
 }
 
 function file_can_be_editted($fid) {
+	load_model('user');
 	global $user;
 
 	$info = file_info(array('fid' => $fid));

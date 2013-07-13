@@ -115,10 +115,26 @@ function scaffolding_check_action($table, $action) {
 
 	global $schema;
 
-	if(!isset($schema[$table]['roles'][$action]))
+	if($table) {
+		if(isset($schema[$table]['roles'][$action]))
+			if(user_has_role($schema[$table]['roles'][$action]))
+				if($action === 'view') {
+					if(isset($schema[$table]['view']))
+						return TRUE;
+				} else
+					return TRUE;
 		return FALSE;
-
-	return user_has_role($schema[$table]['roles'][$action]);
+	} else {
+		foreach ($schema as &$table_info)
+			if(isset($table_info['roles'][$action]))
+				if(user_has_role($table_info['roles'][$action]))
+					if($action === 'view') {
+						if(isset($table_info['view']))
+							return TRUE;
+					} else
+						return TRUE;
+		return FALSE;
+	}
 }
 
 function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
@@ -144,8 +160,10 @@ function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
 			case 'varchar':
 				$form_field = array(
 					'type' => 'text',
+					'max' => @$field_info['length'],
 				);
 				break;
+			case 'numeric':
 			case 'tinyint':
 			case 'float':
 			case 'int':
@@ -157,6 +175,13 @@ function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
 				$form_field = array(
 					'type' => 'datetime',
 					'format' => 'yyyy-MM-dd hh:mm:ss',
+				);
+				break;
+			case 'enum':
+				$form_field = array(
+					'type' => 'select',
+					'default' => @$field_info['default'],
+					'options' => @$field_info['options'],
 				);
 				break;
 			default:
@@ -233,7 +258,7 @@ function scaffolding_handle_form($table, $action, $id, &$form) {
 
 	$callback = @$schema[$table]['custom form handle'];
 	if(is_callable($callback)) {
-		if($callback($form))
+		if($callback($form, $action, $id))
 			return redirect("scaffolding/{$table}/index");
 	}
 	else {

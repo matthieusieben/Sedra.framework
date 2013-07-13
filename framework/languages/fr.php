@@ -73,9 +73,10 @@ $strings['fr']['Users'] = 'Utilisateurs';
 $strings['fr']['Users actions'] = 'Actions de compte';
 $strings['fr']['Users sessions'] = 'Sessions utilisateur';
 $strings['fr']['Files'] = 'Fichiers';
+$strings['fr']['Menus'] = 'Menus';
+$strings['fr']['Menu items'] = 'Liens du menu';
 $strings['fr']['Watchdog'] = 'Chien de garde';
 
 # Themes
-
 $strings['fr']['Are you sure?'] = '&Ecirc;tes-vous certain?';
 $strings['fr']['This cannot be undone.'] = 'Cette action ne peut pas &ecirc;tre annul&eacute;e.';

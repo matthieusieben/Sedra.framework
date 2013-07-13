@@ -1,5 +1,5 @@
-<?php require 'head.php'; ?>
-<?php require 'body.php'; ?>
+<?php require 'head.php' ?>
+<?php require 'body.php' ?>
 
 <div class="container">
 	<div class="row">
@@ -18,4 +18,4 @@
 	</div>
 </div>
 
-<?php require 'foot.php'; ?>
+<?php require 'foot.php' ?>

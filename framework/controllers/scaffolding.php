@@ -16,4 +16,3 @@ case 'remove':
 default:
 	return load_controller("scaffolding/{$content_action}");
 }
-

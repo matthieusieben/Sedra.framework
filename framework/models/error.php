@@ -57,12 +57,6 @@ function __exception_handler($e) {
 	# Clear output buffers
 	$output_buffer = ob_get_clean_all();
 
-	if($e instanceof FrameworkException && $e->getCode() === 403) {
-		load_model('user');
-		# The following function allows to redirrect to login page if not logged in.
-		user_role_required(AUTHENTICATED_RID);
-	}
-
 	# Set error status header
 	if(!headers_sent()) {
 		set_status_header($e instanceof FrameworkException ? $e->getCode() : 500);
@@ -70,10 +64,8 @@ function __exception_handler($e) {
 	}
 
 	try {
-		if(function_exists('theme'))
-			exit(theme('error/exception', array('exception' => $e, 'output_buffer' => $output_buffer)));
-		else
-			throw $e;
+		load_model('theme');
+		exit(theme('error/exception', array('exception' => $e, 'output_buffer' => $output_buffer)));
 	} catch(FrameworkException $e) {
 		fatal($e->getMessage(), NULL, $e->getCode(), $e->getFile(), $e->getLine(), $e->getTrace());
 	} catch(Exception $e) {

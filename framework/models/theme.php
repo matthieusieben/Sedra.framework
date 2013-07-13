@@ -8,10 +8,11 @@ function attributes($attributes = array()) {
 		if($data === FALSE)
 			continue;
 
-		if(!$data) {
+		if(!$data && !is_numeric($data)) {
 			$data = check_plain($attribute);
 		} else {
-			$data = implode(' ', (array) $data);
+			if(is_array($data))
+				$data = implode(' ', $data);
 			$data = check_plain($attribute) . '="' . check_plain($data) . '"';
 		}
 	}
@@ -64,33 +65,29 @@ function l(array $options) {
 	return '<a' . attributes($options['attributes']) . '>' . ($options['html'] ? $options['title'] : check_plain($options['title'])) . '</a>';
 }
 
-function theme_data(array $data) {
+function theme_data(array $__data) {
 	load_model('data');
 
-	global $site_data;
+	hook_invoke('user data', $__data);
 
-	$data += (array) $site_data;
+	$__data += data();
 
-	if(!isset($data['page_title'])) {
-		if(isset($data['title'])) {
-			$data['page_title'] = $data['site_name'] . ' - ' . $data['title'];
+	if(!isset($__data['page_title'])) {
+		if(isset($__data['title'])) {
+			$__data['page_title'] = $__data['site_name'] . ' - ' . $__data['title'];
 		}
 		else {
-			$data['page_title'] = $data['site_name'];
+			$__data['page_title'] = $__data['site_name'];
 		}
 	}
 
-	return $data;
+	return $__data;
 }
 
 function theme($__view, array $__data = array()) {
 	if(is_array($__view)) {
 		$__data = $__view;
 		$__view = @$__data['view'];
-	}
-
-	if(!$__view) {
-		return NULL;
 	}
 
 	# Avoid file name conflicts
@@ -101,18 +98,7 @@ function theme($__view, array $__data = array()) {
 		# Resolve the file
 		$__file = stream_resolve_include_path($__view.'.php');
 		if (!$__file) {
-			set_include_path($__current_include_path);
-			switch ($__view) {
-			case 'link':
-				return l($__data);
-			case 'array':
-				$__str = '';
-				foreach(@$__data['items'] as $__item)
-					$__str .= theme($__item);
-				return $__str;
-			default:
-				throw new FrameworkException(t("The view <code>@view</code> cannot be loaded.", array('@view' => $__view ? $__view : 'NULL')));
-			}
+			throw new FrameworkException(t("The view <code>@view</code> cannot be loaded.", array('@view' => $__view ? $__view : 'NULL')));
 		}
 
 		# Add default data & set them available
@@ -170,6 +156,10 @@ function theme_user_text(array $data) {
 }
 
 function theme_date($timestamp) {
+
+	if(!is_numeric($timestamp))
+		$timestamp = strtotime($timestamp);
+
 	$time_ago = REQUEST_TIME - $timestamp;
 
 	if ($time_ago >= 0) {
@@ -239,7 +229,16 @@ function theme_file($file_info, $thumbnail = TRUE, $as_link = TRUE) {
 }
 
 function theme_avatar($account, $size = 256) {
+	load_model('user');
 	load_model('avatar');
+
+	if(is_numeric($account))
+		$account = user_find(array('uid' => $account));
+	else if(is_string($account))
+		$account = user_find(array('mail' => $account));
+
+	if(!$account instanceof User)
+		return NULL;
 
 	$data = array(
 		'account' => $account,

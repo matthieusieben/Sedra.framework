@@ -8,16 +8,16 @@ global $strings;
 
 $language_default = config('site.language', 'en');
 $language_custom = @$_GET['language'];
-$languages = config('site.languages', array('en' => 'English'));
+$languages = config('site.languages');
 $language = $language_default;
 $strings = array();
 
-lang_set($language_custom);
+language_set($language_custom);
 
-function lang_load($l) {
+function language_load($l) {
 	global $strings, $languages;
 
-	if(empty($strings[$l]) && isset($languages[$l])) {
+	if(empty($strings[$l]) && (empty($languages) || isset($languages[$l]))) {
 		$strings[$l] = array();
 
 		if (is_file(FRAMEWORK_ROOT.'/languages/'.$l.'.php')) {
@@ -27,51 +27,54 @@ function lang_load($l) {
 		if (is_file(APP_ROOT.'/languages/'.$l.'.php')) {
 			require_once APP_ROOT.'/languages/'.$l.'.php';
 		}
-
-		# TODO : load from database
 	}
 }
 
-function lang_set($l) {
-	global $language, $language_custom, $languages;
-
-	if(empty($language_custom) || $l == $language_custom)
-		if(array_key_exists($l, $languages))
-			return $language = $l;
-
-	return $language = $language_custom;
+function language_is_valid($l) {
+	global $languages;
+	return empty($languages) || isset($languages[$l]);
 }
 
-function lang_list($lang = NULL) {
+function language_set($l) {
+	global $language, $language_custom, $language_default;
+
+	if($language_custom && language_is_valid($language_custom))
+		$language = $language_custom;
+	else if($l && language_is_valid($l))
+		$language = $l;
+	else
+		$language = $language_default;
+
+	language_load($language);
+}
+
+function language_list($lang = NULL) {
 	global $language, $languages;
-	static $lang_list;
+	static $language_list;
 	if (is_null($lang)) $lang = $language;
-	if (!isset($lang_list[$lang])) {
+	if (!isset($language_list[$lang])) {
 		foreach($languages as $code => $name) {
-			$lang_list[$lang][$code] = t($name);
+			$language_list[$lang][$code] = t($name);
 		}
 	}
-	return $lang_list[$lang];
+	return $language_list[$lang];
 }
 
-function lang_name($lang = NULL) {
+function language_name($lang = NULL) {
 	global $language;
 	if (is_null($lang)) $lang = $language;
-	$list = lang_list($lang);
+	$list = language_list($lang);
 	return isset($list[$lang]) ? $list[$lang] : NULL;
 }
 
 function t($string, $replace_pairs = array()) {
 	global $strings, $language;
 
-	lang_load($language);
-
 	if (isset($strings[$language][$string])) {
 		# Translation string exists
 		$string = $strings[$language][$string];
 	}
 	# else : Not found, not translated
-	# TODO : add in database when not found.
 
 	# Transform arguments before inserting them.
 	foreach ($replace_pairs as $key => $value) {

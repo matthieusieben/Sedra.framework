@@ -8,6 +8,7 @@
 	'message' => val($message, t('This cannot be undone.')),
 	'confirm' => $_original_link, # Original link.
 )); ?>
-<?php $_original_link['anchor'] = $id; ?>
-<?php $_original_link['attributes']['data-toggle'] = 'modal'; ?>
-<?php echo l($_original_link); ?>
+<?php $_replacement_link = $__data; ?>
+<?php $_replacement_link['anchor'] = $id; ?>
+<?php $_replacement_link['attributes']['data-toggle'] = 'modal'; ?>
+<?php echo l($_replacement_link); ?>

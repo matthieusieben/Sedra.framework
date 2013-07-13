@@ -17,13 +17,14 @@ function hook_register($hook, $callback) {
 		$hooks[$hook][] = $callback;
 }
 
-function hook_invoke($hook, &$data = NULL) {
+function hook_invoke($hook, &$data = NULL, $once = FALSE) {
 	global $hooks;
+	static $called = array();
 
 	if (!empty($hooks[$hook])) {
 		foreach ($hooks[$hook] as $callback) {
 			if(is_callable($callback)) {
-				call_user_func($callback, $data);
+				call_user_func_array($callback, array(&$data));
 			}
 		}
 	}

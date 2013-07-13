@@ -13,8 +13,11 @@ function message($type = NULL, $message = NULL) {
 		$messages = isset($_SESSION['messages']) ? $_SESSION['messages'] : array();
 	}
 
-	if(!func_num_args()) {
+	if(func_num_args() === 0) {
+		$msgs = $messages;
 		unset($_SESSION['messages']);
+		$messages = array();
+		return $msgs;
 	}
 	else if($message) {
 		$messages[$type][] = $message;
@@ -23,3 +26,4 @@ function message($type = NULL, $message = NULL) {
 
 	return $messages;
 }
+

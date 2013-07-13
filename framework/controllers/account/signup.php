@@ -42,7 +42,7 @@ $signup_form = array(
 			'type' => 'select',
 			'default' => $user->language,
 			'required' => TRUE,
-			'options' => lang_list(),
+			'options' => language_list(),
 		),
 		'timezone' => array(
 			'placeholder' => t('Timezone'),

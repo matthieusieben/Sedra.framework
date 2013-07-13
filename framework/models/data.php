@@ -1,94 +1,31 @@
 <?php
 
-global $site_data;
-global $private_pages;
+load_model('menu');
 
-global $request_path, $controller, $language;
-$site_data = array(
-	'site_name' => config('site.name', 'Sedra Framework'),
-	'site_logo' => ($logo_url = file_url(config('site.logo'))) ? $logo_url : config('site.logo'),
-	'site_slogan' => config('site.slogan', NULL),
+# uses
+global $language;
+global $breadcrumb;
+global $menus;
+# provides
+global $data;
+
+$data = array(
 	'lang' => $language,
-	'body' => array(
-		'attributes' => array(
-			'class' => array(
-				'controller-'.$controller,
-				'path-'.str_replace('/','-',$request_path),
-			),
-		),
-	),
+	'breadcrumb' => &$breadcrumb,
+	'menus' => &$menus,
+	'site_name' => config('site.name', 'Sedra Framework'),
 );
 
-$site_data['menus']['nav-main'] = array(
-	'attributes' => array(
-		'id' => 'nav-main',
-	),
-	'items' => array(
-	),
-);
-
-$site_data['menus']['user'] = array(
-	'attributes' => array(
-		'id' => 'user-menu',
-	),
-	'items' => array(
-		array(
-			'title' => t('Account details'),
-			'path' => 'account/index',
-		),
-		array(
-			'title' => t('Change my credentials'),
-			'path' => 'account/password',
-		),
-	),
-);
-
-$site_data['menus']['nav-secondary'] = array(
-	'attributes' => array(
-		'id' => 'nav-secondary',
-	),
-	'items' => array(
-	),
-);
-
-load_model('user');
-if(user_has_role(AUTHENTICATED_RID)) {
-	$site_data['menus']['nav-secondary']['items'][] = array(
-		'title' => t('Site content'),
-		'path' => 'scaffolding',
-		'icon' => '<i class="icon-file"></i>',
-	);
-
-	$site_data['menus']['nav-secondary']['items'][] = array(
-		'title' => t('Account'),
-		'path' => 'account',
-		'icon' => '<i class="icon-user"></i>',
-		'sub' => array(
-			'items' => array(
-				array(
-					'title' => t('My account'),
-					'path' => 'account/index',
-				),
-				array(
-					'title' => t('Logout'),
-					'path' => 'account/logout',
-				),
-			),
-		),
-	);
-} else {
-	$site_data['menus']['nav-secondary']['items'][] = array(
-		'title' => t('Login'),
-		'path' => 'account/login',
-		'icon' => '<i class="icon-user icon-white"></i>',
-	);
+# Get data
+function &data($key = NULL, $default = NULL) {
+	global $data;
+	hook_invoke('site data', $data);
+	if(isset($key)) {
+		if(isset($data[$key]))
+			return $data[$key];
+		else {
+			return $default;
+		}
+	}
+	return $data;
 }
-
-$private_pages = array(
-	'account',
-	'account/',
-	'error',
-	'error/',
-	'file/',
-	'phpinfo',
-);

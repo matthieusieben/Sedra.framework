@@ -33,6 +33,12 @@ defined('PRIVATE_DIR') or define('PRIVATE_DIR', SITE_ROOT.'private/');
 # Framework variables
 define('SEDRA_VERSION', '1.0');
 
+# User roles
+define('ANONYMOUS_RID', 0);
+define('AUTHENTICATED_RID', 1);
+define('MODERATOR_RID', 2);
+define('ADMINISTRATOR_RID', 3);
+
 # Add INCLUDES_DIR to the path
 set_include_path(APP_MODELS.PATH_SEPARATOR.FRAMEWORK_MODELS);
 
@@ -63,11 +69,12 @@ require 'url.php';
 
 # Load settings
 if(!@include APP_ROOT.'settings.php') {
-	load_model('theme');
-	fatal('Could not load settings file.');
+	require 'language.php';
+	throw new FrameworkException('Could not load settings file.', 500);
 }
 
-require 'lang.php';
+# Language support should be loaded after settings file
+require 'language.php';
 
 # Include libraries
 global $libraries;

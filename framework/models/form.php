@@ -81,14 +81,14 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 	);
 	$field['form'] = &$form;
 	$field['style'] = &$form['style'];
-	$field['submitted'] = isset($form['request'][$field['name']]);
+	$field['submitted'] = array_key_exists($field['name'], $form['request']);
 
 	# Setup the value of non-form fields
 	if ($field['type'] !== 'form') {
 
 		if($form['submitted'] && !$field['disabled'])
-			$field['value'] = @$form['request'][$field['name']];
-		else if (empty($field['value']))
+			$field['value'] = $form['request'][$field['name']];
+		else if ($field['value'] === NULL)
 			$field['value'] = $field['default'];
 
 		if ($field['multiple']) {
@@ -98,7 +98,7 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 			# Prevent hack
 			if (is_array($field['value'])) {
 				$field['valid'] = FALSE;
-				$field['value'] = $field['default'];
+				$field['value'] = NULL;
 			}
 		}
 	}
@@ -130,7 +130,7 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 		}
 
 		# Provide default validation
-		if ($field['required'] && !$was_validated) {
+		if (!$was_validated && $field['required']) {
 			if (!$field['valid'] && !is_numeric($field['value'])) {
 				# Mark the field as invalid if empty
 				$field['valid'] = FALSE;
@@ -139,7 +139,7 @@ function _form_run_field(&$form, &$field, $name = NULL) {
 
 		# Provide defualt error message
 		if(!$field['valid'] && empty($field['error'])) {
-			$field['error'] = t('This field is required');
+			$field['error'] = t('This value is not allowed.');
 		}
 	}
 
@@ -262,27 +262,38 @@ function _form_handle_select(&$form, &$field) {
 function _form_handle_multiple_field(&$form, &$field) {
 	if ($field['multiple']) {
 		foreach ($field['value'] as $_k => $_value) {
+			# Replace empty string by NULL
+			if ($_value === '') {
+				$_value = $field['value'][$_k] = NULL;
+			}
+
+			# Convert to number if needed
+			if(is_numeric($_value)) {
+				$_value = $field['value'][$_k] += 0;
+			}
+
 			# Remove unproposed values
 			if (!isset($field['options'][$_value])) {
 				unset($field['value'][$_k]);
-			}
-			# Replace empty string by NULL
-			elseif ($_value === '') {
-				$field['value'][$_k] = NULL;
 			}
 		}
 	}
 	# Not a multiple field
 	else {
-		# Reset invalid value (prevent hack)
-		if (!isset($field['options'][$field['value']])) {
-			$field['valid'] = FALSE;
-			$field['value'] = $field['default'];
-		}
-
 		# Replace empty string by NULL
 		if ($field['value'] === '')
 			$field['value'] = NULL;
+
+		# Convert to number if needed
+		if(is_numeric($field['value'])) {
+			$field['value'] += 0;
+		}
+
+		# Reset invalid value (prevent hack)
+		if (!isset($field['options'][$field['value']])) {
+			$field['valid'] = FALSE;
+			$field['value'] = NULL;
+		}
 	}
 }
 

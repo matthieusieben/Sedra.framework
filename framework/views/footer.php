@@ -1,3 +1,1 @@
-
-	</div>
-<?php require 'foot.php' ?>
+</div>

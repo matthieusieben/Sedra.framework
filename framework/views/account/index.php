@@ -1,7 +1,8 @@
 <?php require 'head.php' ?>
+<?php require 'body.php' ?>
 <?php require 'header.php' ?>
 
-	<?php require 'account/header.php'; ?>
+	<?php require 'account/header.php' ?>
 
 	<div id="account" class="row">
 
@@ -22,6 +23,7 @@
 
 	</div>
 
-	<?php require 'account/footer.php'; ?>
+	<?php require 'account/footer.php' ?>
 
 <?php require 'footer.php' ?>
+<?php require 'foot.php' ?>

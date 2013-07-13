@@ -17,7 +17,7 @@ session_start();
 global $user;
 
 if(!isset($user)) {
-	throw new FrameworkException(t('No user data'), 500, E_ERROR);
+	throw new FrameworkException(t('No user data'), 500);
 }
 
 user_setup_environment();
@@ -33,39 +33,45 @@ function _session_close() {
 function _session_read($sid) {
 	global $user;
 
-	// Make sure the session data is written
+	# Make sure the session data is written
 	hook_register('shutdown', 'session_write_close');
 
 	if (!isset($_COOKIE[session_name()])) {
-		$user = anonymous_user();
+		$user = new AnonymousUser;
 		return '';
 	}
 
-	$user = db_query("SELECT s.*, u.* FROM {sessions} s LEFT JOIN {users} u ON u.uid = s.uid WHERE s.sid = :sid", array(':sid' => $sid))->fetchObject('User');
+	try {
+		$user = db_query("SELECT s.*, u.* FROM {sessions} s LEFT JOIN {users} u ON u.uid = s.uid WHERE s.sid = :sid", array(':sid' => $sid))->fetchObject('User');
+	} catch(PDOException $e) {
+		# May hapen when database is not created yet.
+		$user = NULL;
+	}
 
-	// We found the client's session record and they are an authenticated,
-	// active user.
+	# We found the client's session record and they are an authenticated,
+	# active user.
 	if ($user && (int) $user->uid > 0 && (int) $user->status == 1) {
-		// This is done to unserialize the data member of $user.
-		$user->data = @unserialize($user->data);
+		# This is done to unserialize the data member of $user.
+		$user->data = (array) @unserialize($user->data);
 	}
 	else if ($user) {
-		// The user is anonymous or blocked. Only preserve two fields from the
-		// {sessions} table.
-		$account = anonymous_user();
+		# The user is blocked. Only preserve two fields from the
+		# {sessions} table.
+		$account = new AnonymousUser;
 		$account->sid = $sid;
 		$account->session = $user->session;
 		$account->timestamp = $user->timestamp;
 		$user = $account;
 	}
 	else {
-		// The session has expired.
-		$user = anonymous_user();
+		# The session has expired.
+		$user = new AnonymousUser;
 		$user->sid = $sid;
 		$user->session = '';
 	}
 
 	reg('session_last_read', array(
+		'uid' => $user->uid,
 		'sid' => $sid,
 		'value' => $user->session,
 	));
@@ -76,26 +82,34 @@ function _session_read($sid) {
 function _session_write($sid, $value) {
 	global $user;
 
-	try {
-		# We may have had an error connecting to the database
-		if(!isset($user)) {
-			return TRUE;
-		}
+	# We may have had an error connecting to the database
+	if(!isset($user)) {
+		return TRUE;
+	}
 
-		if ($user->uid && REQUEST_TIME - $user->access > config('session.write_interval', 180)) {
-			$user->access = REQUEST_TIME;
-		}
+	# Only write access data once every session.write_interval seconds
+	if ($user->uid && REQUEST_TIME - $user->access > config('session.write_interval', 180)) {
+		$user->access = REQUEST_TIME;
+	}
 
-		$user->save();
+	# Save all cahnges made to the user
+	$user->save();
 
-		if (!$user->uid && empty($_COOKIE[session_name()]) && empty($value)) {
-			return TRUE;
-		}
+	# User is anonymous and has no session data
+	if (!$user->uid && empty($_COOKIE[session_name()]) && empty($value)) {
+		return TRUE;
+	}
 
-		$last_read = reg('session_last_read');
-		$is_changed = $last_read['sid'] != $sid || $last_read['value'] !== $value;
+	$last_read = reg('session_last_read');
 
-		if ($is_changed || !isset($user->timestamp) || REQUEST_TIME - $user->timestamp > config('session.write_interval', 180)) {
+	if(	empty($user->timestamp)
+	||	@$last_read['uid'] != $user->uid
+	||	@$last_read['sid'] != $sid
+	||	@$last_read['value'] != $value
+	|| 	REQUEST_TIME - $user->timestamp > config('session.write_interval', 180)
+	) {
+		try {
+			# Update session
 			db_merge('sessions')
 				->key(array(
 					'sid' => $sid
@@ -107,15 +121,12 @@ function _session_write($sid, $value) {
 					'timestamp' => REQUEST_TIME,
 				))
 				->execute();
+		} catch (PDOException $e) {
+			# May hapen when database is not created yet.
 		}
+	}
 
-		return TRUE;
-	}
-	catch (Exception $e) {
-		load_model('log');
-		log_exception($e);
-		return FALSE;
-	}
+	return TRUE;
 }
 
 function _session_garbage_collection($lifetime) {
@@ -128,13 +139,13 @@ function _session_garbage_collection($lifetime) {
 function _session_destroy($sid) {
 	global $user;
 
-	// Delete session data.
+	# Delete session data.
 	db_delete('sessions')
 		->condition('sid', $sid)
 		->execute();
 
 	$_SESSION = array();
-	$user = anonymous_user();
+	$user = new AnonymousUser;
 
 	if (isset($_COOKIE[session_name()])) {
 		$params = session_get_cookie_params();
