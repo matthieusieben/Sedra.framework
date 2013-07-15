@@ -1,17 +1,16 @@
 <?php
 
-load_model('file');
+require_once 'includes/file.php';
 
 if (headers_sent()) {
 	throw new FrameworkException(t('HTTP Headers already sent while trying to output a file.'));
 }
 
 $info = file_info(array('hash' => url_segment(1)));
-if (!$info) {
-	show_404();
-}
 
-hook_invoke('file', $info);
+if (!$info) show_404();
+
+hook_invoke('file display', $info);
 
 set_status_header(200);
 

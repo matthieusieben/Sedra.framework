@@ -1,8 +1,8 @@
-<?php require 'head.php' ?>
+<?php require 'views/head.php' ?>
 	<style>
 	body { padding-top: 60px; }
 	</style>
-<?php require 'body.php' ?>
+<?php require 'views/body.php' ?>
 
 	<div class="container">
 		<div class="hero-unit">
@@ -13,4 +13,4 @@
 		</div>
 	</div>
 
-<?php require 'foot.php' ?>
+<?php require 'views/foot.php' ?>

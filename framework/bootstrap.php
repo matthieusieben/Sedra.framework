@@ -9,20 +9,9 @@ defined('SITE_ROOT') or define('SITE_ROOT', dirname($caller[0]['file']).'/');
 
 # Application folder
 defined('APP_ROOT') or define('APP_ROOT', SITE_ROOT.'application/');
-define('APP_CONTROLLERS', APP_ROOT.'controllers/');
-define('APP_LIBRARIES', APP_ROOT.'libraries/');
-define('APP_MODELS', APP_ROOT.'models/');
-define('APP_VIEWS', APP_ROOT.'views/');
 
 # Framework folders
 defined('FRAMEWORK_ROOT') or define('FRAMEWORK_ROOT', __DIR__.'/');
-define('FRAMEWORK_CONTROLLERS', FRAMEWORK_ROOT.'controllers/');
-define('FRAMEWORK_LIBRARIES', FRAMEWORK_ROOT.'libraries/');
-define('FRAMEWORK_MODELS', FRAMEWORK_ROOT.'models/');
-define('FRAMEWORK_VIEWS', FRAMEWORK_ROOT.'views/');
-
-# View include path
-defined('VIEW_PATH') or define('VIEW_PATH', APP_VIEWS.PATH_SEPARATOR.FRAMEWORK_VIEWS);
 
 # Public folder
 defined('PUBLIC_DIR') or define('PUBLIC_DIR', SITE_ROOT.'public/');
@@ -40,7 +29,7 @@ define('MODERATOR_RID', 2);
 define('ADMINISTRATOR_RID', 3);
 
 # Add INCLUDES_DIR to the path
-set_include_path(APP_MODELS.PATH_SEPARATOR.FRAMEWORK_MODELS);
+set_include_path(FRAMEWORK_ROOT);
 
 # Unset globals
 if (ini_get('register_globals')) {
@@ -62,32 +51,25 @@ if (ini_get('register_globals')) {
 }
 
 # Load core files
-require 'functions.php';
-require 'hook.php';
-require 'error.php';
-require 'url.php';
+require 'includes/functions.php';
+require 'includes/hook.php';
+require 'includes/error.php';
+require 'includes/url.php';
 
 # Load settings
 if(!@include APP_ROOT.'settings.php') {
-	require 'language.php';
+	require 'includes/language.php';
 	throw new FrameworkException('Could not load settings file.', 500);
 }
 
 # Language support should be loaded after settings file
-require 'language.php';
-
-# Include libraries
-global $libraries;
-foreach((array) @$libraries as $library => $required)
-	load_library($library, $required);
-unset($library);
-unset($required);
+require 'includes/language.php';
 
 # Include modules
-global $models;
-foreach((array) @$models as $model)
-	if($model) load_model($model);
-unset($model);
+foreach((array) config('modules') as $module => $required)
+	load_module($module, $required);
+unset($module);
+unset($required);
 
 # Main controller
 global $controller;

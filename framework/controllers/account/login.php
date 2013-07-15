@@ -1,9 +1,9 @@
 <?php
 
-load_model('user');
-load_model('theme');
-load_model('form');
-load_model('watchdog');
+require_once 'includes/user.php';
+require_once 'includes/theme.php';
+require_once 'includes/form.php';
+require_once 'includes/watchdog.php';
 
 if(user_has_role(AUTHENTICATED_RID))
 	return redirect(config('account'));
@@ -11,6 +11,7 @@ if(user_has_role(AUTHENTICATED_RID))
 $login_form = array(
 	'style' => 'vertical',
 	'title' => config('site.name', 'Sedra Framework'),
+	'autocomplete' => TRUE,
 	'fields' => array(
 		'mail' => array(
 			'placeholder' => t('Email'),
@@ -64,11 +65,9 @@ if(form_run($login_form) && form_is_valid($login_form)) {
 	}
 	else {
 		# Login
-		if(user_login($mail, $pass)) {
+		$login_form['valid'] = user_login($mail, $pass, 'login', $login_form['error']);
+		if($login_form['valid']) {
 			redirect(config('site.home', 'index'));
-		} else {
-			$login_form['valid'] = FALSE;
-			$login_form['error'] = t('Wrong email or password.');
 		}
 	}
 }

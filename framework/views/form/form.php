@@ -10,5 +10,5 @@
 			</span>
 		</div>
 	<?php endif; ?>
-	<?php require 'fieldset.php'; ?>
+	<?php require 'views/form/fieldset.php'; ?>
 </form>

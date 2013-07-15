@@ -1,11 +1,10 @@
 <?php
 
-load_model('user');
-load_model('data');
-load_model('theme');
-load_model('form');
-load_model('timezone');
-load_model('watchdog');
+require_once 'includes/user.php';
+require_once 'includes/theme.php';
+require_once 'includes/form.php';
+require_once 'includes/timezone.php';
+require_once 'includes/watchdog.php';
 
 if(user_has_role(AUTHENTICATED_RID))
 	return redirect(config('site.home', 'account'));
@@ -76,8 +75,12 @@ $signup_form = array(
 
 if(form_run($signup_form) && form_is_valid($signup_form)) {
 	$values = form_values($signup_form);
-	if(user_register($values)) {
+	$error_message = NULL;
+	if(user_register($values, $error_message)) {
 		redirect(isset($_GET['redirect']) ? $_GET['redirect'] : config('site.home', 'index'));
+	}
+	else {
+		$form['error'] = $error_message;
 	}
 }
 

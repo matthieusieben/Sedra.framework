@@ -1,4 +1,4 @@
-<?php if(!isset($items)) return; ?>
+<?php if(empty($items)) return; ?>
 <?php if(!isset($divider)) $divider = '/' ?>
 <?php $attributes = (array) @$attributes; ?>
 <?php $attributes['class'][] = 'breadcrumb'; ?>

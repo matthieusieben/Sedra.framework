@@ -1,6 +1,6 @@
 <?php
 
-load_model('user');
+require_once 'includes/user.php';
 
 if(user_has_role(AUTHENTICATED_RID)) {
 	redirect('account');

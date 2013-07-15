@@ -1,11 +1,11 @@
 <?php
 
-load_model('user');
-load_model('form');
-load_model('menu');
-load_model('theme');
-load_model('timezone');
-load_model('message');
+require_once 'includes/user.php';
+require_once 'includes/form.php';
+require_once 'includes/menu.php';
+require_once 'includes/theme.php';
+require_once 'includes/timezone.php';
+require_once 'includes/message.php';
 
 user_role_required(AUTHENTICATED_RID);
 

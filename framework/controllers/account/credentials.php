@@ -1,9 +1,10 @@
 <?php
 
-load_model('user');
-load_model('form');
-load_model('menu');
-load_model('theme');
+require_once 'includes/user.php';
+require_once 'includes/form.php';
+require_once 'includes/menu.php';
+require_once 'includes/theme.php';
+require_once 'includes/message.php';
 
 user_role_required(AUTHENTICATED_RID);
 
@@ -94,7 +95,7 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 			user_setup_environment();
 			message(MESSAGE_SUCCESS, t('Your account has been updated.'));
 		}
-	} catch(Exception $e) {
+	} catch(PDOException $e) {
 		message(MESSAGE_ERROR, t('This email address is already in use.'));
 	}
 }

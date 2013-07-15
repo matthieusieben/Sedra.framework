@@ -10,12 +10,19 @@
 	))),
 )); ?>
 
-<div id="container" class="container">
+<div id="wrapper" class="container">
 
-	<?php echo theme('components/breadcrumb', $breadcrumb); ?>
+	<header id="header">
+		<?php if (@$site_name): ?>
+			<h1 id="site_name" role="banner"><?php echo $site_name ?></h1>
+		<?php endif ?>
+	</header>
 
-	<?php if (@$title): ?>
-		<h2 id="title"><?php echo $title ?></h2>
-	<?php endif ?>
+	<div id="main" role="main">
+		<?php require 'views/components/message.php' ?>
 
-	<?php require 'components/message.php' ?>
+		<?php echo theme('components/breadcrumb', $breadcrumb); ?>
+
+		<?php if (@$title): ?>
+			<h1 id="page_title"><?php echo $title ?></h1>
+		<?php endif ?>

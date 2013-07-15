@@ -1,10 +1,10 @@
-<?php require 'head.php' ?>
-<?php require 'body.php' ?>
+<?php require 'views/head.php' ?>
+<?php require 'views/body.php' ?>
 
 <div class="container">
 	<div class="row">
 		<div class="span6 offset3">
-			<?php require 'components/message.php' ?>
+			<?php require 'views/components/message.php' ?>
 
 			<?php $login_form['attributes']['class'][] = 'form-signin' ?>
 			<?php $login_form['fields']['mail']['attributes']['class'][] = 'input-xlarge' ?>
@@ -15,4 +15,4 @@
 	</div>
 </div>
 
-<?php require 'foot.php' ?>
+<?php require 'views/foot.php' ?>

@@ -8,9 +8,8 @@ try {
 	$create_setup = TRUE;
 }
 
-load_model('theme');
-load_model('schema');
-load_model('kprintr');
+require_once 'includes/theme.php';
+require_once 'includes/schema.php';
 
 if($create_setup) {
 	# TODO
@@ -20,15 +19,14 @@ if($create_setup) {
 	$first_install = !db_table_exists('users') || !db_table_exists('sessions');
 
 	if(!$first_install) {
-		load_model('user');
+		require_once 'includes/user.php';
 		user_role_required(ADMINISTRATOR_RID);
 	}
 
-	global $schema;
-	foreach ($schema as $name => $table) {
+	foreach (schema_get_all() as $name => $table) {
 		if (!empty($table) && !db_table_exists($name)) {
 			# XXX
-			echo "installing {$name}. \n";
+			echo "installing {$name}. <br/>\n";
 
 			sedra_schema_init($name, $table);
 			sedra_schema_install($table);
@@ -41,8 +39,7 @@ if($create_setup) {
 		$mail = 'admin@example.com';
 		$pass = 'admin';
 
-		load_model('scaffolding');
-		scaffolding_add_item('users', array(
+		db_insert('users')->fields(array(
 			'rid' => ADMINISTRATOR_RID,
 			'name' => $name,
 			'mail' => $mail,
@@ -53,6 +50,6 @@ if($create_setup) {
 			'access' => REQUEST_TIME,
 			'login' => REQUEST_TIME,
 			'status' => 1,
-		));
+		))->execute();
 	}
 }

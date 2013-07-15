@@ -47,24 +47,14 @@ $databases['default']['default'] = array (
 	'prefix' =>		'',
 );
 
-# Model files to include by default
-$models = array_merge(array(
-	# Common
-	'user',
-), $config['devel'] ? array(
-	# Devel only
-	'kprintr',
-	'devel',
-) : array(
-	# Production only
-));
-
-# Libraries to load by default ('name' => mandatory[TRUE/FALSE])
-$libraries = array(
-	'html5shim' => FALSE,
-	'bootstrap' => FALSE,
-	'analytics' => FALSE,
-);
+# Modules to load by default ('name' => mandatory[TRUE/FALSE])
+$config['modules'] = array();
+if($config['devel'])
+$config['modules']['devel'] = FALSE;
+$config['modules']['scaffolding'] = TRUE;
+$config['modules']['html5shim'] = FALSE;
+$config['modules']['bootstrap'] = FALSE;
+$config['modules']['analytics'] = FALSE;
 
 # reCaptcha
 $config['recaptcha.public'] = NULL;
