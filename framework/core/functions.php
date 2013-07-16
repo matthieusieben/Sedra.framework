@@ -82,7 +82,7 @@ function random_salt($length = 32) {
 	return substr(hash('sha256', random_bytes(64)), 0, min(64, max(0, $length)));
 }
 
-function set_status_header($code = 200)
+function set_status_header($code = 200, $override = TRUE)
 {
 	if (headers_sent()) return;
 
@@ -138,7 +138,7 @@ function set_status_header($code = 200)
 
 	if (substr(php_sapi_name(), 0, 3) === 'cgi')
 	{
-		header("Status: {$code} {$text}", TRUE);
+		header("Status: {$code} {$text}", $override);
 	}
 	else
 	{
@@ -146,11 +146,11 @@ function set_status_header($code = 200)
 
 		if ( substr($server_protocol,0,4) === 'HTTP' )
 		{
-			header($server_protocol." {$code} {$text}", TRUE, $code);
+			header($server_protocol." {$code} {$text}", $override, $code);
 		}
 		else
 		{
-			header("HTTP/1.1 {$code} {$text}", TRUE, $code);
+			header("HTTP/1.1 {$code} {$text}", $override, $code);
 		}
 	}
 }
@@ -201,6 +201,7 @@ function load_module($__module, $__required = TRUE) {
 	if(isset($__loaded[$__module]))
 		return $__loaded[$__module];
 
+	$__loaded[$__module] = FALSE;
 	foreach(array(APP_ROOT, FRAMEWORK_ROOT . 'modules/') as $__root) {
 		$__folder = $__root . $__module . '/';
 
@@ -208,19 +209,25 @@ function load_module($__module, $__required = TRUE) {
 			set_include_path($__folder . PATH_SEPARATOR . get_include_path());
 
 			if(is_file($__file = $__folder . 'bootstrap.php'))
-				return $__loaded[$__module] = require_once($__file);
+				$__loaded[$__module] = require_once($__file);
 			else
-				return TRUE;
+				$__loaded[$__module] = TRUE;
+
+			break;
 		}
 	}
 
-	if($__required)
+	if(!$__loaded[$__module] && $__required)
 		throw new FrameworkLoadException(t('Cannot load module @module', array('@module' => $__module)));
 
-	return FALSE;
+	return $__loaded[$__module];
 }
 
-function load_controller($__controller, $arg = NULL) {
+function load_controller($__controller, array $arg = array()) {
+	if(is_array($__controller)) {
+		$arg = $__controller;
+		$__controller = @$arg[0];
+	}
 
 	if($__file = stream_resolve_include_path("controllers/{$__controller}.php"))
 		return require($__file);

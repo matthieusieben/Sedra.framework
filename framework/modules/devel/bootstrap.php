@@ -1,12 +1,11 @@
 <?php
 
-require_once 'includes/database.php';
-Database::startLog('devel');
+# Start database debugging
+if(class_exists('Database'))
+	Database::startLog('devel');
 
-# Load PHP-ref
-require_once 'modules/devel/php-ref/ref.php';
-
-global $_library_ref_css, $_library_ref_js;
+# Load php-ref
+require_once 'libraries/php-ref/ref.php';
 
 # Configure PHP-ref
 ref::config('shortcutFunc', array('r', 'rt', 'dvm', 'devel'));
@@ -16,8 +15,8 @@ ref::config('showPrivateMembers', TRUE);
 ref::config('showResourceInfo', TRUE);
 
 # Get default css and js files
-$_library_ref_css = ref::config('stylePath', NULL);
-$_library_ref_js = ref::config('scriptPath', NULL);
+reg('library_ref_css', ref::config('stylePath'));
+reg('library_ref_js', ref::config('scriptPath'));
 
 # Disable JS and CSS printing
 ref::config('stylePath', FALSE);
@@ -28,7 +27,6 @@ function devel($variable) {
 }
 
 function dvm($variable) {
-
 	ob_start();
 	r($variable);
 	$devel = ob_get_clean();
@@ -38,11 +36,9 @@ function dvm($variable) {
 }
 
 # Include JS and CSS at end of page
-hook_register('html_foot', function () {
-	global $_library_ref_css, $_library_ref_js;
-
-	echo theme_css(str_replace('{:dir}', 'modules/devel/php-ref', $_library_ref_css));
-	echo theme_js(str_replace('{:dir}', 'modules/devel/php-ref', $_library_ref_js));
+hook_register('html_head', function () {
+	echo theme_css(str_replace('{:dir}', 'libraries/php-ref', reg('library_ref_css')));
+	echo theme_js(str_replace('{:dir}', 'libraries/php-ref', reg('library_ref_js')));
 });
 
 # Devel block
@@ -55,13 +51,13 @@ hook_register('html_foot', function () {
 	global $user;
 	if(isset($user)) devel($user);
 
-	if($queries = @Database::getLog('devel', 'default'))
-		devel($queries);
+	if(class_exists('Database'))
+		if($queries = @Database::getLog('devel', 'default'))
+			devel($queries);
 
 	devel($GLOBALS);
 
 	echo '</div>';
 });
-
 
 return TRUE;

@@ -2,12 +2,12 @@
 
 defined('MAX_ROWS_DISPLAY') or define('MAX_ROWS_DISPLAY', 20);
 
-require_once 'includes/user.php';
 require_once 'includes/form.php';
 require_once 'includes/schema.php';
 require_once 'includes/menu.php';
 require_once 'includes/pagination.php';
 require_once 'includes/theme.php';
+require_once 'includes/scaffolding.php';
 
 global $content_table;
 global $content_table_info;
@@ -98,9 +98,16 @@ while($content_row = ($content_q->fetchAssoc())) {
 		);
 	}
 	else {
-		foreach($content_row as $field => $value)
-			if(!@$content_table_info['fields'][$field]['hidden'])
-				$row[$field] = check_plain($value);
+		foreach($content_row as $field => $value) {
+			if(!@$content_table_info['fields'][$field]['hidden']) {
+				if(isset($content_table_info['fields'][$field]['options'][$value])) {
+					$row[$field] = $content_table_info['fields'][$field]['options'][$value];
+				}
+				else {
+					$row[$field] = check_plain($value);
+				}
+			}
+		}
 	}
 
 	if($primary && ($can_edit || $can_remove)) {

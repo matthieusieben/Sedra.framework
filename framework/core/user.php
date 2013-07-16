@@ -1,7 +1,5 @@
 <?php
 
-require_once 'includes/session.php';
-
 class User {
 
 	public $sid;
@@ -65,7 +63,7 @@ class User {
 			session_regenerate();
 			break;
 		case 'rid':
-			if($this->uid && user_has_role(MODERATOR_RID) && ANONYMOUS_RID < $value && $value <= AUTHENTICATED_RID) {
+			if($this->uid && user_has_role(MODERATOR_RID) && AUTHENTICATED_RID <= $value && $value <= ADMINISTRATOR_RID) {
 				# OK
 			} else {
 				return NULL;
@@ -356,10 +354,8 @@ function user_action_request($mail, $action) {
 		load_module('mail');
 		require_once 'includes/theme.php';
 
-		if($action == 'reset') {
-			require_once 'includes/log.php';
+		if($action === 'reset')
 			log_message('Password reset for "'.$mail.'"');
-		}
 
 		db_insert('users_actions')
 			->fields(array(

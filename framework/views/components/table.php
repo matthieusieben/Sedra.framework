@@ -8,15 +8,13 @@
 			<thead>
 				<tr>
 					<?php foreach($header as $_value): ?>
-						<?php if (is_string($_value)): ?>
-							<th>
+						<th>
+							<?php if (is_string($_value)): ?>
 								<?php echo $_value; ?>
-							</th>
-						<?php else: ?>
-							<th>
+							<?php elseif(!empty($_value)): ?>
 								<?php echo theme($_value); ?>
-							</th>
-						<?php endif; ?>
+							<?php endif; ?>
+						</th>
 					<?php endforeach; ?>
 				</tr>
 			</thead>
@@ -27,15 +25,13 @@
 				<?php foreach($rows as $_row): ?>
 					<tr>
 						<?php foreach($_row as $_value): ?>
-							<?php if (is_string($_value)): ?>
-								<td>
+							<td>
+								<?php if (is_string($_value)): ?>
 									<?php echo $_value; ?>
-								</td>
-							<?php else: ?>
-								<td>
+								<?php elseif(!empty($_value)): ?>
 									<?php echo theme($_value); ?>
-								</td>
-							<?php endif; ?>
+								<?php endif; ?>
+							</td>
 						<?php endforeach; ?>
 					</tr>
 				<?php endforeach; ?>
@@ -46,7 +42,13 @@
 			<tfoot>
 				<tr>
 					<?php foreach($footer as $_value): ?>
-						<td><?php echo $_value; ?></td>
+						<td>
+							<?php if (is_string($_value)): ?>
+								<?php echo $_value; ?>
+							<?php elseif(!empty($_value)): ?>
+								<?php echo theme($_value); ?>
+							<?php endif; ?>
+						</td>
 					<?php endforeach; ?>
 				</tr>
 			</tfoot>

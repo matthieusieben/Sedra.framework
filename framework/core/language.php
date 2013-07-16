@@ -12,13 +12,11 @@ $languages = config('site.languages');
 $language = $language_default;
 $strings = array();
 
-language_set($language_custom);
-
 function language_load($l) {
-	global $strings, $languages;
+	global $strings;
 
 	foreach((array) explode(PATH_SEPARATOR, get_include_path()) as $module) {
-		if(is_file($file = $module.'languages/'.$l.'.php')) {
+		if(is_file($file = $module.'/languages/'.$l.'.php')) {
 			require_once $file;
 		}
 	}
@@ -39,18 +37,13 @@ function language_set($l) {
 	else
 		$language = $language_default;
 
-	$locales = config('site.locales', array(
-		'en' => 'en_US',
-		'fr' => 'fr_FR',
-	));
+	$locales = config('site.locales', array('en' => 'en_US'));
 
 	if (isset($locales[$language])) {
 		setlocale(LC_ALL, $locales[$language]);
 	} else {
 		setlocale(LC_ALL, 'en_US');
 	}
-
-	language_load($language);
 }
 
 function language_list($lang = NULL) {

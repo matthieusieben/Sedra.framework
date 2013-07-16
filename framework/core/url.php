@@ -124,16 +124,23 @@ function url_is_active($path) {
 }
 
 function file_url($file) {
+	global $request_folder;
+
+	if($file_path = stream_resolve_include_path($file)) {
+		return strtr($file_path, array(
+			APP_ROOT => $request_folder . 'application/',
+			FRAMEWORK_ROOT => $request_folder . 'framework/',
+			SITE_ROOT => $request_folder,
+		));
+	}
+
 	if(is_file(APP_ROOT.$file)) {
-		global $request_folder;
 		return $request_folder . 'application/' . $file;
 	}
 	else if(is_file(FRAMEWORK_ROOT.$file)) {
-		global $request_folder;
 		return $request_folder. 'framework/' . $file;
 	}
 	else if(is_file(SITE_ROOT.$file)) {
-		global $request_folder;
 		return $request_folder . $file;
 	}
 	else {

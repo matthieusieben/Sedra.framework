@@ -1,8 +1,5 @@
 <?php
 
-require_once 'includes/user.php';
-require_once 'includes/database.php';
-
 session_set_save_handler(
 	'_session_open',
 	'_session_close',

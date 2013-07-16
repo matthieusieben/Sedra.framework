@@ -208,7 +208,6 @@ function theme_file($file_info, $thumbnail = TRUE, $as_link = TRUE) {
 }
 
 function theme_avatar($account, $size = 256) {
-	require_once 'includes/user.php';
 	if(load_module('gravatar', FALSE)) {
 
 		if(is_numeric($account))

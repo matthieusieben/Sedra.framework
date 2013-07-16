@@ -1,7 +1,6 @@
 <?php
 
 require_once 'includes/cache.php';
-require_once 'includes/database.php';
 
 # Provides
 global $schema;
@@ -10,7 +9,9 @@ global $schema;
 
 function &schema_init() {
 	global $schema;
-	if(!$schema && !($schema = cache_get('schema'))) {
+	global $language;
+	$cache_id = "schema/{$language}";
+	if(!$schema && !($schema = cache_get($cache_id))) {
 		$schema = array();
 		foreach((array) explode(PATH_SEPARATOR, get_include_path()) as $module) {
 			if(is_dir($module.'schemas')) {
@@ -28,7 +29,7 @@ function &schema_init() {
 			}
 		}
 		hook_invoke('schema', $schema);
-		cache_set('schema', $schema);
+		cache_set($cache_id, $schema);
 	}
 	return $schema;
 }

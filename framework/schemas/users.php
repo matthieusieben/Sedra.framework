@@ -13,6 +13,7 @@ return array(
 			'type' => 'serial',
 			'not null' => TRUE,
 			'unsigned' => TRUE,
+			'hidden' => TRUE,
 		),
 		'rid' => array(
 			'type' => 'enum',
@@ -94,22 +95,23 @@ return array(
 		'user_mail' => array('mail'),
 	),
 	'roles' => array(
-		'view' => MODERATOR_RID,
-		'list' => MODERATOR_RID,
-		'add' => MODERATOR_RID,
-		'edit' => MODERATOR_RID,
-		'remove' => MODERATOR_RID,
+		'view' => ADMINISTRATOR_RID,
+		'list' => ADMINISTRATOR_RID,
+		'add' => ADMINISTRATOR_RID,
+		'edit' => ADMINISTRATOR_RID,
+		'remove' => ADMINISTRATOR_RID,
 	),
 	'custom form handle' => '_schema_user_form_handle',
 );
 
-function _schema_user_form_handle(&$form, $action, $uid) {
-	require_once 'includes/user.php';
+function _schema_user_form_handle($table, $action, $id, &$form) {
 	$form['fields']['pass']['type'] = 'password';
 	if(form_run($form) && form_is_valid($form)) {
 		$values = form_values($form);
 		if($action == 'edit') {
-			$account = user_find(array('uid' => $uid));
+			$account = user_find(array('uid' => $id));
+			if(!$account)
+				return FALSE;
 			foreach ($values as $key => $value)
 				if($key !== 'pass' || !empty($value))
 					$account->{$key} = $value;

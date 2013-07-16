@@ -8,8 +8,11 @@ try {
 	$create_setup = TRUE;
 }
 
+cache_delete();
+
 require_once 'includes/theme.php';
 require_once 'includes/schema.php';
+require_once 'includes/menu.php';
 
 if($create_setup) {
 	# TODO
@@ -19,7 +22,7 @@ if($create_setup) {
 	$first_install = !db_table_exists('users') || !db_table_exists('sessions');
 
 	if(!$first_install) {
-		require_once 'includes/user.php';
+		require_once 'core/user.php';
 		user_role_required(ADMINISTRATOR_RID);
 	}
 
@@ -28,7 +31,6 @@ if($create_setup) {
 			# XXX
 			echo "installing {$name}. <br/>\n";
 
-			sedra_schema_init($name, $table);
 			sedra_schema_install($table);
 		}
 	}
@@ -51,5 +53,65 @@ if($create_setup) {
 			'login' => REQUEST_TIME,
 			'status' => 1,
 		))->execute();
+
+		#TODO test this.
+		menu_add(array(
+			'menu' => 'main',
+			'path' => 'index',
+			'title' => 'Home',
+		));
+		menu_add(array(
+			'menu' => 'secondary',
+			'path' => 'account',
+			'title' => 'Account',
+			'role' => NULL,
+			'weight' => 50,
+		));
+		menu_add(array(
+			'menu' => 'secondary',
+			'path' => 'account/login',
+			'title' => 'Login',
+			'role' => 0,
+			'parent' => 'account/login',
+		));
+		menu_add(array(
+			'menu' => 'secondary',
+			'path' => 'account/index',
+			'title' => 'Account',
+			'role' => 1,
+			'parent' => 'account',
+		));
+		menu_add(array(
+			'menu' => 'secondary',
+			'path' => 'account/logout',
+			'title' => 'Logout',
+			'role' => 1,
+			'parent' => 'account',
+			'weight' => 50,
+		));
+		menu_add(array(
+			'menu' => 'user',
+			'path' => 'account/index',
+			'title' => 'Account details',
+			'role' => 1,
+			'weight' => 0,
+		));
+		menu_add(array(
+			'menu' => 'user',
+			'path' => 'account/credentials',
+			'title' => 'Edit your credentials',
+			'role' => 1,
+			'weight' => 1,
+		));
+		global $config;
+		if(@$config['modules']['scaffolding']) {
+			menu_add(array(
+				'menu' => 'secondary',
+				'path' => 'scaffolding',
+				'title' => 'Site content',
+				'role' => NULL,
+				'weight' => 45,
+			));
+		}
 	}
 }

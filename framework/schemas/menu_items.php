@@ -1,5 +1,7 @@
 <?php
 
+require_once 'includes/cache.php';
+
 return array(
 	'display name' => t('Menu items'),
 	'fields' => array(
@@ -20,17 +22,30 @@ return array(
 				'user' => t('User menu'),
 			),
 		),
-		'parent' => array(
-			'type' => 'int',
-			'not null' => FALSE,
-			'unsigned' => TRUE,
-			'display name' => t('Parent item'),
-		),
 		'title' => array(
 			'type' => 'varchar',
 			'not null' => TRUE,
 			'length' => 128,
 			'display name' => t('Item title'),
+		),
+		'language' => array(
+			'type' => 'varchar',
+			'not null' => FALSE,
+			'length' => 10,
+			'display name' => t('Language'),
+			'options' => (array) config('site.languages', 'en'),
+		),
+		'path' => array(
+			'type' => 'varchar',
+			'not null' => FALSE,
+			'length' => 128,
+			'display name' => t('Path'),
+		),
+		'parent' => array(
+			'type' => 'int',
+			'not null' => FALSE,
+			'unsigned' => TRUE,
+			'display name' => t('Parent item'),
 		),
 		'role' => array(
 			'type' => 'enum',
@@ -45,12 +60,6 @@ return array(
 			),
 			'display name' => t('Required role'),
 			'description' => t('Leave empty if you want this item to appear only when it has visible sub pages.')
-		),
-		'path' => array(
-			'type' => 'varchar',
-			'not null' => FALSE,
-			'length' => 512,
-			'display name' => t('Path'),
 		),
 		'weight' => array(
 			'type' => 'int',
@@ -69,15 +78,21 @@ return array(
 		),
 	),
 	'roles' => array(
-		'view' => MODERATOR_RID,
-		'list' => MODERATOR_RID,
-		'add' => MODERATOR_RID,
-		'edit' => MODERATOR_RID,
-		'remove' => MODERATOR_RID,
+		'view' => ADMINISTRATOR_RID,
+		'list' => ADMINISTRATOR_RID,
+		'add' => ADMINISTRATOR_RID,
+		'edit' => ADMINISTRATOR_RID,
+		'remove' => ADMINISTRATOR_RID,
 	),
 	'order' => array(
 		'menu' => 'ASC',
 		'parent' => 'ASC',
 		'weight' => 'ASC',
 	),
+	'custom form handle' => '_schema_menu_items_form_handle',
 );
+
+function _schema_menu_items_form_handle($table, $action, $id, &$form) {
+	cache_delete('menus/%');
+	return scaffolding_handle_form_default($table, $action, $id, $form);
+}

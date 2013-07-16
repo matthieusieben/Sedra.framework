@@ -1,10 +1,10 @@
 <?php
 
-require_once 'includes/user.php';
 require_once 'includes/form.php';
 require_once 'includes/schema.php';
 require_once 'includes/menu.php';
 require_once 'includes/theme.php';
+require_once 'includes/scaffolding.php';
 
 global $content_id;
 global $content_table;

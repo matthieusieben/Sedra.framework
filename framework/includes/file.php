@@ -1,8 +1,5 @@
 <?php
 
-require_once 'includes/database.php';
-require_once 'includes/user.php';
-
 function file_was_sent($field_name) {
 	return !empty($_FILES[$field_name]) && file_exists($_FILES[$field_name]['tmp_name']);
 }

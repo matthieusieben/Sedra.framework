@@ -1,8 +1,6 @@
 <?php
 
 function watchdog_notify($id = NULL, $timeout = NULL) {
-	require_once 'includes/database.php';
-
 	if(!$timeout)
 		$timeout = config('watchdog.timeout', 3600);
 
@@ -25,15 +23,18 @@ function watchdog_notify($id = NULL, $timeout = NULL) {
 }
 
 function watchdog_suspect($id = NULL, $attempts = NULL) {
-	if(!$attempts)
+	if(is_null($attempts))
 		$attempts = config('watchdog.attempts', 3);
 	$count = watchdog_getcount($id);
-	return $count > $attempts;
+	if($count < $attempts)
+		return 0;
+	if((int) $count === (int) $attempts)
+		return 1;
+	else
+		return 2;
 }
 
 function watchdog_getcount($id = NULL) {
-	require_once 'includes/database.php';
-
 	$r = db_select('watchdog', 'w')
 		->fields('w', array('count'))
 		->condition('id', $id)
@@ -46,8 +47,6 @@ function watchdog_getcount($id = NULL) {
 }
 
 function watchdog_release($id = NULL) {
-	require_once 'includes/database.php';
-
 	db_delete('watchdog')
 		->condition('id', $id)
 		->condition('hostname', ip_address())
@@ -58,32 +57,30 @@ function _form_handle_watchdog(&$form, &$field) {
 	$field += array(
 		'timeout' => NULL,
 		'attempts' => NULL,
-		'release' => FALSE,
+		'release' => TRUE,
 	);
-
-	if($field['release']) {
-		$form['_watchdog_release'] = TRUE;
-	}
+	$field['view'] = NULL;
 
 	if($form['submitted']) {
 		watchdog_notify($form['id'], $field['timeout']);
 	}
 
-	if(watchdog_suspect($form['id'], $field['attempts'])) {
-		$field['_watchdog'] = TRUE;
+	$field['_watchdog_status'] = watchdog_suspect($form['id'], $field['attempts']);
+	if($field['_watchdog_status'] > 0) {
 		load_module('captcha');
 		return _form_handle_captcha($form, $field);
 	}
-
-	$field['_watchdog'] = FALSE;
-	$field['view'] = NULL;
 }
 
 function _form_callback_watchdog(&$form, &$field) {
-	if($field['_watchdog']) {
+	# watchdog_suspect() returns 1 the first time the visitor is suspected,
+	# 2 afterwards.
+	if($field['_watchdog_status'] > 1) {
 		if(_form_callback_captcha($form, $field)) {
-			watchdog_release($form['id']);
-			$field['view'] = NULL;
+			if($field['release']) {
+				watchdog_release($form['id']);
+				$field['view'] = NULL;
+			}
 			return TRUE;
 		}
 		else {
@@ -93,11 +90,3 @@ function _form_callback_watchdog(&$form, &$field) {
 		return TRUE;
 	}
 }
-
-hook_register('form_run', function(&$form) {
-	if(@$form['_watchdog_release']) {
-		if($form['valid']) {
-			watchdog_release($form['id']);
-		}
-	}
-});

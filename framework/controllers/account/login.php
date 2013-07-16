@@ -1,6 +1,5 @@
 <?php
 
-require_once 'includes/user.php';
 require_once 'includes/theme.php';
 require_once 'includes/form.php';
 require_once 'includes/watchdog.php';

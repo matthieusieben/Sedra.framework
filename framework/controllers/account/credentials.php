@@ -1,6 +1,5 @@
 <?php
 
-require_once 'includes/user.php';
 require_once 'includes/form.php';
 require_once 'includes/menu.php';
 require_once 'includes/theme.php';
@@ -13,7 +12,7 @@ global $user;
 function check_current_password_field(&$form, &$field) {
 	global $user;
 	if(password_hash($field['value']) !== $user->pass) {
-		$field['error'] = t('Incorrect password.');
+		$field['error'] = t('Wrong password.');
 		return FALSE;
 	}
 	return TRUE;

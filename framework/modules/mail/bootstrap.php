@@ -2,47 +2,44 @@
 
 global $mailer;
 
-require_once __DIR__.'/swiftmailer/lib/swift_required.php';
+function main_init() {
+	global $mailer;
+	if(!isset($mailer)) {
+		require_once 'libraries/swiftmailer/lib/swift_required.php';
 
-if(!isset($mailer)) {
+		switch (config('mail.method')) {
+		case 'sendmail':
+			$transport = Swift_SendmailTransport::newInstance(
+				config('mail.sendmail', '/usr/sbin/sendmail -bs'));
+			break;
 
-	$transport = NULL;
+		case 'smtp':
+			$transport = Swift_SmtpTransport::newInstance(
+				config('mail.smtp.server', 'localhost'),
+				config('mail.smtp.port', 25),
+				config('mail.smtp.security', NULL));
 
-	switch (config('mail.method', 'mail')) {
+			if(config('mail.smtp.username'))
+				$transport->setUsername(config('mail.smtp.username'));
 
-	case 'sendmail':
-		$transport = Swift_SendmailTransport::newInstance(
-			config('mail.sendmail', '/usr/sbin/sendmail -bs'));
-		break;
+			if(config('mail.smtp.password'))
+				$transport->setPassword(config('mail.smtp.password'));
 
-	case 'smtp':
-		$transport = Swift_SmtpTransport::newInstance(
-			config('mail.smtp.server', 'localhost'),
-			config('mail.smtp.port', 25),
-			config('mail.smtp.security', NULL));
+			break;
 
-		if($_username = config('mail.smtp.username'))
-			$transport->setUsername($_username);
+		case 'mail':
+		default:
+			$transport = Swift_MailTransport::newInstance();
+			break;
+		}
 
-		if($_password = config('mail.smtp.password'))
-			$transport->setPassword($_password);
-
-		unset($_username, $_password);
-
-		break;
-
-	case 'mail':
-	default:
-		$transport = Swift_MailTransport::newInstance();
-		break;
+		$mailer = Swift_Mailer::newInstance($transport);
 	}
-
-	$mailer = Swift_Mailer::newInstance($transport);
+	return $mailer;
 }
 
 function mail_send($options) {
-
-	global $mailer;
+	main_init();
 
 	$options += array(
 		'subject' => '',
@@ -54,13 +51,16 @@ function mail_send($options) {
 		'text' => NULL,
 		'priority' => 3,
 		'attachments' => NULL,
-		'date' => date('l j F Y, G:i', REQUEST_TIME),
+		'date' => REQUEST_TIME,
 		'id' => NULL,
 	);
 	$options += array(
 		'replyto' => $options['from'],
 		'returnpath' => $options['from'],
 	);
+
+	if(!$options['text'] && !$options['html'])
+		return FALSE;
 
 	$message = Swift_Message::newInstance()
 		->setSubject($options['subject'])
@@ -82,31 +82,22 @@ function mail_send($options) {
 	if($options['id'])
 		$message->setID($options['Message-ID']);
 
-	if($options['text'] && $options['html']) {
-		$message->setBody($options['html'], 'text/html');
-		$message->addPart($options['text'], 'text/plain');
-	}
-	else if($options['html']) {
+	if($options['html'])
 		$message->setBody($options['body'], 'text/html');
-	}
-	else if($options['text']) {
-		$message->setBody($options['text'], 'text/plain');
-	}
-	else {
-		return FALSE;
-	}
 
-	foreach ((array) $options['attachments'] as $filename => $data) {
+	if($options['text'])
+		$message->setBody($options['text'], 'text/plain');
+
+	foreach((array) $options['attachments'] as $filename => $data)
 		$message->attach(Swift_Attachment::newInstance($data, $filename));
-	}
 
 	try {
+		global $mailer;
 		return $mailer->send($message);
 	} catch (Exception $e) {
 		if(config('devel')) {
 			throw new FrameworkException($e);
 		} else {
-			require_once 'includes/log.php';
 			log_exception($e);
 			return FALSE;
 		}

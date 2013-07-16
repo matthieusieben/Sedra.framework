@@ -5,9 +5,10 @@ define('MESSAGE_WARNING', 'alert-block');
 define('MESSAGE_ERROR',   'alert-error');
 
 function message($type = NULL, $message = NULL) {
-	require_once 'includes/session.php';
-
 	global $messages;
+
+	if(!isset($_SESSION))
+		return FALSE;
 
 	if(!isset($messages)) {
 		$messages = isset($_SESSION['messages']) ? $_SESSION['messages'] : array();

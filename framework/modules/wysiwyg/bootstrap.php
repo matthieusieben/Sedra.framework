@@ -1,6 +1,6 @@
 <?php
 
-if(!load_module('jquery'))
+if(!load_module('jquery', FALSE))
 	return FALSE;
 
 hook_register('html_foot', function () {
@@ -14,14 +14,13 @@ hook_register('html_foot', function () {
 			$locale = substr($locale, 0, $p);
 	}
 
-	$locale_file = 'modules/wysiwyg/bootstrap-wysihtml5/src/locales/bootstrap-wysihtml5.'.$locale.'.js';
-	$locale_js = theme_js($locale_file);
+	$locale_js = theme_js('libraries/bootstrap-wysihtml5/src/locales/bootstrap-wysihtml5.'.$locale.'.js');
 
-	$css = file_url('modules/wysiwyg/bootstrap-wysihtml5/lib/css/wysiwyg-color.css');
-	echo theme_css('modules/wysiwyg/bootstrap-wysihtml5/src/bootstrap-wysihtml5.css');
+	$css = file_url('libraries/bootstrap-wysihtml5/lib/css/wysiwyg-color.css');
+	echo theme_css('libraries/bootstrap-wysihtml5/src/bootstrap-wysihtml5.css');
 
-	echo theme_js('modules/wysiwyg/bootstrap-wysihtml5/lib/js/wysihtml5-0.3.0.min.js');
-	echo theme_js('modules/wysiwyg/bootstrap-wysihtml5/src/bootstrap-wysihtml5.js');
+	echo theme_js('libraries/bootstrap-wysihtml5/lib/js/wysihtml5-0.3.0.min.js');
+	echo theme_js('libraries/bootstrap-wysihtml5/src/bootstrap-wysihtml5.js');
 
 	if($locale_js) {
 		echo $locale_js;

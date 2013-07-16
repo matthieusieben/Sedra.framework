@@ -1,3 +1,3 @@
 <?php
 
-return load_controller('account/reset');
+return load_controller('account/reset', $arg);

@@ -24,6 +24,6 @@ function _form_callback_captcha(&$form, &$field) {
 	return $field['required'] ? $resp->is_valid : TRUE;
 }
 
-require_once __DIR__.'/recaptcha-php/recaptchalib.php';
+require_once 'libraries/recaptcha-php/recaptchalib.php';
 
 return config('recaptcha.public') && config('recaptcha.private');

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'includes/log.php';
-
 set_error_handler('__error_handler');
 set_exception_handler('__exception_handler');
 
@@ -22,16 +20,14 @@ class FrameworkLoadException extends FrameworkException {
 }
 
 function __error_handler($errno, $errstr, $errfile, $errline) {
-
-	log_phperror($errno, $errstr, $errfile, $errline);
-
 	switch ($errno) {
 	case E_ERROR:
 	case E_PARSE:
 	case E_USER_ERROR:
 	case E_CORE_ERROR:
 	case E_COMPILE_ERROR:
-		throw new ErrorException($errstr, 500, $errno, $errfile, $errline);
+		log_phperror($errno, $errstr, $errfile, $errline);
+		throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 		break;
 	case E_STRICT:
 	case E_DEPRECATED:
@@ -39,51 +35,52 @@ function __error_handler($errno, $errstr, $errfile, $errline) {
 	case E_WARNING:
 	case E_USER_WARNING:
 	case E_RECOVERABLE_ERROR:
-		if(config('devel')) {
-			load_module('devel');
-			$error = array(
+		if(config('devel') && load_module('devel', FALSE)) {
+			dvm($error = array(
 				'errno' => $errno,
 				'errstr' => $errstr,
 				'errfile' => $errfile,
 				'errline' => $errline
-			);
-			dvm($error);
+			));
 		}
 		break;
 	case E_NOTICE:
 	default:
 		break;
 	}
+	return TRUE;
 }
 
 function __exception_handler($e) {
 
-	log_exception($e);
+	$code = $e instanceof FrameworkException ? $e->getCode() : 500;
 
 	# Clear output buffers
 	$output_buffer = ob_get_clean_all();
 
-	if($e instanceof FrameworkException && $e->getCode() === 403) {
+	if($code === 403) {
 		global $user;
-		if(isset($user) && !$user->uid) {
+		if(!$user->uid) {
 			global $request_path;
 			redirect('account/login', array('redirect' => $request_path));
 		}
 	}
 
+	log_exception($e);
+
 	# Set error status header
 	if(!headers_sent()) {
-		set_status_header($e instanceof FrameworkException ? $e->getCode() : 500);
-		header('Content-Type: text/html; charset=utf-8');
+		set_status_header($code, TRUE);
+		header('Content-Type: text/html; charset=utf-8', TRUE);
 	}
 
 	try {
 		require_once 'includes/theme.php';
 		exit(theme('exception', array('exception' => $e, 'output_buffer' => $output_buffer)));
-	} catch(FrameworkException $e) {
-		fatal($e->getMessage(), NULL, $e->getCode(), $e->getFile(), $e->getLine(), $e->getTrace());
-	} catch(Exception $e) {
-		fatal($e->getMessage(), NULL, 500, $e->getFile(), $e->getLine(), $e->getTrace());
+	} catch(FrameworkException $ex) {
+		fatal($ex->getMessage(), NULL, $ex->getCode(), $ex->getFile(), $ex->getLine(), $ex->getTrace());
+	} catch(Exception $ex) {
+		fatal($ex->getMessage(), NULL, 500, $ex->getFile(), $ex->getLine(), $ex->getTrace());
 	}
 }
 

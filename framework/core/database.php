@@ -37,7 +37,7 @@ define('PREG_CLASS_UNICODE_WORD_BOUNDARY',
 	'\x{FE10}-\x{FE19}\x{FE30}-\x{FE6B}\x{FEFF}-\x{FF0F}\x{FF1A}-\x{FF20}' .
 	'\x{FF3B}-\x{FF40}\x{FF5B}-\x{FF65}\x{FFE0}-\x{FFFD}');
 
-define('DRUPAL_ROOT', __DIR__.'/drupal/');
+define('DRUPAL_ROOT', stream_resolve_include_path('libraries/drupal/').'/');
 
 set_include_path(get_include_path().PATH_SEPARATOR.DRUPAL_ROOT);
 

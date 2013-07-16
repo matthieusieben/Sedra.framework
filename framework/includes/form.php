@@ -502,14 +502,11 @@ function _form_callback_email(&$form, &$field) {
 }
 
 function _form_callback_user_password(&$form, &$field) {
-	require_once 'includes/user.php';
-
 	if($field['required'] || $field['value']) {
 		if (!user_check_password($field['value'], $field['error'])) {
 			return FALSE;
 		}
 	}
-
 	return TRUE;
 }
 

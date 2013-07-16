@@ -1,14 +1,16 @@
-<?php echo theme('components/navbar', $menus + array(
-	'fixed' => FALSE,
-	'top' => TRUE,
-	'title' => l(array(
-		'title' => $site_name,
-		'path' => 'index',
-		'attributes' => array(
+<?php if(!empty($menus)): ?>
+	<?php echo theme('components/navbar', $menus + array(
+		'fixed' => FALSE,
+		'top' => TRUE,
+		'title' => l(array(
 			'title' => $site_name,
-			'class' => array('brand'),
-	))),
-)); ?>
+			'path' => 'index',
+			'attributes' => array(
+				'title' => $site_name,
+				'class' => array('brand'),
+		))),
+	)); ?>
+<?php endif ?>
 
 <div id="wrapper" class="container">
 

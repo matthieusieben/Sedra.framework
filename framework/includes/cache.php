@@ -2,7 +2,6 @@
 
 function cache_get($id) {
 	try {
-		$id = sha1(var_export($id, TRUE));
 		$query = db_select('cache','c')->fields('c', array('content'))->condition('id', $id);
 		$result = $query->execute();
 		$content = $result->fetchField();
@@ -15,12 +14,22 @@ function cache_get($id) {
 function cache_set($id, $content) {
 	try {
 		db_merge('cache')
-			->key(array('id' => sha1(var_export($id, TRUE))))
+			->key(array('id' => $id))
 			->fields(array(
 				'content' => serialize($content),
 			))
 			->execute();
 	} catch (PDOException $e) {
 		return NULL;
+	}
+}
+
+function cache_delete($id = '%') {
+	try {
+		return db_delete('cache')
+			->condition('id', $id, 'LIKE')
+			->execute();
+	} catch (PDOException $e) {
+		return FALSE;
 	}
 }

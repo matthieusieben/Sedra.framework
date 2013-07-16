@@ -51,25 +51,31 @@ if (ini_get('register_globals')) {
 }
 
 # Load core files
-require 'includes/functions.php';
-require 'includes/hook.php';
-require 'includes/error.php';
-require 'includes/url.php';
+require 'core/functions.php';
+require 'core/hook.php';
+require 'core/log.php';
+require 'core/error.php';
+require 'core/url.php';
 
 # Load settings
-if(!@include APP_ROOT.'settings.php') {
-	require 'includes/language.php';
+if(!@include APP_ROOT.'settings.php')
 	throw new FrameworkException('Could not load settings file.', 500);
-}
 
-# Language support should be loaded after settings file
-require 'includes/language.php';
+# The following core files depend on the settings
+require 'core/language.php';
+require 'core/database.php';
+require 'core/user.php';
+require 'core/session.php';
 
 # Include modules
 foreach((array) config('modules') as $module => $required)
 	load_module($module, $required);
 unset($module);
 unset($required);
+
+# Load langage files after modules
+global $language;
+language_load($language);
 
 # Main controller
 global $controller;

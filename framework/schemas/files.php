@@ -66,11 +66,11 @@ return array(
 		),
 	),
 	'roles' => array(
-		'view' => MODERATOR_RID,
-		'list' => MODERATOR_RID,
-		'add' => MODERATOR_RID,
-		'edit' => MODERATOR_RID,
-		'remove' => MODERATOR_RID,
+		'view' => ADMINISTRATOR_RID,
+		'list' => ADMINISTRATOR_RID,
+		'add' => ADMINISTRATOR_RID,
+		'edit' => ADMINISTRATOR_RID,
+		'remove' => ADMINISTRATOR_RID,
 	),
 	# Scaffolding
 	'custom form' => array(
@@ -86,7 +86,7 @@ return array(
 	'custom form handle' => '_schema_files_form_handle',
 );
 
-function _schema_files_form_handle(&$form) {
+function _schema_files_form_handle($table, $action, $id, &$form) {
 	require_once 'includes/form.php';
 	require_once 'includes/file.php';
 	if(form_run($form) && form_is_valid($form)) {
