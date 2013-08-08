@@ -62,10 +62,10 @@ $signup_form = array(
 				),
 				'login' => array(
 					'view' => 'html',
-					'html' => array(
-						'title'=>t('Log in'),
-						'path'=>'account/login',
-					),
+					'html' => l(array(
+						'title' => t('Log in'),
+						'path' => 'account/login',
+					)),
 				),
 			),
 		),

@@ -126,6 +126,7 @@ class AnonymousUser extends User {
 		$this->hostname = ip_address();
 		$this->rid = ANONYMOUS_RID;
 		$this->name = t('Guest');
+		$this->language = config('site.language', 'en');
 	}
 
 	public function data($key, $default = NULL) {
@@ -161,7 +162,7 @@ function user_has_role($role) {
 
 function user_role_required($role) {
 	if(!user_has_role($role)) {
-		show_403();
+		show_401();
 	}
 }
 
@@ -199,10 +200,13 @@ function user_setup_environment() {
 
 	if(empty($language_custom) && isset($_SESSION['language']))
 		$language_custom = $_SESSION['language'];
-	else if($language_default != $language)
-		$_SESSION['language'] = $language;
-	else
+
+	if($language_custom == $language_default && !$user->uid)
 		unset($_SESSION['language']);
+	else if($language_custom == $user->language)
+		unset($_SESSION['language']);
+	else if($language_custom)
+		$_SESSION['language'] = $language_custom;
 
 	language_set($user->language);
 
@@ -398,15 +402,34 @@ function user_logout() {
 }
 
 function &user_find($cond) {
+	$null = NULL;
+	if(empty($cond))
+		return $null;
 
-	$query = db_select('users', 'u')->fields('u');
-	foreach ($cond as $key => $value)
-		$query->condition($key, $value);
-	$account = $query->execute()->fetchObject('User');
+	# Check wether we want the current user account
+	{
+		global $user;
+		$is_cur = TRUE;
+		foreach ($cond as $key => $value)
+			if($user->$key != $value)
+				{ $is_cur = FALSE; break; }
 
-	if ($account) {
-		$account->data = (array) @unserialize($account->data);
+		if($is_cur)
+			return $user;
 	}
 
-	return $account;
+	# Find user in database
+	{
+		$query = db_select('users', 'u')->fields('u');
+		foreach ($cond as $key => $value)
+			$query->condition($key, $value);
+		$account = $query->execute()->fetchObject('User');
+
+		if ($account) {
+			$account->data = (array) @unserialize($account->data);
+			return $account;
+		}
+	}
+
+	return $null;
 }

@@ -105,24 +105,30 @@ return array(
 );
 
 function _schema_user_form_handle($table, $action, $id, &$form) {
-	$form['fields']['pass']['type'] = 'password';
-	if(form_run($form) && form_is_valid($form)) {
-		$values = form_values($form);
-		if($action == 'edit') {
-			$account = user_find(array('uid' => $id));
-			if(!$account)
-				return FALSE;
-			foreach ($values as $key => $value)
-				if($key !== 'pass' || !empty($value))
-					$account->{$key} = $value;
-			$account->status = 1;
-			$account->save();
-			return TRUE;
-		} else {
-			$values += array('status' => 1);
-			$form['valid'] = user_register($values, $form['error']);
-			return $form['valid'];
+	if($action === 'add' || $action === 'edit') {
+		$form['fields']['pass']['type'] = 'password';
+		if(form_run($form) && form_is_valid($form)) {
+			$values = form_values($form);
+			if($action === 'edit') {
+				$account = user_find(array('uid' => $id));
+				if(!$account)
+					return FALSE;
+				foreach ($values as $key => $value)
+					if($key !== 'pass' || !empty($value))
+						$account->{$key} = $value;
+				$account->status = 1;
+				$account->save();
+				return TRUE;
+			}
+			else if($action === 'add') {
+				$values += array('status' => 1);
+				$form['valid'] = user_register($values, $form['error']);
+				return $form['valid'];
+			}
 		}
+		return $form['submitted'];
 	}
-	return $form['submitted'];
+	else {
+		return scaffolding_handle_form_default($table, $action, $id, $form);
+	}
 }

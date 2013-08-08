@@ -1,6 +1,6 @@
 <?php
 
-if(!load_module('jquery', FALSE))
+if(!load_module('bootstrap', FALSE))
 	return FALSE;
 
 hook_register('html_foot', function () {

@@ -9,11 +9,12 @@ function log_phperror($errno, $errstr, $errfile, $errline) {
 }
 
 function log_exception($e) {
-	if($e->getCode() !== 404 && $e->getCode() !== 403) {
+	if(!$e instanceof FrameworkException || $e->getCode() >= 500 || $e->getCode() === 404) {
+		$errcls = get_class($e);
 		$errstr = $e->getMessage();
 		$errfile = str_replace(SITE_ROOT, '', $e->getFile());
 		$errline = $e->getLine();
-		return log_message("PHP Exception @ {$errfile}:{$errline} : {$errstr}");
+		return log_message("PHP {$errcls} @ {$errfile}:{$errline} : {$errstr}");
 	}
 	return TRUE;
 }

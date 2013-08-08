@@ -1,8 +1,16 @@
 <div class="hero-unit">
 	<?php if (@$title): ?>
-		<h1><?php echo $title; ?></h1>
+		<header>
+			<h1><?php echo $title ?></h1>
+		</header>
 	<?php endif ?>
-	<?php if (@$content): ?>
-		<?php echo $content; ?>
+	<?php if (isset($html)): ?>
+		<div class="content">
+			<?php if (is_string($html)): ?>
+				<?php echo $html ?>
+			<?php elseif(is_array($html)): ?>
+				<?php echo theme($html) ?>
+			<?php endif ?>
+		</div>
 	<?php endif ?>
 </div>

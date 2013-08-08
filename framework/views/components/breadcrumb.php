@@ -12,7 +12,9 @@
 			<?php if (url_is_current($_item['path'])) $_item['disabled'] = TRUE ?>
 			<?php echo l($_item); ?>
 			<?php if (++$_i < $_count): ?>
-				<span class="divider"><?php echo $divider ?></span>
+				<?php if ($divider): ?>
+					<span class="divider"><?php echo $divider ?></span>
+				<?php endif ?>
 			<?php endif ?>
 		</li>
 	<?php endforeach; ?>

@@ -37,13 +37,12 @@ $login_form = array(
 					'type' => 'submit',
 					'label' => t('Reset'),
 				),
-				array(
+				!config('user.subscription') ? NULL : array(
 					'view' => 'html',
-					'html' => !config('user.subscription') ? NULL :
-						l(array(
-							'title'=>t('Sign up'),
-							'path'=>'account/signup',
-						)),
+					'html' => l(array(
+						'title'=>t('Sign up'),
+						'path'=>'account/signup',
+					)),
 				),
 			),
 		),

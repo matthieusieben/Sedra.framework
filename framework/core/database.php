@@ -101,5 +101,3 @@ function truncate_utf8($string, $max_length, $wordsafe = FALSE, $add_ellipsis = 
 
 require_once DRUPAL_ROOT.'includes/database/log.inc';
 require_once DRUPAL_ROOT.'includes/database/database.inc';
-
-return TRUE;

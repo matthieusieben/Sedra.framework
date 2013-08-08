@@ -2,7 +2,6 @@
 
 return array(
 	'display name' => t('Users actions'),
-	'description' => 'The table for user actions such as account activation or password reset.',
 	'fields' => array(
 		'uid' => array(
 			'type' => 'int',

@@ -156,7 +156,6 @@ function set_status_header($code = 200, $override = TRUE)
 }
 
 function redirect($path = 'index', array $query = array()) {
-	require_once 'includes/theme.php';
 
 	if(!is_array($path)) {
 		$path = array('path' => $path);
@@ -175,9 +174,13 @@ function redirect($path = 'index', array $query = array()) {
 
 	hook_invoke('shutdown');
 
-	header('Location: '. $url, TRUE, 302);
+	if(!headers_sent()) {
+		header('Location: '. $url, TRUE, 302);
+	}
 
-	exit(theme('redirect', array('url' => $url)));
+	echo load_view('redirect', array('url' => $url));
+
+	exit;
 }
 
 function ob_get_clean_all() {
@@ -228,6 +231,9 @@ function load_controller($__controller, array $arg = array()) {
 		$arg = $__controller;
 		$__controller = @$arg[0];
 	}
+	elseif(empty($arg)) {
+		$arg = array($__controller);
+	}
 
 	if($__file = stream_resolve_include_path("controllers/{$__controller}.php"))
 		return require($__file);
@@ -239,13 +245,9 @@ function load_controller($__controller, array $arg = array()) {
 }
 
 function load_view($__view, array $__data = array()) {
-	if(is_array($__view)) {
-		$__data = $__view;
-		$__view = @$__data['view'];
-	}
 
 	if($__file = stream_resolve_include_path("views/{$__view}.php")) {
-		extract(theme_data($__data));
+		extract($__data);
 
 		ob_start();
 		require $__file;
@@ -253,6 +255,10 @@ function load_view($__view, array $__data = array()) {
 	}
 
 	throw new FrameworkLoadException(t("The view <code>@view</code> cannot be loaded.", array('@view' => $__view ? $__view : 'NULL')));
+}
+
+function show_401($msg = NULL) {
+	throw new FrameworkException($msg ? $msg : t('You need to be authentified to access this page.'), 401);
 }
 
 function show_403($msg = NULL) {

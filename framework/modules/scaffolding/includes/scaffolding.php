@@ -118,6 +118,8 @@ function scaffolding_delete_id($table, $id) {
 			$replacements["!{$key}"] = $value;
 		menu_delete(strtr($table_info['menu']['path'], $replacements));
 	}
+
+	return TRUE;
 }
 
 function scaffolding_list_query($table, $start = NULL, $limit = NULL) {
@@ -276,26 +278,34 @@ function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
 }
 
 function scaffolding_handle_form_default($table, $action, $id, &$form) {
-	if(form_run($form) && form_is_valid($form)) {
-		$form_values = form_values($form);
-		try {
+	if($action === 'add' || $action === 'edit') {
+		if(form_run($form) && form_is_valid($form)) {
+			$form_values = form_values($form);
+			try {
 
-			if($id)
-				scaffolding_set_item($table, $id, $form_values);
-			else
-				scaffolding_add_item($table, $form_values);
+				if($id)
+					scaffolding_set_item($table, $id, $form_values);
+				else
+					scaffolding_add_item($table, $form_values);
 
-			return TRUE;
+				return TRUE;
 
-		} catch (Exception $e) {
-			$form['error'] = $e->getMessage();
-			$form['valid'] = FALSE;
+			} catch (Exception $e) {
+				$form['error'] = $e->getMessage();
+				$form['valid'] = FALSE;
+			}
 		}
+		return $form['submitted'] && $form['valid'];
 	}
-	return $form['submitted'] && $form['valid'];
+	else if ($action === 'remove') {
+		return scaffolding_delete_id($table, $id);
+	}
+	return TRUE;
 }
 
 function scaffolding_handle_form($table, $action, $id, &$form) {
+	require_once 'includes/form.php';
+
 	$table_info = schema_get($table);
 	$callback = @$table_info['custom form handle'];
 
@@ -303,7 +313,7 @@ function scaffolding_handle_form($table, $action, $id, &$form) {
 		# Make sure the callback is defined
 		require_once "schemas/{$table}.php";
 		if(!is_callable($callback)) {
-			throw new FrameworkException(t('Scaffolding unable to find function &laquo;@callback&raquo;.', array('@callback' => $callback)));
+			throw new FrameworkException(t('Scaffolding unable to find function &laquo;@callback&raquo;.', array('@callback' => $callback)), 500);
 		}
 	}
 	else {

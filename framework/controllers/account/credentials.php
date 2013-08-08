@@ -19,7 +19,7 @@ function check_current_password_field(&$form, &$field) {
 }
 
 function check_password_bis_field(&$form, &$field) {
-	if ($field['required'] || $form['fields']['pass']['value']) {
+	if ($form['fields']['pass']['value']) {
 		if ($field['value'] !== $form['fields']['pass']['value']) {
 			$field['error'] = t('Paswords do not match.');
 			return FALSE;

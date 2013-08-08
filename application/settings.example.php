@@ -2,8 +2,6 @@
 
 global $config;
 global $databases;
-global $models;
-global $libraries;
 
 # Is this website under development (TRUE) or production (FALSE) ?
 $config['devel'] = FALSE;
@@ -28,10 +26,10 @@ $config['site.locales'] = array(
 $config['date.timezone'] = 'Europe/Brussels';
 date_default_timezone_set($config['date.timezone']);
 
-# User parametes
-$config['user.subscription'] = TRUE;
-$config['user.pwd.secure'] = TRUE;
-$config['user.pwd.min'] = 6;
+# Account parametes
+$config['user.subscription'] = FALSE || $config['devel'];
+$config['user.pwd.secure'] = FALSE && !$config['devel'];
+$config['user.pwd.min'] = $config['devel'] ? 3 : 7;
 
 # Enable URL rewriting. see .htaccess
 $config['url.rewrite'] = 'pathauto'; # 'pathauto', 'query' or FALSE
@@ -47,22 +45,29 @@ $databases['default']['default'] = array (
 	'prefix' =>		'',
 );
 
-# Modules to load by default ('name' => mandatory[TRUE/FALSE])
+# Modules to load by default
 $config['modules'] = array();
+# Framework modules
 if($config['devel'])
 $config['modules']['devel'] = FALSE;
+$config['modules']['contact'] = TRUE;
 $config['modules']['scaffolding'] = TRUE;
 $config['modules']['html5shim'] = FALSE;
 $config['modules']['bootstrap'] = FALSE;
 $config['modules']['analytics'] = FALSE;
+# User modules
 
 # reCaptcha
 $config['recaptcha.public'] = NULL;
 $config['recaptcha.private'] = NULL;
 
+# Disable caching
+$config['cache.disabled'] = $config['devel'];
+
 # Watchdog default properties
 $config['watchdog.timeout'] = 3600;
 $config['watchdog.attempts'] = 3;
+$config['watchdog.hardlimit'] = 30;
 
 # Mail settings
 $config['mail.method'] = 'mail'; # mail / sendmail / smtp

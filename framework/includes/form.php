@@ -18,7 +18,7 @@ function form_run(&$form) {
 		'fields' => array(),
 		'style' => 'horizontal', # horizontal, vertical, inline, search
 		'title' => NULL,
-		'autocomplete' => FALSE,
+		'autocomplete' => TRUE,
 	);
 
 	$form['request'] = ($form['method'] === 'get') ? $_GET : $_POST;
@@ -43,9 +43,6 @@ function form_run(&$form) {
 }
 
 function _form_run_field(&$form, &$field, $name = NULL) {
-
-	if(!is_array($field))
-		throw new FrameworkException("Wrong form format");
 
 	# Not a form field, do no prevent validation (return TRUE)
 	if (empty($field['type'])) {
@@ -245,17 +242,22 @@ function _form_handle_checkbox(&$form, &$field) {
 
 function _form_handle_select(&$form, &$field) {
 
-	if ($field['disabled'])
+	if ($field['disabled']) {
 		$field['attributes']['disabled'] = 'disabled';
-	else if ($field['required'])
+	}
+	else if ($field['required']) {
 		$field['attributes']['required'] = '';
+	}
 
-	if ($field['multiple'])
+	if ($field['multiple']) {
 		$field['attributes']['multiple'] = 'multiple';
-	else
+	}
+	else {
 		# Add default empty value if not required
-		if (!$field['required'] || is_null($field['default']))
+		if (!$field['required'] || is_null($field['default'])) {
 			$field['options'] += array(NULL => t('&lt;select one&gt;'));
+		}
+	}
 
 	_form_handle_multiple_field($form, $field);
 }

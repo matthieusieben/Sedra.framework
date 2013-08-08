@@ -25,10 +25,15 @@ function watchdog_notify($id = NULL, $timeout = NULL) {
 function watchdog_suspect($id = NULL, $attempts = NULL) {
 	if(is_null($attempts))
 		$attempts = config('watchdog.attempts', 3);
+	$attempts = max(1, (int) $attempts);
 	$count = watchdog_getcount($id);
-	if($count < $attempts)
+	$hardlimit = config('watchdog.hardlimit');
+
+	if($hardlimit && $count >= $hardlimit)
+		throw new FrameworkException(t('A suspect activity has been detected from your IP address <code>@ip</code>. It has been temporarily blocked. Please try again later.', array('@ip' => ip_address())), 403);
+	else if($count < $attempts)
 		return 0;
-	if((int) $count === (int) $attempts)
+	else if($count === $attempts)
 		return 1;
 	else
 		return 2;
@@ -43,7 +48,7 @@ function watchdog_getcount($id = NULL) {
 		->execute()
 		->fetch();
 
-	return $r ? $r->count : 0;
+	return $r ? (int) $r->count : 0;
 }
 
 function watchdog_release($id = NULL) {
@@ -57,7 +62,8 @@ function _form_handle_watchdog(&$form, &$field) {
 	$field += array(
 		'timeout' => NULL,
 		'attempts' => NULL,
-		'release' => TRUE,
+		'release' => FALSE,
+		'required' => TRUE,
 	);
 	$field['view'] = NULL;
 
@@ -67,7 +73,7 @@ function _form_handle_watchdog(&$form, &$field) {
 
 	$field['_watchdog_status'] = watchdog_suspect($form['id'], $field['attempts']);
 	if($field['_watchdog_status'] > 0) {
-		load_module('captcha');
+		require_once 'includes/captcha.php';
 		return _form_handle_captcha($form, $field);
 	}
 }

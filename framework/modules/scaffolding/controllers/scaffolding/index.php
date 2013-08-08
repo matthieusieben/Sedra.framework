@@ -14,7 +14,7 @@ global $content_table_info;
 global $content_table_title;
 
 if(!scaffolding_check_action($content_table, 'list'))
-	show_403();
+	show_401();
 
 if(empty($content_table)) {
 	$tables_menu = scaffolding_get_tables_menu();

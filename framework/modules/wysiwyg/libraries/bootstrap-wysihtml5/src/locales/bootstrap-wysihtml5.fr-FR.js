@@ -4,18 +4,19 @@
 (function($){
     $.fn.wysihtml5.locale["fr-FR"] = {
         font_styles: {
-              normal: "Normal",
+              normal: "Texte normal",
               h1: "Titre 1",
               h2: "Titre 2",
               h3: "Titre 3",
               h4: "Titre 4",
               h5: "Titre 5",
-              h6: "Titre 6"
+              h6: "Titre 6",
+              p: "Paragraphe"
         },
         emphasis: {
-              bold: "<b>B</b>",
-              italic: "<i>I</i>",
-              underline: "<u>U</u>"
+              bold: "Gras",
+              italic: "Italique",
+              underline: "Souligné"
         },
         lists: {
               unordered: "Liste à puces",

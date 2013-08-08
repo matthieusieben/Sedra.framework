@@ -467,12 +467,13 @@
                 h3: "Heading 3",
                 h4: "Heading 4",
                 h5: "Heading 5",
-                h6: "Heading 6"
+                h6: "Heading 6",
+                p: "Paragraph"
             },
             emphasis: {
-                bold: "<b>B</b>",
-                italic: "<i>I</i>",
-                underline: "<u>U</u>"
+                bold: "Bold",
+                italic: "Italic",
+                underline: "Underline"
             },
             lists: {
                 unordered: "Unordered list",

@@ -1,5 +1,22 @@
 <?php
 
+require_once 'includes/menu.php';
+
+# Uses
+global $language;
+global $breadcrumb;
+# Provides
+global $data;
+
+$data = array(
+	'lang' => &$language,
+	'menus' => menus_get(),
+	'breadcrumb' => &$breadcrumb,
+	'site_name' => config('site.name', 'Sedra Framework'),
+);
+
+hook_invoke('site data', $data);
+
 function attributes($attributes = array()) {
 	if(empty($attributes) || !is_array($attributes))
 		return '';
@@ -66,20 +83,21 @@ function l(array $options) {
 
 	$options['attributes']['href'] = url($options);
 
-	$content = $options['html'] ? $options['title'] : check_plain($options['title']);
+	$content = @$options['html'] ? $options['title'] : check_plain($options['title']);
 
-	if(@$options['disabled'])
-		return $content;
-	else
-		return '<a' . attributes($options['attributes']) . '>' . $content . '</a>';
+	if(@$options['disabled']) {
+		$options['attributes']['disabled'] = 'disabled';
+	}
+
+	return '<a' . attributes($options['attributes']) . '>' . $content . '</a>';
 }
 
 function theme_data(array $__data) {
-	require_once 'includes/data.php';
+	global $data;
+
+	$__data += $data;
 
 	hook_invoke('user data', $__data);
-
-	$__data += data();
 
 	if(!isset($__data['page_title'])) {
 		if(isset($__data['title'])) {
@@ -94,100 +112,16 @@ function theme_data(array $__data) {
 }
 
 function theme($__view, array $__data = array()) {
-	return load_view($__view, $__data);
-}
-
-function theme_user_text(array $data) {
-
-	$data += array(
-		'text' => NULL,
-		'markup' => NULL,
-		'length' => NULL,
-		'lines' => NULL,
-	);
-
-	$text = $data['text'];
-
-	switch($data['markup']) {
-	case 'html':
-		break;
-	case 'markdown':
-		# TODO : support md
-	default:
-
-		if (is_numeric($data['lines'])) {
-			for($i = 0, $j = (int) $data['lines']; $i !== FALSE && $j > 0; $i = strpos($text, "\n", $i + 1), $j--);
-			if ($i !== FALSE && $j === 0) $text = substr($text, 0, $i);
-		}
-
-		if (is_numeric($data['length']) && strlen($text) > $data['length'] && $data['length'] > 3) {
-			# TODO : better cut (not cutting the last word or html tags).
-			$text = substr($text, 0, $data['length'] - 3) . '...';
-		}
-
-		$text = check_plain($text);
-		$text = nl2br($text, TRUE);
-
-		break;
+	if(is_array($__view)) {
+		$__data += $__view;
+		$__view = @$__data['view'];
 	}
 
-	return $text;
-}
-
-function theme_date($timestamp) {
-
-	if(!is_numeric($timestamp))
-		$timestamp = strtotime($timestamp);
-
-	$time_ago = REQUEST_TIME - $timestamp;
-
-	if ($time_ago >= 0) {
-		# In the past
-		if (($years = (int) ($time_ago / 31536000)) > 1) {
-			$text = t('@years years ago', array('@years' => $years));
-		}
-		elseif ($years === 1) {
-			$text = t('one year ago');
-		}
-		elseif (($months = (int) ($time_ago / 2678400)) > 1) {
-			$text = t('@months months ago', array('@months' => $months));
-		}
-		elseif ($months ===  1) {
-			$text = t('one month ago');
-		}
-		elseif (($weeks = (int) ($time_ago / 604800)) > 1) {
-			$text = t('@weeks weeks ago', array('@weeks' => $weeks));
-		}
-		elseif ($weeks ===  1) {
-			$text = t('one week ago');
-		}
-		elseif (($days = (int) ($time_ago / 86400)) > 1) {
-			$text = t('@days days ago', array('@days' => $days));
-		}
-		elseif ($days ===  1) {
-			$text = t('one day ago');
-		}
-		elseif (($hours = (int) ($time_ago / 3600)) > 1) {
-			$text = t('@hours hours ago', array('@hours' => $hours));
-		}
-		elseif ($hours ===  1) {
-			$text = t('one hour ago');
-		}
-		elseif (($minutes = (int) ($time_ago / 60)) > 1) {
-			$text = t('@minutes minutes ago', array('@minutes' => $minutes));
-		}
-		elseif ($minutes ===  1) {
-			$text = t('one minute ago');
-		}
-		else {
-			$text = t('just now');
-		}
-	} else {
-		# In the future
-		$text = check_plain(strftime('%c', $timestamp));
+	if(empty($__view)) {
+		return NULL;
 	}
 
-	return '<span class="date">'.$text.'</span>';
+	return load_view($__view, theme_data($__data));
 }
 
 function theme_file($file_info, $thumbnail = TRUE, $as_link = TRUE) {
@@ -208,25 +142,21 @@ function theme_file($file_info, $thumbnail = TRUE, $as_link = TRUE) {
 }
 
 function theme_avatar($account, $size = 256) {
-	if(load_module('gravatar', FALSE)) {
 
-		if(is_numeric($account))
-			$account = user_find(array('uid' => $account));
-		else if(is_string($account))
-			$account = user_find(array('mail' => $account));
+	if(is_numeric($account))
+		$account = user_find(array('uid' => $account));
+	else if(is_string($account))
+		$account = user_find(array('mail' => $account));
 
-		if(!$account instanceof User)
-			return NULL;
+	if(!$account instanceof User)
+		return NULL;
 
-		$data = array(
-			'account' => $account,
-			'size' => $size,
-			'mini' => $size <= 32,
-			'avatar_url' => gravatar_avatar( $account->mail, (int) $size),
-		);
-
-		return theme('account/avatar', $data);
-	}
+	return theme('account/avatar', array(
+		'account' => $account,
+		'size' => $size,
+		'mini' => $size <= 32,
+		'avatar_url' => theme_avatar_url($account, (int) $size),
+	));
 }
 
 function theme_css($css_file, $media = NULL) {
@@ -246,4 +176,20 @@ function theme_js($js_file) {
 	else {
 		return NULL;
 	}
+}
+
+function theme_avatar_url($account, $s = 160) {
+	$email = is_string($account) ? $account : $account->mail;
+
+	// $d Default imageset to use [ 404 | mm | identicon | monsterid | wavatar ]
+	$d = config('gravatar.default', 'mm');
+
+	// $r Maximum rating (inclusive) [ g | pg | r | x ]
+	$r = config('gravatar.rating', 'g');
+
+	$url = 'http://www.gravatar.com/avatar/';
+	$url .= md5(strtolower(trim($email)));
+	$url .= "?s=$s&d=$d&r=$r";
+
+	return $url;
 }

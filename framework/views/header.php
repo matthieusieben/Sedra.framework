@@ -14,17 +14,23 @@
 
 <div id="wrapper" class="container">
 
-	<header id="header">
+	<header id="header" class="row">
 		<?php if (@$site_name): ?>
 			<h1 id="site_name" role="banner"><?php echo $site_name ?></h1>
 		<?php endif ?>
 	</header>
 
-	<div id="main" role="main">
-		<?php require 'views/components/message.php' ?>
+	<div class="row">
+		<div class="span12">
+			<?php require 'views/components/message.php' ?>
+		</div>
+	</div>
 
-		<?php echo theme('components/breadcrumb', $breadcrumb); ?>
+	<div class="row">
 
-		<?php if (@$title): ?>
-			<h1 id="page_title"><?php echo $title ?></h1>
-		<?php endif ?>
+		<section id="main" role="main" class="content <?php echo empty($aside) ? 'span12' : 'span9'; ?>">
+			<?php echo theme('components/breadcrumb', $breadcrumb); ?>
+
+			<?php if (@$title): ?>
+				<h1 id="page_title"><?php echo $title ?></h1>
+			<?php endif ?>

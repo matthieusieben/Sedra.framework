@@ -5,8 +5,6 @@ require_once 'includes/cache.php';
 # Provides
 global $schema;
 
-# Add user defined schemas
-
 function &schema_init() {
 	global $schema;
 	global $language;

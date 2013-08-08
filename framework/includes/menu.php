@@ -15,7 +15,7 @@ function breadcrumb_add($item) {
 	$breadcrumb['items'][] = $item;
 }
 
-function &menu_get($menu_name = NULL) {
+function menus_get() {
 	global $menus;
 	if(!isset($menus)) {
 		global $user, $language;
@@ -23,14 +23,20 @@ function &menu_get($menu_name = NULL) {
 		$menus = cache_get($cache_id);
 
 		if(!$menus) {
-			$items = db_select('menu_items', 'mi')
-				->fields('mi')
-				->condition(db_or()->condition('language', NULL)->condition('language', $language))
-				->orderBy('menu')
-				->orderBy('parent')
-				->orderBy('weight')
-				->execute()
-				->fetchAllAssoc('mid', PDO::FETCH_ASSOC);
+			try {
+				$items = db_select('menu_items', 'mi')
+					->fields('mi')
+					->condition(db_or()->condition('language', NULL)->condition('language', $language))
+					->orderBy('menu')
+					->orderBy('parent')
+					->orderBy('weight')
+					->execute()
+					->fetchAllAssoc('mid', PDO::FETCH_ASSOC);
+			} catch (PDOException $e) {
+				// TODO : basic main menu with home and instal.php links.
+				$items = array();
+			}
+
 			foreach($items as &$item) {
 				if($item['language'] === NULL)
 					$item['title'] = t($item['title']);
@@ -41,23 +47,22 @@ function &menu_get($menu_name = NULL) {
 			foreach($items as &$item)
 				$menus[$item['menu']]['items'][$item['mid']] =& $item;
 
+			if(empty($menus))
+				$menus = array();
+
 			hook_invoke('menus', $menus);
 
 			foreach($menus as $name => &$menu)
-				foreach($menu['items'] as $key => $item)
+				foreach($menu['items'] as $key => &$item)
 					if(!is_null($item['parent']))
 						unset($menu['items'][$key]);
-					else if($item['role'] !== NULL && !user_has_role($item['role']))
+					else if($item['role'] !== NULL && !user_has_role((int) $item['role']))
 						unset($menu['items'][$key]);
 					else if($item['role'] === NULL && empty($item['items']))
 						unset($menu['items'][$key]);
 
 			cache_set($cache_id, $menus);
 		}
-	}
-	if($menu_name) {
-		$null = NULL;
-		return isset($menus[$menu_name]) ? $menus[$menu_name] : $null;
 	}
 	return $menus;
 }

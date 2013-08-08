@@ -1,6 +1,9 @@
 <?php
 
 function cache_get($id) {
+	if(config('cache.disabled', FALSE))
+		return NULL;
+
 	try {
 		$query = db_select('cache','c')->fields('c', array('content'))->condition('id', $id);
 		$result = $query->execute();

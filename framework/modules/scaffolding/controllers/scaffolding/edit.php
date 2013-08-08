@@ -13,24 +13,21 @@ global $content_action;
 global $content_table_title;
 
 if(!scaffolding_check_action($content_table, $content_action))
-	show_403();
+	show_401();
 
-switch ($content_action) {
-case 'remove':
-case 'edit':
+if($content_action === 'edit' || $content_action === 'remove')
 	if(empty($content_table_info['primary key']))
 		throw new FrameworkException(t('This table has no primary key.'), 404);
-case 'add':
-	break;
-default:
-	show_404();
-}
 
+$form = NULL;
 $values = NULL;
 switch ($content_action) {
+default:
+	return show_404();
+
 case 'remove':
 	if(!$content_id) show_404();
-	scaffolding_delete_id($content_table, $content_id);
+	scaffolding_handle_form($content_table, $content_action, $content_id, $form);
 	return redirect("scaffolding/{$content_table}/index");
 
 case 'edit':
@@ -38,12 +35,13 @@ case 'edit':
 	$values = scaffolding_get_item($content_table, $content_id);
 	if(!$values)
 		throw new FrameworkException(t('This item does not exists.'), 404);
+	# no break
+
+case 'add':
+	$form = scaffolding_get_edit_form($content_table, $content_action, $content_id, $values);
+	scaffolding_handle_form($content_table, $content_action, $content_id, $form);
 	break;
 }
-
-$form = scaffolding_get_edit_form($content_table, $content_action, $content_id, $values);
-
-scaffolding_handle_form($content_table, $content_action, $content_id, $form);
 
 breadcrumb_add(array(
 	'path' => 'scaffolding/'.$content_table.'/'.($content_id ? 'edit/'.$content_id : 'add'),

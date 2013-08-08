@@ -1,6 +1,9 @@
 <?php
 
 switch($errno = val($arg[1])) {
+case '401':
+	return show_401();
+
 case '403':
 	return show_403();
 

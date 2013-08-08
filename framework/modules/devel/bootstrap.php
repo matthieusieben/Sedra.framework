@@ -49,13 +49,16 @@ hook_register('html_foot', function () {
 	devel($load_time);
 
 	global $user;
-	if(isset($user)) devel($user);
+	if(isset($_GET['user']))
+		devel($user);
 
-	if(class_exists('Database'))
-		if($queries = @Database::getLog('devel', 'default'))
-			devel($queries);
+	if(isset($_GET['queries']))
+		if(class_exists('Database'))
+			if($queries = @Database::getLog('devel', 'default'))
+				devel($queries);
 
-	devel($GLOBALS);
+	if(isset($_GET['globals']))
+		devel($GLOBALS);
 
 	echo '</div>';
 });

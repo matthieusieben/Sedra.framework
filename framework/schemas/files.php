@@ -2,7 +2,6 @@
 
 return array(
 	'display name' => t('Files'),
-	'description' => 'The base table for storing files.',
 	'fields' => array(
 		'fid' => array(
 			'type' => 'serial',
@@ -87,11 +86,15 @@ return array(
 );
 
 function _schema_files_form_handle($table, $action, $id, &$form) {
-	require_once 'includes/form.php';
-	require_once 'includes/file.php';
-	if(form_run($form) && form_is_valid($form)) {
-		$values = form_values($form);
-		return file_save($values['fid']);
+	if($action === 'add' || $action === 'edit') {
+		if(form_run($form) && form_is_valid($form)) {
+			require_once 'includes/file.php';
+			$values = form_values($form);
+			return file_save($values['fid']);
+		}
+		return $form['submitted'];
 	}
-	return FALSE;
+	else {
+		return scaffolding_handle_form_default($table, $action, $id, $form);
+	}
 }
