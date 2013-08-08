@@ -4,7 +4,7 @@
 <div class="container">
 	<div class="row">
 		<div class="span6 offset3">
-			<?php require 'views/components/message.php' ?>
+			<?php require 'views/message.php' ?>
 
 			<?php $signup_form['attributes']['class'][] = 'form-signup'; ?>
 			<?php $signup_form['fields']['name']['attributes']['class'][] = 'input-xlarge'; ?>

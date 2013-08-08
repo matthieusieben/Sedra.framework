@@ -155,7 +155,7 @@ function set_status_header($code = 200, $override = TRUE)
 	}
 }
 
-function redirect($path = 'index', array $query = array()) {
+function redirect($path = '', array $query = array()) {
 
 	if(!is_array($path)) {
 		$path = array('path' => $path);

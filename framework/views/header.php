@@ -22,7 +22,7 @@
 
 	<div class="row">
 		<div class="span12">
-			<?php require 'views/components/message.php' ?>
+			<?php require 'views/messages.php' ?>
 		</div>
 	</div>
 

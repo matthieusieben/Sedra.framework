@@ -17,6 +17,11 @@ a[disabled] {
 	margin-right: auto;
 }
 
+.sidebar,
+.content {
+	text-align: justify;
+}
+
 /* Navbar */
 
 .navbar-static-top {
@@ -102,4 +107,12 @@ a[disabled] {
 .avatar > div.avatar-image {
 	float: left;
 	margin-right: 10px;
+}
+
+/* Base page */
+
+.copyright {
+	text-align: center;
+	margin: 2em auto 0;
+	opacity: 0.5;
 }

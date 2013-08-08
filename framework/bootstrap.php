@@ -73,6 +73,8 @@ foreach((array) config('modules') as $module => $required)
 unset($module);
 unset($required);
 
+hook_invoke('bootstrap');
+
 # Load langage files after modules
 global $language;
 language_load($language);

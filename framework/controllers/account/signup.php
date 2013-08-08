@@ -6,7 +6,7 @@ require_once 'includes/timezone.php';
 require_once 'includes/watchdog.php';
 
 if(user_has_role(AUTHENTICATED_RID))
-	return redirect(config('site.home', 'account'));
+	return redirect('account');
 
 if(!config('user.subscription'))
 	show_403();
@@ -76,7 +76,7 @@ if(form_run($signup_form) && form_is_valid($signup_form)) {
 	$values = form_values($signup_form);
 	$error_message = NULL;
 	if(user_register($values, $error_message)) {
-		redirect(isset($_GET['redirect']) ? $_GET['redirect'] : config('site.home', 'index'));
+		redirect(isset($_GET['redirect']) ? $_GET['redirect'] : '');
 	}
 	else {
 		$form['error'] = $error_message;

@@ -59,13 +59,13 @@ if(form_run($login_form) && form_is_valid($login_form)) {
 	if($reset) {
 		# Reset
 		user_action_request($mail, 'reset');
-		redirect(config('site.home', 'index'));
+		redirect();
 	}
 	else {
 		# Login
 		$login_form['valid'] = user_login($mail, $pass, 'login', $login_form['error']);
 		if($login_form['valid']) {
-			redirect(config('site.home', 'index'));
+			redirect();
 		}
 	}
 }

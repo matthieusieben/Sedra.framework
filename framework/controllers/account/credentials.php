@@ -87,7 +87,7 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 			$user = new AnonymousUser;
 			session_regenerate();
 			message(MESSAGE_SUCCESS, t('Your account has been removed.'));
-			redirect(config('site.home', 'index'));
+			redirect();
 		}
 		else {
 			$user->save();

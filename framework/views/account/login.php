@@ -4,7 +4,7 @@
 <div class="container">
 	<div class="row">
 		<div class="span6 offset3">
-			<?php require 'views/components/message.php' ?>
+			<?php require 'views/messages.php' ?>
 
 			<?php $login_form['attributes']['class'][] = 'form-signin' ?>
 			<?php $login_form['fields']['mail']['attributes']['class'][] = 'input-xlarge' ?>

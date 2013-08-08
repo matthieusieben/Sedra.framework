@@ -1,5 +1,16 @@
 <?php
 
+global $request_protocol;
+global $request_port;
+global $request_server;
+global $request_realm;
+global $request_folder;
+global $request_script;
+global $request_uri;
+global $request_path;
+global $request_segments;
+global $request_base;
+
 $request_protocol = strtolower(@$_SERVER['HTTPS']) === 'on' ? 'https' : 'http';
 $request_port     = @$_SERVER['SERVER_PORT']
 	? ($request_protocol == 'http' && $_SERVER['SERVER_PORT'] == 80
@@ -74,7 +85,7 @@ function url_setup(array &$options) {
 	}
 	else if (isset($options['path'])) {
 		$options['path'] = trim($options['path'], ' /');
-		if($options['path'] == config('site.home')) {
+		if($options['path'] === 'index') {
 			$options['path'] = '';
 		}
 	}
