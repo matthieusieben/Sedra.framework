@@ -59,7 +59,7 @@ class User {
 
 		switch ($field) {
 		case 'pass':
-			$value = password_hash($value);
+			$value = sedra_password_hash($value);
 			session_regenerate();
 			break;
 		case 'rid':
@@ -261,7 +261,7 @@ function user_login($mail, $pass, $action = 'login', &$error_message = NULL) {
 			'SELECT * FROM {users} u WHERE mail = :mail AND pass = :pass',
 			array(
 				':mail' => $mail,
-				':pass' => password_hash($pass),
+				':pass' => sedra_password_hash($pass),
 			))
 			->fetchObject('User');
 
@@ -338,7 +338,7 @@ function user_register($data, &$error_message = NULL) {
 		return FALSE;
 	}
 
-	$data['pass'] = strlen($data['pass']) ? password_hash($data['pass']) : NULL;
+	$data['pass'] = strlen($data['pass']) ? sedra_password_hash($data['pass']) : NULL;
 
 	try {
 		db_insert('users')->fields($data)->execute();

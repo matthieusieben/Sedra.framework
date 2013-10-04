@@ -19,9 +19,10 @@ function &schema_init() {
 						$table_info = require $path;
 						$table_name = pathinfo($path, PATHINFO_FILENAME);
 
-						sedra_schema_init($table_name, $table_info);
-
-						$schema[$table_name] = $table_info;
+						if($table_info && !empty($table_info)) {
+							sedra_schema_init($table_name, $table_info);
+							$schema[$table_name] = $table_info;
+						}
 					}
 				}
 			}

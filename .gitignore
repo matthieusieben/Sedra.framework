@@ -1,6 +1,5 @@
 *~
 *.DS_Store
 *.bak
-.git
 application/settings.php
 private/logs/*

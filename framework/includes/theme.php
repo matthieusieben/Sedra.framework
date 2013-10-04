@@ -52,7 +52,11 @@ function l(array $options) {
 	attributes_setup($options['attributes']);
 
 	if(@$options['active']) {
-		$options['attributes']['class'][] = 'active';
+		// Not a problem if mutiple times the same class
+		// if(!in_array('active', $options['attributes']['class']))
+		{
+			$options['attributes']['class'][] = 'active';
+		}
 	}
 
 	if(@$options['disabled']) {

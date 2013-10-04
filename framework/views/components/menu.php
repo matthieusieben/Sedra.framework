@@ -4,7 +4,8 @@
 <ul <?php echo attributes($attributes); ?>>
 	<?php foreach ($items as $_item): ?>
 		<?php if (empty($_item)) continue; ?>
-		<?php if (@$_item['path'] && url_is_active($_item['path'])) $_item['attributes']['class'][] = 'active'; ?>
+		<?php if (!array_key_exists('active', $_item) && @$_item['path'] && url_is_active($_item['path'])) $_item['attributes']['class'][] = 'active'; ?>
+		<?php if (array_key_exists('active', $_item)) $_item['attributes']['class'][] = 'active'; ?>
 		<?php if (!empty($_item['items']) && @$is_sub) $_item['attributes']['class'][] = 'dropdown-submenu'; ?>
 		<?php if (!empty($_item['items']) && !@$is_sub) {
 			$_item['attributes']['class'][] = 'dropdown';

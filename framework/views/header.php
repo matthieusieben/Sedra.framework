@@ -18,6 +18,7 @@
 		<?php if (@$site_name): ?>
 			<h1 id="site_name" role="banner"><?php echo $site_name ?></h1>
 		<?php endif ?>
+		<?php echo theme('components/langmenu') ?>
 	</header>
 
 	<div class="row">

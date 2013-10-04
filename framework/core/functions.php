@@ -16,7 +16,7 @@ function &reg($k, $v=null) {
 	return $registry[$k];
 }
 
-function password_hash($pass) {
+function sedra_password_hash($pass) {
 	return sha1($pass);
 }
 
