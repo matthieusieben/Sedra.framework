@@ -9,15 +9,19 @@ session_set_save_handler(
 	'_session_garbage_collection'
 );
 
-session_start();
+hook_register('bootstrap', 'sedra_session_start');
 
-global $user;
+function sedra_session_start() {
+	session_start();
 
-if(!isset($user)) {
-	throw new FrameworkException(t('No user data'), 500);
+	global $user;
+
+	if(!isset($user)) {
+		throw new FrameworkException(t('No user data'), 500);
+	}
+
+	user_setup_environment();
 }
-
-user_setup_environment();
 
 function _session_open() {
 	return TRUE;

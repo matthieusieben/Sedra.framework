@@ -56,16 +56,16 @@ require 'core/hook.php';
 require 'core/log.php';
 require 'core/error.php';
 require 'core/url.php';
+require 'core/language.php';
+require 'core/database.php';
+require 'core/cache.php';
+require 'core/user.php';
+require 'core/session.php';
+require 'core/router.php';
 
 # Load settings
 if(!@include APP_ROOT.'settings.php')
-	throw new FrameworkException('Could not load settings file.', 500);
-
-# The following core files depend on the settings
-require 'core/language.php';
-require 'core/database.php';
-require 'core/user.php';
-require 'core/session.php';
+	throw new FrameworkSettingsException();
 
 # Include modules
 foreach((array) config('modules') as $module => $required)
@@ -73,6 +73,7 @@ foreach((array) config('modules') as $module => $required)
 unset($module);
 unset($required);
 
+# Initialize every modules
 hook_invoke('bootstrap');
 
 # Load langage files after modules

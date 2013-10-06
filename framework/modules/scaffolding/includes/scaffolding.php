@@ -1,7 +1,6 @@
 <?php
 
 require_once 'includes/schema.php';
-require_once 'includes/cache.php';
 
 function scaffolding_get_id($table, $id) {
 	$table_info = schema_get($table);
@@ -321,7 +320,7 @@ function scaffolding_handle_form($table, $action, $id, &$form) {
 	}
 
 	if($callback($table, $action, $id, $form)) {
-		return redirect("scaffolding/{$table}/index");
+		return redirect("scaffolding/{$table}");
 	}
 
 	return FALSE;
@@ -336,7 +335,7 @@ function scaffolding_get_table_menu($table) {
 	if(scaffolding_check_action($table, 'list'))
 		$table_menu['items'][] = array(
 				'title' => t('Table content'),
-				'path' => 'scaffolding/'.$table.'/index',
+				'path' => 'scaffolding/'.$table.'',
 		);
 
 	if(scaffolding_check_action($table, 'add'))

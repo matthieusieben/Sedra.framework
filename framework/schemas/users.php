@@ -20,9 +20,9 @@ return array(
 			'not null' => TRUE,
 			'default' => AUTHENTICATED_RID,
 			'options' => array(
-				AUTHENTICATED_RID => 'Simple user',
-				MODERATOR_RID => 'Moderator',
-				ADMINISTRATOR_RID => 'Administrator',
+				AUTHENTICATED_RID => t('Simple user'),
+				MODERATOR_RID => t('Moderator'),
+				ADMINISTRATOR_RID => t('Administrator'),
 			),
 			'display name' => t('Role'),
 		),
@@ -50,11 +50,14 @@ return array(
 			'length' => 5,
 			'default' => config('site.language', 'en'),
 			'options' => $languages,
+			'display name' => t('Language'),
 		),
 		'timezone' => array(
-			'type' => 'enum',
+			'type' => 'varchar',
 			'not null' => FALSE,
+			'length' => 128,
 			'options' => $timezone_list,
+			'display name' => t('Timezone'),
 		),
 		'data' => array(
 			'type' => 'text',

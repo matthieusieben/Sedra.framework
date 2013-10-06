@@ -4,11 +4,9 @@ $create_setup = FALSE;
 
 try {
 	require_once 'framework/bootstrap.php';
-} catch (FrameworkException $e) {
+} catch (FrameworkSettingsException $e) {
 	$create_setup = TRUE;
 }
-
-cache_delete();
 
 require_once 'includes/theme.php';
 require_once 'includes/schema.php';
@@ -22,7 +20,7 @@ if($create_setup) {
 	$first_install = !db_table_exists('users') || !db_table_exists('sessions');
 
 	if(!$first_install) {
-		require_once 'core/user.php';
+		sedra_session_start();
 		user_role_required(ADMINISTRATOR_RID);
 	}
 
@@ -83,7 +81,7 @@ if($create_setup) {
 		));
 		menu_add(array(
 			'menu' => 'secondary',
-			'path' => 'account/index',
+			'path' => 'account',
 			'title' => 'Account',
 			'role' => 1,
 			'parent' => 'account',
@@ -98,7 +96,7 @@ if($create_setup) {
 		));
 		menu_add(array(
 			'menu' => 'user',
-			'path' => 'account/index',
+			'path' => 'account',
 			'title' => 'Account details',
 			'role' => 1,
 			'weight' => 0,

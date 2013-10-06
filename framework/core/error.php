@@ -28,6 +28,12 @@ class FrameworkLoadException extends FrameworkException {
 	}
 }
 
+class FrameworkSettingsException extends FrameworkException {
+	public function __construct() {
+		parent::__construct('Could not load settings file.', 500);
+	}
+}
+
 function __error_handler($errno, $errstr, $errfile, $errline) {
 	switch ($errno) {
 	case E_ERROR: // 1

@@ -10,6 +10,7 @@ global $request_uri;
 global $request_path;
 global $request_segments;
 global $request_base;
+global $request_method;
 
 $request_protocol = strtolower(@$_SERVER['HTTPS']) === 'on' ? 'https' : 'http';
 $request_port     = @$_SERVER['SERVER_PORT']
@@ -27,6 +28,7 @@ $request_uri      = $_SERVER['REQUEST_URI'];
 $request_path     = trim(!empty($_SERVER['PATH_INFO']) ? val($_SERVER['PATH_INFO'], 'index') : val($_REQUEST['q'], 'index'), '/');
 $request_segments = explode('/', $request_path);
 $request_base     = $request_folder . ($request_script !== 'index.php' ? $request_script : '');
+$request_method   = $_SERVER['REQUEST_METHOD'];
 
 function url_segment($n, $default = NULL) {
 	global $request_segments;
@@ -96,7 +98,7 @@ function url_setup(array &$options) {
 		'title' => NULL,
 		'attributes' => array(),
 		'html' => TRUE,
-		'active' => isset($options['path']) && url_is_active($options['path']),
+		'active' => isset($options['path']) && url_is_current($options['path']),
 		'view' => 'link',
 	);
 }
@@ -117,21 +119,6 @@ function url_is_current($path) {
 		return TRUE;
 
 	return FALSE;
-}
-
-function url_is_active($path) {
-	$path = trim($path, '/');
-	if(empty($path)) {
-		return FALSE;
-	}
-	else {
-		global $request_path;
-
-		if(url_is_current($path))
-			return TRUE;
-
-		return strpos($request_path.'/', $path.'/') === 0;
-	}
 }
 
 function file_url($file) {

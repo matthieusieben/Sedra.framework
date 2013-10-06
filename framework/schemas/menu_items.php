@@ -1,7 +1,5 @@
 <?php
 
-require_once 'includes/cache.php';
-
 return array(
 	'display name' => t('Menu items'),
 	'fields' => array(

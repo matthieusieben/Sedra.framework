@@ -100,7 +100,7 @@ if(form_run($edit_form) && form_is_valid($edit_form)) {
 }
 
 breadcrumb_add(array(
-	'path' => 'account/index',
+	'path' => 'account',
 	'title' => t('My account'),
 ));
 

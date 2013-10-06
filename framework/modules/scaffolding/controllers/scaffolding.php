@@ -10,9 +10,9 @@ global $content_action;
 global $content_id;
 global $content_table_title;
 
-$content_table = val($arg[1]);
-$content_action = val($arg[2], 'index');
-$content_id = val($arg[3]);
+$content_table = val($arg[0]);
+$content_action = val($arg[1], 'index');
+$content_id = val($arg[2]);
 
 if($content_table === 'index' && $content_action === 'index') {
 	$content_table = NULL;

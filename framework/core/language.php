@@ -6,11 +6,25 @@ global $languages;
 global $language;
 global $strings;
 
-$language_default = config('site.language', 'en');
+// Default values
+$language_default = 'en';
 $language_custom = @$_GET['language'];
-$languages = config('site.languages');
+$languages = array('en');
 $language = $language_default;
 $strings = array();
+
+// Initialize after configuration file was loaded
+hook_register('bootstrap', function() {
+	global $language_default;
+	global $language_custom;
+	global $languages;
+	global $language;
+
+	$language_default = config('site.language', $language_default);
+	$language_custom = @$_GET['language'];
+	$languages = config('site.languages', $languages);
+	$language = $language_default;
+});
 
 function language_load($l) {
 	global $strings;

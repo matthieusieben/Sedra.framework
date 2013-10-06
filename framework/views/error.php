@@ -1,3 +1,8 @@
+<?php if(!function_exists('t')) {
+	function t($str, $from = array(), $to = array()) {
+		return strtr($str, $from, $to);
+	}
+} ?>
 <?php global $request_base; ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang ?>">
@@ -96,38 +101,38 @@
 <body>
 
 	<header>
-		<h1><?php echo strtr('Oops...') ?></h1>
+		<h1><?php echo t('Oops...') ?></h1>
 	</header>
 
 	<div id="content">
 		<p><?php echo $message ?></p>
-		<p><?php echo strtr('Go back to !link.', array('!link' => '<a href="'.$request_base.'">'.config('site.name', strtr('the home page')).'</a>')) ?></p>
+		<p><?php echo t('Go back to !link.', array('!link' => '<a href="'.$request_base.'">'.config('site.name', t('the home page')).'</a>')) ?></p>
 	</div>
 
 	<?php if (config('devel')): ?>
 		<footer>
 
-			<h2><?php echo strtr('Debug info') ?></h2>
+			<h2><?php echo t('Debug info') ?></h2>
 
 			<div id="debug-info">
 
 				<dl>
-					<dt><?php echo strtr('Error') ?></dt>
+					<dt><?php echo t('Error') ?></dt>
 					<dd><code><?php echo @$error ?></code></dd>
-					<dt><?php echo strtr('File') ?></dt>
+					<dt><?php echo t('File') ?></dt>
 					<dd><code><?php echo @$file ?></code></dd>
-					<dt><?php echo strtr('Line') ?></dt>
+					<dt><?php echo t('Line') ?></dt>
 					<dd><code><?php echo @$line ?></code></dd>
 				</dl>
 
-				<h3><?php echo strtr('Output buffer content') ?></h3>
+				<h3><?php echo t('Output buffer content') ?></h3>
 				<?php if($output_buffer): ?>
 					<pre><?php echo check_plain($output_buffer) ?></pre>
 				<?php else: ?>
-					<p><em><?php echo strtr('Empty') ?></em></p>
+					<p><em><?php echo t('Empty') ?></em></p>
 				<?php endif ?>
 
-				<h3><?php echo strtr('Backtrace') ?></h3>
+				<h3><?php echo t('Backtrace') ?></h3>
 				<?php foreach ($trace as $num => $call): ?>
 					<?php var_dump($call) ?>
 				<?php endforeach ?>

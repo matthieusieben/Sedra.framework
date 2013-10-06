@@ -1,13 +1,13 @@
 <?php
 
 global $config;
+global $routes;
 global $databases;
 
 # Is this website under development (TRUE) or production (FALSE) ?
 $config['devel'] = FALSE;
 
 # Website parameters
-$config['site.home'] = 'index';
 $config['site.name'] = 'My great website';
 $config['site.email'] = 'admin@example.com';
 $config['site.ga'] = NULL; // UA-XXXXX-X
@@ -89,3 +89,9 @@ ini_set('session.gc_probability', 1);
 ini_set('session.gc_divisor', 100);
 ini_set('session.gc_maxlifetime', 200000);
 ini_set('session.cookie_lifetime', 2000000);
+
+# Setup some default routes
+$routes['index'] = array(
+	'url' => 'index',
+	'controller' => 'index',
+);
