@@ -91,7 +91,7 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
 	global $language;
 
 	if (empty($heading)) {
-		$heading = t('Error @code', array('@code' => $status_code));
+		$heading = strtr('Error @code', array('@code' => $status_code));
 	}
 
 	if (is_numeric($status_code) && !headers_sent()) {
@@ -108,7 +108,7 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
 
 	# Error message
 	echo load_view('error', array(
-		'message' => $status_code >= 500 ? t('An internal error occured. Please try again later.') : $message,
+		'message' => $status_code >= 500 ? strtr('An internal error occured. Please try again later.') : $message,
 		'error' => $message,
 		'title' => $heading,
 		'file' => $file,
