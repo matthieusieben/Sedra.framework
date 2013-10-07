@@ -3,10 +3,30 @@
 # Provides
 global $routes;
 
+hook_register('routes', function(&$routes) {
+	foreach($routes as $routeName => &$routeInfo) {
+		if(!isset($routeInfo['regex'])) {
+			$regex = preg_replace('/\./','\.', $routeInfo['url']);
+			$regex = preg_replace('/@/','\@', $regex);
+			$routeInfo['regex'] = '@^'.preg_replace('/:(\w+)/', '(?<${1}>\w+)', $regex, -1, $count).'$@i';
+			$routeInfo['needs_regex'] = $count > 0;
+		} else {
+			$routeInfo['needs_regex'] = TRUE;
+		}
+		if(!isset($routeInfo['path_generator'])) {
+			$routeInfo['path_generator'] = '\''.preg_replace('/:(\w+)/', '\' . \$args[\'${1}\'] . \'', $routeInfo['url']).'\'';
+		}
+		if(!empty($routeInfo['args']) && !isset($routeInfo['args_generator'])) {
+			$args_g = var_export($routeInfo['args'], true);
+			$routeInfo['args_generator'] = preg_replace("/':(\w+)'/",'\$matches[\'${1}\']', $args_g);
+		}
+	}
+});
+
 hook_register('bootstrap', function() {
 	global $routes;
 
-	$cache_id = "router/routes";
+	$cache_id = 'router/routes';
 	if($cached_routes = cache_get($cache_id)) {
 		$routes = $cached_routes;
 	} else {
@@ -31,14 +51,14 @@ function router_match($url, $method = 'GET') {
 
 		if (!empty($routeInfo['methods']) && !in_array($method, $routeInfo['methods'])) continue;
 
-		if (!preg_match('@^'.$routeInfo['url'].'$@i', $url, $matches)) continue;
+		if ($routeInfo['needs_regex'] && !preg_match($routeInfo['regex'], $url, $matches)) continue;
 
-		$args = (array) @$routeInfo['args'];
-		foreach($args as &$arg) {
-			if($arg && $arg[0] === '$') {
-				$arg = @$matches[substr($arg, 1)];
-			}
-		}
+		if (!$routeInfo['needs_regex'] && $routeInfo['url'] != $url) continue;
+
+		if(isset($routeInfo['args_generator']))
+			$args = eval('return '.$routeInfo['args_generator'].';');
+		else
+			$args = (array) @$routeInfo['args'];
 
 		return array(
 			'route' => $routeName,
@@ -60,20 +80,20 @@ function router_match_current() {
 
 function router_load_controller() {
 	$route = router_match_current();
-	if(!$route) show_404();
-	return load_controller($route['controller'], @$route['args']);
-}
-
-function _router_create_path($matches) {
-	global $_router_args;
-	return @$_router_args[$matches[1]];
+	if(!$route) {
+		if(config('devel')) {
+			throw new FrameworkException(t('No route found.'), 404);
+		} else {
+			show_404();
+		}
+	}
+	return load_controller($route['controller'], $route['args']);
 }
 
 function router_create_path($route_name, array $args = array()) {
 	global $routes;
 	$route = @$routes[$route_name];
-	if(!@$route['url']) return null;
-	global $_router_args;
-	$_router_args = $args;
-	return preg_replace_callback('@\(\?\<(\w+)\>[^\)]+\)@i', '_router_create_path', $route['url']);
+	if(empty($route['path_generator']))
+		throw new FrameworkException(t('The route named "@name" could not be found.', array('@name' => $route_name)));
+	return eval('return '.$route['path_generator'].';');
 }

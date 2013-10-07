@@ -6,25 +6,25 @@ $routes['scaffolding_index'] = array(
 );
 
 $routes['scaffolding_table'] = array(
-	'url' => 'scaffolding/(?<table>\w+)',
+	'url' => 'scaffolding/:table',
 	'controller' => 'scaffolding',
-	'args' => array('$table'),
+	'args' => array(':table'),
 );
 
 $routes['scaffolding_item_add'] = array(
-	'url' => 'scaffolding/(?<table>\w+)/add',
+	'url' => 'scaffolding/:table/add',
 	'controller' => 'scaffolding',
-	'args' => array('$table', 'add'),
+	'args' => array(':table', 'add'),
 );
 
 $routes['scaffolding_item_edit'] = array(
-	'url' => 'scaffolding/(?<table>\w+)/edit/(?<itemid>\w+)',
+	'url' => 'scaffolding/:table/:itemid/edit',
 	'controller' => 'scaffolding',
-	'args' => array('$table', 'edit', '$itemid'),
+	'args' => array(':table', 'edit', ':itemid'),
 );
 
 $routes['scaffolding_item_remove'] = array(
-	'url' => 'scaffolding/(?<table>\w+)/remove/(?<itemid>\w+)',
+	'url' => 'scaffolding/:table/:itemid/remove',
 	'controller' => 'scaffolding',
-	'args' => array('$table', 'remove', '$itemid'),
+	'args' => array(':table', 'remove', ':itemid'),
 );

@@ -227,21 +227,20 @@ function load_module($__module, $__required = TRUE) {
 }
 
 function load_controller($__controller, array $arg = array()) {
-	if(is_array($__controller)) {
-		$arg = $__controller;
-		$__controller = @$arg[0];
+	list($__controller, $__callback) = explode('#', $__controller);
+
+	$__file = stream_resolve_include_path("controllers/{$__controller}.php");
+
+	if($__controller && !$__file)
+		return show_404(config('devel') ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
+
+	if($__callback) {
+		require_once $__file;
+		return call_user_func($__callback, $arg);
 	}
-	elseif(empty($arg)) {
-		$arg = array($__controller);
+	else {
+		return require($__file);
 	}
-
-	if($__file = stream_resolve_include_path("controllers/{$__controller}.php"))
-		return require($__file);
-
-	if($__file = stream_resolve_include_path("controllers/{$__controller}/index.php"))
-		return require($__file);
-
-	return show_404(config('devel') ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
 }
 
 function load_view($__view, array $__data = array()) {

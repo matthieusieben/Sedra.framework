@@ -82,6 +82,7 @@ switch (@$arg[0]) {
 case 'raw':
 	return theme($contact_form);
 
+default:
 case 'contact':
 
 	breadcrumb_add(array(
@@ -93,7 +94,4 @@ case 'contact':
 		'title' => t('Contact'),
 		'html' => theme($contact_form),
 	));
-
-default:
-	throw new FrameworkException(t('Undefined request <code>@request</code>', array('@request' => @$arg[0])), 500);
 }

@@ -1,7 +1,7 @@
 <?php
 
 $routes['error'] = array(
-	'url' => 'error/(?<code>\w+)',
+	'url' => 'error/:code',
 	'controller' => 'error',
-	'args' => array('$code'),
+	'args' => array(':code'),
 );

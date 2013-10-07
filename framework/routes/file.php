@@ -1,13 +1,13 @@
 <?php
 
 $routes['file'] = array(
-	'url' => 'file/(?<fileid>\w+)',
+	'url' => 'file/:fileid',
 	'controller' => 'file',
-	'args' => array('$fileid'),
+	'args' => array(':fileid'),
 );
 
 $routes['file_download'] = array(
-	'url' => 'file/(?<fileid>\w+)/download',
+	'url' => 'file/:fileid/download',
 	'controller' => 'file',
-	'args' => array('$fileid', 'download'),
+	'args' => array(':fileid', TRUE),
 );

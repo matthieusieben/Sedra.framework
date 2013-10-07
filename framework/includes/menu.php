@@ -9,8 +9,10 @@ $breadcrumb['items'][] = array(
 );
 
 function breadcrumb_add($item) {
+	global $request_path;
 	global $breadcrumb;
-	$breadcrumb['items'][] = $item;
+	if($request_path !== 'index')
+		$breadcrumb['items'][] = $item;
 }
 
 function menus_get() {
