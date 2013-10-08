@@ -3,37 +3,6 @@
 set_error_handler('__error_handler');
 set_exception_handler('__exception_handler');
 
-class FrameworkException extends Exception {
-	public $code = 500;
-
-	public function __construct($message, $code = 500) {
-
-		if($message instanceof Exception)
-			$message = $message->message;
-
-		parent::__construct($message, $code);
-	}
-
-	public function setCode($code) {
-		if(is_null($code))
-			return $this->code;
-		else
-			return $this->code = $code;
-	}
-}
-
-class FrameworkLoadException extends FrameworkException {
-	public function __construct($message) {
-		parent::__construct($message, 500);
-	}
-}
-
-class FrameworkSettingsException extends FrameworkException {
-	public function __construct() {
-		parent::__construct('Could not load settings file.', 500);
-	}
-}
-
 function __error_handler($errno, $errstr, $errfile, $errline) {
 	switch ($errno) {
 	case E_ERROR: // 1
@@ -96,8 +65,10 @@ function __exception_handler($e) {
 function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $line = NULL, $trace = NULL) {
 	global $language;
 
+	$t = function_exists('t') ? 't' : 'strtr';
+
 	if (empty($heading)) {
-		$heading = strtr('Error @code', array('@code' => $status_code));
+		$heading = $t('Error @code', array('@code' => $status_code));
 	}
 
 	if (is_numeric($status_code) && !headers_sent()) {
@@ -114,7 +85,7 @@ function fatal( $message, $heading = NULL, $status_code = 500, $file = NULL, $li
 
 	# Error message
 	echo load_view('error', array(
-		'message' => $status_code >= 500 ? strtr('An internal error occured. Please try again later.') : $message,
+		'message' => $status_code >= 500 ? $t('An internal error occured. Please try again later.', array()) : $message,
 		'error' => $message,
 		'title' => $heading,
 		'file' => $file,

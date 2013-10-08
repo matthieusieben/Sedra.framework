@@ -12,7 +12,7 @@ function form_run(&$form) {
 
 	$form += array(
 		'name' => '__form_'.$form['id'],
-		'method' => 'post',
+		'method' => 'POST',
 		'action' => $request_uri,
 		'type' => 'form',
 		'fields' => array(),
@@ -20,8 +20,15 @@ function form_run(&$form) {
 		'title' => NULL,
 		'autocomplete' => TRUE,
 	);
+	$form['method'] = strtoupper($form['method']);
 
-	$form['request'] = ($form['method'] === 'get') ? $_GET : $_POST;
+	if($form['method'] === 'GET')
+		$form['request'] = $_GET;
+	else if($form['method'] === 'POST')
+		$form['request'] = $_POST;
+	else if($form['method'] === 'PUT')
+		$form['request'] = $_POST; # TODO: check this
+
 
 	$form['attributes']['action'] = $form['action'];
 	$form['attributes']['method'] = $form['method'];

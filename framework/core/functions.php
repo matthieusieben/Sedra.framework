@@ -16,8 +16,8 @@ function &reg($k, $v=null) {
 	return $registry[$k];
 }
 
-function sedra_password_hash($pass) {
-	return sha1($pass);
+function sedra_password_hash($pass, $salt = '') {
+	return sha1($pass.$salt);
 }
 
 function ip_address() {
@@ -160,15 +160,14 @@ function redirect($path = '', array $query = array()) {
 	if(!is_array($path)) {
 		$path = array('path' => $path);
 	}
+	if(isset($_GET['redirect'])) {
+		$path['path'] = $_GET['redirect'];
+	}
 
 	if(!empty($path['query']))
 		$path['query'] += $query;
 	else
 		$path['query'] = $query;
-
-	if(isset($_GET['redirect'])) {
-		$path['path'] = $_GET['redirect'];
-	}
 
 	$url = url($path);
 
@@ -226,7 +225,7 @@ function load_module($__module, $__required = TRUE) {
 	return $__loaded[$__module];
 }
 
-function load_controller($__controller, array $arg = array()) {
+function load_controller($__controller, array $args = array()) {
 	list($__controller, $__callback) = explode('#', $__controller);
 
 	$__file = stream_resolve_include_path("controllers/{$__controller}.php");
@@ -235,8 +234,13 @@ function load_controller($__controller, array $arg = array()) {
 		return show_404(config('devel') ? t('Unable to load the controller "@controller"', array('@controller'=>$__controller)) : NULL);
 
 	if($__callback) {
-		require_once $__file;
-		return call_user_func($__callback, $arg);
+		if($__file) {
+			require_once $__file;
+		}
+		if(!is_callable($__callback)) {
+			throw new FrameworkException('Loading a function controller that is not callable.', 500);
+		}
+		return call_user_func($__callback, $args);
 	}
 	else {
 		return require($__file);

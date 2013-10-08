@@ -28,7 +28,7 @@ default:
 case 'remove':
 	if(!$content_id) show_404();
 	scaffolding_handle_form($content_table, $content_action, $content_id, $form);
-	return redirect(router_create_path('scaffolding_table', array('table' => $content_table)));
+	return redirect(router_path('scaffolding_table', array('table' => $content_table)));
 
 case 'edit':
 	if(!$content_id) show_404();
@@ -44,7 +44,7 @@ case 'add':
 }
 
 breadcrumb_add(array(
-	'path' => router_create_path($content_id ? 'scaffolding_item_edit' : 'scaffolding_item_add', array('table' => $content_table, 'itemid' => $content_id)),
+	'path' => router_path($content_id ? 'scaffolding_item_edit' : 'scaffolding_item_add', array('table' => $content_table, 'itemid' => $content_id)),
 	'title' => $content_id
 		? t('Edit content')
 		: t('Add content'),

@@ -263,7 +263,7 @@ function scaffolding_get_edit_form($table, $action, $id, $values = NULL) {
 			),
 			array(
 				'title' => t('Cancel'),
-				'path' => router_create_path('scaffolding_table', array('table' => $table)),
+				'path' => router_path('scaffolding_table', array('table' => $table)),
 				'view' => 'link',
 				'attributes' => array('class' => array(
 					'btn',
@@ -320,7 +320,7 @@ function scaffolding_handle_form($table, $action, $id, &$form) {
 	}
 
 	if($callback($table, $action, $id, $form)) {
-		return redirect(router_create_path('scaffolding_table', array('table' => $table)));
+		return redirect(router_path('scaffolding_table', array('table' => $table)));
 	}
 
 	return FALSE;
@@ -334,14 +334,14 @@ function scaffolding_get_table_menu($table) {
 
 	if(scaffolding_check_action($table, 'list'))
 		$table_menu['items'][] = array(
-				'title' => t('Table content'),
-				'path' => router_create_path('scaffolding_table', array('table' => $table)),
+			'title' => t('Table content'),
+			'path' => router_path('scaffolding_table', array('table' => $table)),
 		);
 
 	if(scaffolding_check_action($table, 'add'))
 		$table_menu['items'][] = array(
-				'title' => t('Add content'),
-				'path' => router_create_path('scaffolding_item_add', array('table' => $table)),
+			'title' => t('Add content'),
+			'path' => router_path('scaffolding_item_add', array('table' => $table)),
 		);
 
 	return $table_menu;
@@ -362,7 +362,7 @@ function scaffolding_get_tables_menu() {
 
 			$tables_menu['items'][] = array(
 				'title' => t(val($table_info['display name'], $table_name)),
-				'path' => router_create_path('scaffolding_table', array('table' => $table_name)),
+				'path' => router_path('scaffolding_table', array('table' => $table_name)),
 			);
 		}
 

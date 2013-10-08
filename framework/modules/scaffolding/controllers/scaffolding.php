@@ -10,9 +10,9 @@ global $content_action;
 global $content_id;
 global $content_table_title;
 
-$content_table = val($arg[0]);
-$content_action = val($arg[1], 'index');
-$content_id = val($arg[2]);
+$content_table = val($args['table']);
+$content_action = val($args['action'], 'index');
+$content_id = val($args['itemid']);
 
 if($content_table === 'index' && $content_action === 'index') {
 	$content_table = NULL;
@@ -42,7 +42,7 @@ switch($content_action) {
 case 'add':
 case 'edit':
 case 'remove':
-	return load_controller('scaffolding/edit', $arg);
+	return load_controller('scaffolding/edit', $args);
 default:
-	return load_controller("scaffolding/{$content_action}", $arg);
+	return load_controller("scaffolding/{$content_action}", $args);
 }

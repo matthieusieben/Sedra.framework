@@ -103,17 +103,19 @@ function url_setup(array &$options) {
 	);
 }
 
+function url_is_active($path) {
+	global $request_path;
+
+	$path = trim($path, '/');
+
+	return url_is_current($path) || strpos($request_path, $path) === 0;
+}
+
 function url_is_current($path) {
 	global $request_path;
 
 	if(!$request_path)
 		return $path === '' || $path === 'index';
-
-	if($request_path . '/index' === $path)
-		return TRUE;
-
-	if($request_path === $path . '/index')
-		return TRUE;
 
 	if($request_path === $path)
 		return TRUE;

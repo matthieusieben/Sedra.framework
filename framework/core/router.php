@@ -3,18 +3,19 @@
 # Provides
 global $routes;
 
-hook_register('routes', function(&$routes) {
+hook_register('compile_routes', function(&$routes) {
 	foreach($routes as $routeName => &$routeInfo) {
 		if(!isset($routeInfo['regex'])) {
-			$regex = preg_replace('/\./','\.', $routeInfo['url']);
-			$regex = preg_replace('/@/','\@', $regex);
-			$routeInfo['regex'] = '@^'.preg_replace('/:(\w+)/', '(?<${1}>\w+)', $regex, -1, $count).'$@i';
+			$regex = preg_quote($routeInfo['url'], '@');
+			$regex = preg_replace('/(\\\:(\w+))/', '(?<${2}>\w+)', $regex, -1, $count);
+			$routeInfo['regex'] = '@^'.$regex.'$@i';
 			$routeInfo['needs_regex'] = $count > 0;
 		} else {
 			$routeInfo['needs_regex'] = TRUE;
 		}
 		if(!isset($routeInfo['path_generator'])) {
-			$routeInfo['path_generator'] = '\''.preg_replace('/:(\w+)/', '\' . \$args[\'${1}\'] . \'', $routeInfo['url']).'\'';
+			$url = $routeInfo['url'];
+			$routeInfo['path_generator'] = '\''.preg_replace('/:(\w+)/', '\' . \$args[\'${1}\'] . \'', $url).'\'';
 		}
 		if(!empty($routeInfo['args']) && !isset($routeInfo['args_generator'])) {
 			$args_g = var_export($routeInfo['args'], true);
@@ -39,7 +40,7 @@ hook_register('bootstrap', function() {
 				}
 			}
 		}
-		hook_invoke('routes', $routes);
+		hook_invoke('compile_routes', $routes);
 		cache_set($cache_id, $routes);
 	}
 });
@@ -90,10 +91,17 @@ function router_load_controller() {
 	return load_controller($route['controller'], $route['args']);
 }
 
-function router_create_path($route_name, array $args = array()) {
+function router_path($routeName, array $args = array()) {
 	global $routes;
-	$route = @$routes[$route_name];
-	if(empty($route['path_generator']))
-		throw new FrameworkException(t('The route named "@name" could not be found.', array('@name' => $route_name)));
-	return eval('return '.$route['path_generator'].';');
+
+	$routeInfo = @$routes[$routeName];
+
+	if(empty($routeInfo['path_generator']))
+		throw new FrameworkException(t('The route named "@name" could not be found.', array('@name' => $routeName)));
+
+	return eval('return '.$routeInfo['path_generator'].';');
+}
+
+function router_url($routeName, array $args = array()) {
+	return url(router_path($routeName, $args));
 }

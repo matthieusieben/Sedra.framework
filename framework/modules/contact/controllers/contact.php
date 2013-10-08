@@ -78,20 +78,12 @@ if(form_run($contact_form) && form_is_valid($contact_form)) {
 	}
 }
 
-switch (@$arg[0]) {
-case 'raw':
-	return theme($contact_form);
+breadcrumb_add(array(
+	'path' => 'contact',
+	'title' => t('Contact'),
+));
 
-default:
-case 'contact':
-
-	breadcrumb_add(array(
-		'path' => 'contact',
-		'title' => t('Contact'),
-	));
-
-	return theme('index', array(
-		'title' => t('Contact'),
-		'html' => theme($contact_form),
-	));
-}
+return theme('index', array(
+	'title' => t('Contact'),
+	'html' => theme($contact_form),
+));

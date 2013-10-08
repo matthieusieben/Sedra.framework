@@ -119,7 +119,7 @@ while($content_row = ($content_q->fetchAssoc())) {
 		if($can_edit)
 			$actions['items'][] = array(
 				'title' => '<i class="icon-pencil"></i>',
-				'path' => router_create_path('scaffolding_item_edit', array('table' => $content_table, 'itemid' => $id)),
+				'path' => router_path('scaffolding_item_edit', array('table' => $content_table, 'itemid' => $id)),
 				'attributes' => array(
 					'title' => t('Edit'),
 				),
@@ -129,7 +129,7 @@ while($content_row = ($content_q->fetchAssoc())) {
 		if($can_remove)
 			$actions['items'][] = array(
 				'title' => '<i class="icon-remove"></i>',
-				'path' => router_create_path('scaffolding_item_remove', array('table' => $content_table, 'itemid' => $id)),
+				'path' => router_path('scaffolding_item_remove', array('table' => $content_table, 'itemid' => $id)),
 				'attributes' => array(
 					'title' => t('Remove'),
 				),

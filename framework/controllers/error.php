@@ -1,6 +1,6 @@
 <?php
 
-switch($errno = val($arg[0])) {
+switch($errno = val($args['code'])) {
 case '401':
 	return show_401();
 

@@ -1,14 +1,14 @@
 <?php if(!function_exists('t')) {
-	function t($str, $from = array(), $to = array()) {
-		return strtr($str, $from, $to);
+	function t($str, $from = array()) {
+		return strtr($str, $from);
 	}
 } ?>
 <?php global $request_base; ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang ?>">
+<html lang="<?=$lang ?>">
 <head>
 	<meta charset="utf-8">
-	<title><?php echo $title ?></title>
+	<title><?=$title ?></title>
 
 	<style type="text/css">
 		body {
@@ -101,38 +101,38 @@
 <body>
 
 	<header>
-		<h1><?php echo t('Oops...') ?></h1>
+		<h1><?=t('Oops...') ?></h1>
 	</header>
 
 	<div id="content">
-		<p><?php echo $message ?></p>
-		<p><?php echo t('Go back to !link.', array('!link' => '<a href="'.$request_base.'">'.config('site.name', t('the home page')).'</a>')) ?></p>
+		<p><?=$message ?></p>
+		<p><?=t('Go back to !link.', array('!link' => '<a href="'.$request_base.'">'.config('site.name', t('the home page')).'</a>')) ?></p>
 	</div>
 
 	<?php if (config('devel')): ?>
 		<footer>
 
-			<h2><?php echo t('Debug info') ?></h2>
+			<h2><?=t('Debug info') ?></h2>
 
 			<div id="debug-info">
 
 				<dl>
-					<dt><?php echo t('Error') ?></dt>
-					<dd><code><?php echo @$error ?></code></dd>
-					<dt><?php echo t('File') ?></dt>
-					<dd><code><?php echo @$file ?></code></dd>
-					<dt><?php echo t('Line') ?></dt>
-					<dd><code><?php echo @$line ?></code></dd>
+					<dt><?=t('Error') ?></dt>
+					<dd><code><?=@$error ?></code></dd>
+					<dt><?=t('File') ?></dt>
+					<dd><code><?=@$file ?></code></dd>
+					<dt><?=t('Line') ?></dt>
+					<dd><code><?=@$line ?></code></dd>
 				</dl>
 
-				<h3><?php echo t('Output buffer content') ?></h3>
+				<h3><?=t('Output buffer content') ?></h3>
 				<?php if($output_buffer): ?>
-					<pre><?php echo check_plain($output_buffer) ?></pre>
+					<pre><?=check_plain($output_buffer) ?></pre>
 				<?php else: ?>
-					<p><em><?php echo t('Empty') ?></em></p>
+					<p><em><?=t('Empty') ?></em></p>
 				<?php endif ?>
 
-				<h3><?php echo t('Backtrace') ?></h3>
+				<h3><?=t('Backtrace') ?></h3>
 				<?php foreach ($trace as $num => $call): ?>
 					<?php var_dump($call) ?>
 				<?php endforeach ?>

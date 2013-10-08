@@ -17,14 +17,14 @@ $routes['account_login'] = array(
 $routes['account_activate'] = array(
 	'url' => 'account/activate/:key',
 	'controller' => 'account/reset',
-	'args' => array('activate', ':key'),
+	'args' => array('action' => 'activate', 'key' => ':key'),
 	'methods' => array('GET'),
 );
 
 $routes['account_reset'] = array(
 	'url' => 'account/reset/:key',
 	'controller' => 'account/reset',
-	'args' => array('reset', ':key'),
+	'args' => array('action' => 'reset', 'key' => ':key'),
 	'methods' => array('GET'),
 );
 

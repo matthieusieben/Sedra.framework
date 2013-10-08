@@ -3,5 +3,5 @@
 $routes['error'] = array(
 	'url' => 'error/:code',
 	'controller' => 'error',
-	'args' => array(':code'),
+	'args' => array('code' => ':code'),
 );

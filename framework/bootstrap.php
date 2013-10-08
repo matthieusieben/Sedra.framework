@@ -51,8 +51,9 @@ if (ini_get('register_globals')) {
 }
 
 # Load core files
-require 'core/functions.php';
 require 'core/hook.php';
+require 'core/functions.php';
+require 'core/exceptions.php';
 require 'core/log.php';
 require 'core/error.php';
 require 'core/url.php';
